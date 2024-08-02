@@ -1,0 +1,48 @@
+package hw4;
+
+
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public class SwitchLink extends AbstractLink{
+	
+	/**
+	 * The saved value of whether or not train will turn as it moves through this link
+	 * Defaults to false;
+	 */
+    private boolean turn;
+    
+    /**
+     * Constructor for SwitchLink
+     * @param highpoint top endpoint of path 1
+     * @param lowpoint bottom endpoint of path 2
+     * @param lowpoint2 bottom endpoint of path 3
+     */
+    
+	public SwitchLink(Point highpoint, Point lowpoint, Point lowpoint2) {
+		super(new PointPair[] {new PointPair(highpoint, lowpoint), new PointPair(highpoint, lowpoint2)});
+        turn = false;
+	}
+	
+	/**
+	 * Will decide whether train will use primary PointPair or secondary PointPair/
+	 * @param turn True will tell the train to turn; false will tell it not to
+	 */
+	public void setTurn(boolean turn) {
+		this.turn = turn;
+	}
+
+	
+	@Override
+	public Point getConnectedPoint(Point point) {
+		if (turn) {
+			return (point != getpairs()[0].getPointB()) ? getpairs()[0].getPointB():getpairs()[0].getPointA();
+		}
+		else {
+			return (point != getpairs()[1].getPointB()) ? getpairs()[1].getPointB():getpairs()[1].getPointA();
+		}
+	}
+}
+
+

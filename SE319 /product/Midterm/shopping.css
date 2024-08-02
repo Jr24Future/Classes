@@ -1,0 +1,35 @@
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* New style for the text container */
+.footer-text {
+    text-align: center;
+    flex-grow: 1; /* Takes available space */
+}
+
+footer a, footer button {
+    color: white;
+    text-decoration: none;
+    background: none;
+    border: none;
+}
+
+footer a:hover, footer button:hover {
+    text-decoration: underline;
+}
+
+.logout-btn { 
+    padding: 5px 10px; 
+    margin-right: 20px; 
+    border: 1px solid white; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}

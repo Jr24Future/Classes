@@ -1,0 +1,71 @@
+# Compile of lab2step2.v was successful.
+vsim -gui work.lab2step2
+# vsim -gui work.lab2step2 
+# Start time: 12:18:55 on Sep 07,2023
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.lab2step2(fast)
+add wave -position insertpoint sim:/lab2step2/*
+force -freeze sim:/lab2step2/A 0'hz 0
+# Invalid (0-size) sized constant.
+# ** UI-Msg (Error): (vsim-4011) Invalid force value: 0'hz 0.
+# 
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/F 1'hx 0
+force -freeze sim:/lab2step2/A 1'h0 0
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/F 1'hx 0
+run 100
+force -freeze sim:/lab2step2/A 1'h0 0
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h1 0
+force -freeze sim:/lab2step2/F 1'hx 0
+run 100
+force -freeze sim:/lab2step2/A 1'h0 0
+force -freeze sim:/lab2step2/B 1'h1 0
+force -freeze sim:/lab2step2/C 1'h1 0
+force -freeze sim:/lab2step2/F 1'hx 0
+run 100
+force -freeze sim:/lab2step2/A 1'h1 0
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/F 1'hx 0
+force -freeze sim:/lab2step2/A 1'h1 0
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/F 1'h0 0
+force -freeze sim:/lab2step2/A 1'h0 0
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/F 1'h0 0
+run 100
+force -freeze sim:/lab2step2/A 1'h0 0
+noforce sim:/lab2step2/C
+force -freeze sim:/lab2step2/C 1'h1 0
+run 100
+force -freeze sim:/lab2step2/F 1'h0 0
+noforce sim:/lab2step2/F
+run 100
+force -freeze sim:/lab2step2/C 1'h0 0
+run 100
+force -freeze sim:/lab2step2/C 1'h1 0
+run 100
+force -freeze sim:/lab2step2/B 1'h1 0
+run 100
+force -freeze sim:/lab2step2/B 1'h0 0
+force -freeze sim:/lab2step2/C 1'h0 0
+force -freeze sim:/lab2step2/A 1'h1 0
+run 100
+force -freeze sim:/lab2step2/B 1'h1 0
+run 100
+force -freeze sim:/lab2step2/C 1'h1 0
+run 100
+force -freeze sim:/lab2step2/B 1'h0 0
+run 100
+force -freeze sim:/lab2step2/A 1'h0 0
+force -freeze sim:/lab2step2/B 1'h1 0
+force -freeze sim:/lab2step2/C 1'h0 0
+run 100
+# End time: 12:31:27 on Sep 07,2023, Elapsed time: 0:12:32
+# Errors: 0, Warnings: 5

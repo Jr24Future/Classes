@@ -1,0 +1,7 @@
+package hw4;
+
+//Models a link that connects a single path to nothing. 
+//getConnectedPoint() returns null and shiftPoints() does nothing.
+public class DeadEndLink extends AbstractLink{
+
+}

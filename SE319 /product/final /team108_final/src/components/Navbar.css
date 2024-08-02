@@ -1,0 +1,45 @@
+.navbar {
+  display: flex;
+  align-items: center; /* Align items vertically within the navbar */
+  justify-content: start; /* Align items to start of the navbar */
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  color: white;
+  transition: color 0.3s ease; 
+}
+
+.navbar-brand:hover {
+  color: white;
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start; /* Align nav items from the start */
+  align-items: center;
+  flex-grow: 1; /* Allow the nav to take up remaining space */
+  list-style: none;
+  margin-left: 3rem;
+  padding: 0;
+}
+
+.navbar-nav li {
+  padding: 0 15px; /* Space between items */
+}
+
+.navbar-nav button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem 1rem; /* Padding for clickable area */
+  transition: color 0.3s ease;
+}
+
+.navbar-nav button:hover {
+  color: rgb(146, 146, 146); /* Change color on hover */
+}

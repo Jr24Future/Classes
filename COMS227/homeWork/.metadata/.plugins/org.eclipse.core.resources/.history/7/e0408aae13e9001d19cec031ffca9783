@@ -1,0 +1,54 @@
+package hw4;
+
+import api.Point;
+import api.PositionVector;
+
+public class CouplingLink extends AbstractLink{
+	private Point highP;
+	private Point lowP;
+	public CouplingLink(Point endpoint1, Point endpoint2) {
+		highP = endpoint1;
+		lowP = endpoint2;
+	}
+	
+ //For shiftPoint() thegoal is to modify the provided position
+ //vector by updating its points to a new path.
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		
+		
+	}
+	
+ //For getConnectedPoint(), the endpoints provided to the constructor determine
+ //which point connects to the provided point or return null if none. 
+	@Override
+	public Point getConnectedPoint(Point point) {
+		if(point.getX()==highP.getX() && point.getY()==highP.getY()){
+			return lowP;
+		}
+		if(point.getX()==lowP.getX() && point.getY()==lowP.getY()) {
+			return highP;
+		}
+		return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		
+		return 0;
+	}
+
+	
+}

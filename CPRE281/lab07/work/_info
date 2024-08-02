@@ -1,0 +1,113 @@
+m255
+K4
+z2
+Z0 !s12c _opt1
+Z1 !s99 nomlopt
+R0
+R1
+Z2 !s12c _opt
+R1
+R2
+R1
+!s11f vlog 2023.2 2023.04, Apr 11 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z3 dU:/CPRE281/lab07
+T_opt
+!s110 1697729145
+VNgN@R7C[13i?g`Peh^MEi0
+04 10 4 work adder_4bit fast 0
+=1-c45ab1e6ccb1-65314a78-38d-3f30
+R1
+Z4 !s12b OEM100
+Z5 !s124 OEM100
+Z6 o-quiet -auto_acc_if_foreign -work work
+Z7 tCvgOpt 0
+n@_opt
+Z8 OL;O;2023.2;77
+R3
+T_opt1
+!s110 1697732578
+V[V54WU;?@5a7o^kc:I]mR0
+04 7 4 work add_sub fast 0
+=1-c45ab1e6ccb1-653157e1-278-21c4
+R1
+R4
+R5
+R6
+R7
+n@_opt1
+R8
+vadd_sub
+2U:/CPRE281/lab07/add_sub.v
+Z9 !s110 1697732572
+!i10b 1
+!s100 7FHO2JiVYDf5XKd@iGA;l3
+Iim4E]SlJ^E_[c;R;^G7:R1
+R3
+w1697732541
+8U:/CPRE281/lab07/add_sub.v
+FU:/CPRE281/lab07/add_sub.v
+!i122 10
+L0 20 71
+Z10 VDg1SIo80bB@j0V0VzS_@n1
+Z11 OL;L;2023.2;77
+r1
+!s85 0
+31
+Z12 !s108 1697732572.000000
+!s107 U:/CPRE281/lab07/add_sub.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab07/add_sub.v|
+!i113 0
+Z13 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R7
+vadder_4bit
+2U:/CPRE281/lab07/adder_4bit.v
+R9
+!i10b 1
+!s100 JYVXc=^TbIA9V0eZTDEmm0
+IdOS:CCN<fSPNOEF9HXAAO0
+R3
+w1697731505
+8U:/CPRE281/lab07/adder_4bit.v
+FU:/CPRE281/lab07/adder_4bit.v
+!i122 11
+L0 20 80
+R10
+R11
+r1
+!s85 0
+31
+R12
+!s107 U:/CPRE281/lab07/adder_4bit.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab07/adder_4bit.v|
+!i113 0
+R13
+R7
+vlab07
+2U:/CPRE281/lab07/lab07.v
+!s110 1697732573
+!i10b 1
+!s100 FoQnhEZ^:2LgDJ1727kzm1
+I;gdj^O[UZkDl0Y3L2YFhP3
+R3
+w1697723887
+8U:/CPRE281/lab07/lab07.v
+FU:/CPRE281/lab07/lab07.v
+!i122 12
+L0 1 6
+R10
+R11
+r1
+!s85 0
+31
+R12
+!s107 U:/CPRE281/lab07/lab07.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab07/lab07.v|
+!i113 0
+R13
+R7

@@ -1,0 +1,92 @@
+package hw4;
+
+import java.util.Arrays;
+
+import api.Crossable;
+import api.Path;
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public abstract class AbstractLink extends java.lang.Object implements Crossable{
+	protected PointPair[] pairs = null;
+	protected Point highP;
+	protected Point lowP;
+	protected Point lowP2;
+	
+	/**
+	 * Constructor for abstract link, should only be called by classes extending
+	 * this one.
+	 * 
+	 * @param connections the list of PointPairs that Abstract link needs to operate; if not
+	 *           passed by constructor, create own list of each possible PointPair;
+	 *           not needed for links with one path
+	 */
+	protected AbstractLink(PointPair[] connections) {
+		pairs = connections;
+		
+	}
+
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		Point connectedPoint = this.getConnectedPoint(positionVector.getPointB());
+		positionVector.setPointA(connectedPoint.getPath().getLowpoint());
+		positionVector.setPointB(connectedPoint.getPath().getPointByIndex(1));
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		for (PointPair pair : pairs) {
+			if (pair.getPointA() == point) {
+				return pair.getPointB();
+			} else if (pair.getPointB() == point) {
+				return pair.getPointA();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		// TODO Auto-generated method stub
+		//Don't know what it does aka no purpose i guess
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		// TODO Auto-generated method stub
+		//Don't know what it does aka no purpose i guess
+	}
+
+	@Override
+	public int getNumPaths() {
+		Path[] pList = new Path[] {};
+		for (PointPair pp : pairs) {
+			Boolean addA = true;
+			Boolean addB = true;
+			if (pList.length > 0) {
+				for (Path p : pList) {
+					if (pp.getPointA().getPath() == p) {
+						addA = false;
+					}
+					if (pp.getPointB().getPath() == p) {
+						addB = false;
+					}
+				}
+			}
+			if (addA) {
+				pList = Arrays.copyOf(pList, pList.length + 1);
+				pList[pList.length - 1] = pp.getPointA().getPath();
+			}
+			if (addB) {
+				pList = Arrays.copyOf(pList, pList.length + 1);
+				pList[pList.length - 1] = pp.getPointB().getPath();
+			}
+		}
+		return pList.length;
+	}
+		return 0;
+	}
+
+}

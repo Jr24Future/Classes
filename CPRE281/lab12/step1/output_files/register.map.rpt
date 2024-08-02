@@ -1,0 +1,777 @@
+Analysis & Synthesis report for register
+Thu Nov 30 13:59:02 2023
+Quartus Prime Version 22.1std.1 Build 917 02/14/2023 SC Standard Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. General Register Statistics
+  9. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 10. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst
+ 11. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst|BUSMUX:inst
+ 12. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst1|BUSMUX:inst
+ 13. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst3|BUSMUX:inst
+ 14. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst2|BUSMUX:inst
+ 15. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst|BUSMUX:inst
+ 16. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst1|BUSMUX:inst
+ 17. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst3|BUSMUX:inst
+ 18. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst2|BUSMUX:inst
+ 19. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst|BUSMUX:inst
+ 20. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst1|BUSMUX:inst
+ 21. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst3|BUSMUX:inst
+ 22. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst2|BUSMUX:inst
+ 23. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst|BUSMUX:inst
+ 24. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst1|BUSMUX:inst
+ 25. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst3|BUSMUX:inst
+ 26. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst2|BUSMUX:inst
+ 27. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst|BUSMUX:inst
+ 28. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst1|BUSMUX:inst
+ 29. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst3|BUSMUX:inst
+ 30. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst2|BUSMUX:inst
+ 31. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst|BUSMUX:inst
+ 32. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst1|BUSMUX:inst
+ 33. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst3|BUSMUX:inst
+ 34. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst2|BUSMUX:inst
+ 35. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst|BUSMUX:inst
+ 36. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst1|BUSMUX:inst
+ 37. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst3|BUSMUX:inst
+ 38. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst2|BUSMUX:inst
+ 39. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst|BUSMUX:inst
+ 40. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst1|BUSMUX:inst
+ 41. Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst3|BUSMUX:inst
+ 42. Parameter Settings for User Entity Instance: BUSMUX:inst1
+ 43. Post-Synthesis Netlist Statistics for Top Partition
+ 44. Elapsed Time Per Partition
+ 45. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2023  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++-----------------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                            ;
++------------------------------------+----------------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Thu Nov 30 13:59:02 2023              ;
+; Quartus Prime Version              ; 22.1std.1 Build 917 02/14/2023 SC Standard Edition ;
+; Revision Name                      ; register                                           ;
+; Top-level Entity Name              ; register1                                          ;
+; Family                             ; Cyclone IV E                                       ;
+; Total logic elements               ; 104                                                ;
+;     Total combinational functions  ; 76                                                 ;
+;     Dedicated logic registers      ; 32                                                 ;
+; Total registers                    ; 32                                                 ;
+; Total pins                         ; 34                                                 ;
+; Total virtual pins                 ; 0                                                  ;
+; Total memory bits                  ; 0                                                  ;
+; Embedded Multiplier 9-bit elements ; 0                                                  ;
+; Total PLLs                         ; 0                                                  ;
++------------------------------------+----------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                              ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                           ; Setting            ; Default Value      ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                           ; EP4CE115F29C7      ;                    ;
+; Top-level entity name                                            ; register1          ; register           ;
+; Family name                                                      ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                            ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                      ; Off                ; Off                ;
+; Restructure Multiplexers                                         ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                              ; Off                ; Off                ;
+; Preserve fewer node names                                        ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                    ; Enable             ; Enable             ;
+; Verilog Version                                                  ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                     ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                         ; Auto               ; Auto               ;
+; Safe State Machine                                               ; Off                ; Off                ;
+; Extract Verilog State Machines                                   ; On                 ; On                 ;
+; Extract VHDL State Machines                                      ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                       ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                   ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                          ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                        ; On                 ; On                 ;
+; Parallel Synthesis                                               ; On                 ; On                 ;
+; DSP Block Balancing                                              ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                               ; On                 ; On                 ;
+; Power-Up Don't Care                                              ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                     ; Off                ; Off                ;
+; Remove Duplicate Registers                                       ; On                 ; On                 ;
+; Ignore CARRY Buffers                                             ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                           ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                            ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                        ; Off                ; Off                ;
+; Ignore LCELL Buffers                                             ; Off                ; Off                ;
+; Ignore SOFT Buffers                                              ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                   ; Off                ; Off                ;
+; Optimization Technique                                           ; Balanced           ; Balanced           ;
+; Carry Chain Length                                               ; 70                 ; 70                 ;
+; Auto Carry Chains                                                ; On                 ; On                 ;
+; Auto Open-Drain Pins                                             ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                            ; Off                ; Off                ;
+; Auto ROM Replacement                                             ; On                 ; On                 ;
+; Auto RAM Replacement                                             ; On                 ; On                 ;
+; Auto DSP Block Replacement                                       ; On                 ; On                 ;
+; Auto Shift Register Replacement                                  ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                  ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                    ; On                 ; On                 ;
+; Strict RAM Replacement                                           ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                           ; Off                ; Off                ;
+; Auto RAM Block Balancing                                         ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                ; Off                ; Off                ;
+; Auto Resource Sharing                                            ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                    ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing              ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                ; Off                ; Off                ;
+; Timing-Driven Synthesis                                          ; On                 ; On                 ;
+; Report Parameter Settings                                        ; On                 ; On                 ;
+; Report Source Assignments                                        ; On                 ; On                 ;
+; Report Connectivity Checks                                       ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                               ; Off                ; Off                ;
+; Synchronization Register Chain Length                            ; 2                  ; 2                  ;
+; Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                  ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report         ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report               ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report        ; 100                ; 100                ;
+; Clock MUX Protection                                             ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                      ; Off                ; Off                ;
+; Block Design Naming                                              ; Auto               ; Auto               ;
+; SDC constraint protection                                        ; Off                ; Off                ;
+; Synthesis Effort                                                 ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal     ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                             ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                               ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                      ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                           ; On                 ; On                 ;
++------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 24          ;
+; Maximum allowed            ; 16          ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 16          ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-16        ;   0.0%      ;
++----------------------------+-------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                  ;
++----------------------------------+-----------------+------------------------------------+---------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                          ; File Name with Absolute Path                                        ; Library ;
++----------------------------------+-----------------+------------------------------------+---------------------------------------------------------------------+---------+
+; register.bdf                     ; yes             ; User Block Diagram/Schematic File  ; U:/CPRE281/lab12/step1/register.bdf                                 ;         ;
+; reg4b.bdf                        ; yes             ; User Block Diagram/Schematic File  ; U:/CPRE281/lab12/step1/reg4b.bdf                                    ;         ;
+; Mux8_4b.v                        ; yes             ; User Verilog HDL File              ; U:/CPRE281/lab12/step1/Mux8_4b.v                                    ;         ;
+; Decoder3to8.v                    ; yes             ; User Verilog HDL File              ; U:/CPRE281/lab12/step1/Decoder3to8.v                                ;         ;
+; regfile.v                        ; yes             ; User Verilog HDL File              ; U:/CPRE281/lab12/step1/regfile.v                                    ;         ;
+; register1.bdf                    ; yes             ; User Block Diagram/Schematic File  ; U:/CPRE281/lab12/step1/register1.bdf                                ;         ;
+; adder_4bit.v                     ; yes             ; Auto-Found Verilog HDL File        ; U:/CPRE281/lab12/step1/adder_4bit.v                                 ;         ;
+; lab07.v                          ; yes             ; Auto-Found Verilog HDL File        ; U:/CPRE281/lab12/step1/lab07.v                                      ;         ;
+; busmux.tdf                       ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/busmux.tdf     ;         ;
+; lpm_mux.inc                      ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/lpm_mux.inc    ;         ;
+; lpm_mux.tdf                      ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/lpm_mux.tdf    ;         ;
+; aglobal221.inc                   ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/aglobal221.inc ;         ;
+; muxlut.inc                       ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/muxlut.inc     ;         ;
+; bypassff.inc                     ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/bypassff.inc   ;         ;
+; altshift.inc                     ; yes             ; Megafunction                       ; c:/intelfpga/22.1std/quartus/libraries/megafunctions/altshift.inc   ;         ;
+; db/mux_7rc.tdf                   ; yes             ; Auto-Generated Megafunction        ; U:/CPRE281/lab12/step1/db/mux_7rc.tdf                               ;         ;
+; db/mux_arc.tdf                   ; yes             ; Auto-Generated Megafunction        ; U:/CPRE281/lab12/step1/db/mux_arc.tdf                               ;         ;
+; seven_seg_decoder.v              ; yes             ; Auto-Found Verilog HDL File        ; U:/CPRE281/lab12/step1/seven_seg_decoder.v                          ;         ;
++----------------------------------+-----------------+------------------------------------+---------------------------------------------------------------------+---------+
+
+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 104       ;
+;                                             ;           ;
+; Total combinational functions               ; 76        ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 62        ;
+;     -- 3 input functions                    ; 14        ;
+;     -- <=2 input functions                  ; 0         ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 76        ;
+;     -- arithmetic mode                      ; 0         ;
+;                                             ;           ;
+; Total registers                             ; 32        ;
+;     -- Dedicated logic registers            ; 32        ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 34        ;
+;                                             ;           ;
+; Embedded Multiplier 9-bit elements          ; 0         ;
+;                                             ;           ;
+; Maximum fan-out node                        ; CLK~input ;
+; Maximum fan-out                             ; 32        ;
+; Total fan-out                               ; 468       ;
+; Average fan-out                             ; 2.66      ;
++---------------------------------------------+-----------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                             ;
++-----------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------+-------------------+--------------+
+; Compilation Hierarchy Node        ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                           ; Entity Name       ; Library Name ;
++-----------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------+-------------------+--------------+
+; |register1                        ; 76 (0)              ; 32 (0)                    ; 0           ; 0            ; 0       ; 0         ; 34   ; 0            ; |register1                                                    ; register1         ; work         ;
+;    |adder_4bit:inst3|             ; 8 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|adder_4bit:inst3                                   ; adder_4bit        ; work         ;
+;       |lab07:b2v_inst1|           ; 2 (2)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|adder_4bit:inst3|lab07:b2v_inst1                   ; lab07             ; work         ;
+;       |lab07:b2v_inst2|           ; 2 (2)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|adder_4bit:inst3|lab07:b2v_inst2                   ; lab07             ; work         ;
+;       |lab07:b2v_inst3|           ; 2 (2)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|adder_4bit:inst3|lab07:b2v_inst3                   ; lab07             ; work         ;
+;       |lab07:b2v_inst|            ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|adder_4bit:inst3|lab07:b2v_inst                    ; lab07             ; work         ;
+;    |busmux:inst1|                 ; 6 (0)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|busmux:inst1                                       ; busmux            ; work         ;
+;       |lpm_mux:$00000|            ; 6 (0)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|busmux:inst1|lpm_mux:$00000                        ; lpm_mux           ; work         ;
+;          |mux_arc:auto_generated| ; 6 (6)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|busmux:inst1|lpm_mux:$00000|mux_arc:auto_generated ; mux_arc           ; work         ;
+;    |regfile:inst|                 ; 48 (0)              ; 32 (0)                    ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst                                       ; regfile           ; work         ;
+;       |Decoder3to8:my_decoder|    ; 8 (8)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|Decoder3to8:my_decoder                ; Decoder3to8       ; work         ;
+;       |Mux8_4b:my_muxP|           ; 20 (20)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|Mux8_4b:my_muxP                       ; Mux8_4b           ; work         ;
+;       |Mux8_4b:my_muxQ|           ; 20 (20)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|Mux8_4b:my_muxQ                       ; Mux8_4b           ; work         ;
+;       |reg4b:my_reg0|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg0                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg0|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg0|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg0|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg0|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg1|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg1                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg1|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg1|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg1|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg1|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg2|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg2                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg2|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg2|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg2|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg2|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg3|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg3                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg3|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg3|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg3|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg3|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg4|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg4                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg4|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg4|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg4|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg4|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg5|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg5                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg5|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg5|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg5|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg5|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg6|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg6                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg6|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg6|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg6|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg6|register:inst           ; register          ; work         ;
+;       |reg4b:my_reg7|             ; 0 (0)               ; 4 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg7                         ; reg4b             ; work         ;
+;          |register:inst1|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg7|register:inst1          ; register          ; work         ;
+;          |register:inst2|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg7|register:inst2          ; register          ; work         ;
+;          |register:inst3|         ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg7|register:inst3          ; register          ; work         ;
+;          |register:inst|          ; 0 (0)               ; 1 (1)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|regfile:inst|reg4b:my_reg7|register:inst           ; register          ; work         ;
+;    |seven_seg_decoder:inst4|      ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|seven_seg_decoder:inst4                            ; seven_seg_decoder ; work         ;
+;    |seven_seg_decoder:inst5|      ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |register1|seven_seg_decoder:inst5                            ; seven_seg_decoder ; work         ;
++-----------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------+-------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 32    ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 32    ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 32    ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                             ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                   ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
+; 8:1                ; 4 bits    ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |register1|regfile:inst|Mux8_4b:my_muxQ|Mux3 ;
+; 8:1                ; 4 bits    ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |register1|regfile:inst|Mux8_4b:my_muxP|Mux3 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg0|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg1|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg2|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg3|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg4|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg5|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg6|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst2|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst|BUSMUX:inst ;
++----------------+-------+--------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                     ;
++----------------+-------+--------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                  ;
++----------------+-------+--------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst1|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: regfile:inst|reg4b:my_reg7|register:inst3|BUSMUX:inst ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; WIDTH          ; 1     ; Untyped                                                                   ;
++----------------+-------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: BUSMUX:inst1 ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; WIDTH          ; 4     ; Untyped                          ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 34                          ;
+; cycloneiii_ff         ; 32                          ;
+;     ENA CLR           ; 32                          ;
+; cycloneiii_lcell_comb ; 78                          ;
+;     normal            ; 78                          ;
+;         1 data inputs ; 2                           ;
+;         3 data inputs ; 14                          ;
+;         4 data inputs ; 62                          ;
+;                       ;                             ;
+; Max LUT depth         ; 7.00                        ;
+; Average LUT depth     ; 4.80                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 22.1std.1 Build 917 02/14/2023 SC Standard Edition
+    Info: Processing started: Thu Nov 30 13:58:55 2023
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off register -c register
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file register.bdf
+    Info (12023): Found entity 1: register
+Info (12021): Found 1 design units, including 1 entities, in source file reg4b.bdf
+    Info (12023): Found entity 1: reg4b
+Info (12021): Found 1 design units, including 1 entities, in source file mux8_4b.v
+    Info (12023): Found entity 1: Mux8_4b File: U:/CPRE281/lab12/step1/Mux8_4b.v Line: 1
+Warning (12019): Can't analyze file -- file 4bit_register.bdf is missing
+Info (12021): Found 1 design units, including 1 entities, in source file decoder3to8.v
+    Info (12023): Found entity 1: Decoder3to8 File: U:/CPRE281/lab12/step1/Decoder3to8.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file regfile.v
+    Info (12023): Found entity 1: regfile File: U:/CPRE281/lab12/step1/regfile.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file register1.bdf
+    Info (12023): Found entity 1: register1
+Info (12127): Elaborating entity "register1" for the top level hierarchy
+Warning (275011): Block or symbol "adder_4bit" of instance "inst3" overlaps another block or symbol
+Warning (12125): Using design file adder_4bit.v, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: adder_4bit File: U:/CPRE281/lab12/step1/adder_4bit.v Line: 20
+Warning (12300): Found the following files while searching for definition of entity "adder_4bit", but did not use these files because already using a different file containing the entity definition
+    Warning (12126): File: adder_4bit.bdf
+Info (12128): Elaborating entity "adder_4bit" for hierarchy "adder_4bit:inst3"
+Warning (12125): Using design file lab07.v, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: lab07 File: U:/CPRE281/lab12/step1/lab07.v Line: 1
+Info (12128): Elaborating entity "lab07" for hierarchy "adder_4bit:inst3|lab07:b2v_inst" File: U:/CPRE281/lab12/step1/adder_4bit.v Line: 70
+Info (12128): Elaborating entity "regfile" for hierarchy "regfile:inst"
+Info (12128): Elaborating entity "Decoder3to8" for hierarchy "regfile:inst|Decoder3to8:my_decoder" File: U:/CPRE281/lab12/step1/regfile.v Line: 18
+Info (12128): Elaborating entity "reg4b" for hierarchy "regfile:inst|reg4b:my_reg0" File: U:/CPRE281/lab12/step1/regfile.v Line: 20
+Info (12128): Elaborating entity "register" for hierarchy "regfile:inst|reg4b:my_reg0|register:inst2"
+Info (12128): Elaborating entity "BUSMUX" for hierarchy "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst"
+Info (12130): Elaborated megafunction instantiation "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst"
+Info (12133): Instantiated megafunction "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst" with the following parameter:
+    Info (12134): Parameter "WIDTH" = "1"
+Info (12128): Elaborating entity "lpm_mux" for hierarchy "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst|lpm_mux:$00000" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/busmux.tdf Line: 44
+Info (12131): Elaborated megafunction instantiation "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst|lpm_mux:$00000", which is child of megafunction instantiation "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/busmux.tdf Line: 44
+Info (12021): Found 1 design units, including 1 entities, in source file db/mux_7rc.tdf
+    Info (12023): Found entity 1: mux_7rc File: U:/CPRE281/lab12/step1/db/mux_7rc.tdf Line: 23
+Info (12128): Elaborating entity "mux_7rc" for hierarchy "regfile:inst|reg4b:my_reg0|register:inst2|BUSMUX:inst|lpm_mux:$00000|mux_7rc:auto_generated" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/lpm_mux.tdf Line: 87
+Info (12128): Elaborating entity "Mux8_4b" for hierarchy "regfile:inst|Mux8_4b:my_muxP" File: U:/CPRE281/lab12/step1/regfile.v Line: 31
+Info (12128): Elaborating entity "BUSMUX" for hierarchy "BUSMUX:inst1"
+Info (12130): Elaborated megafunction instantiation "BUSMUX:inst1"
+Info (12133): Instantiated megafunction "BUSMUX:inst1" with the following parameter:
+    Info (12134): Parameter "WIDTH" = "4"
+Info (12128): Elaborating entity "lpm_mux" for hierarchy "BUSMUX:inst1|lpm_mux:$00000" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/busmux.tdf Line: 44
+Info (12131): Elaborated megafunction instantiation "BUSMUX:inst1|lpm_mux:$00000", which is child of megafunction instantiation "BUSMUX:inst1" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/busmux.tdf Line: 44
+Info (12021): Found 1 design units, including 1 entities, in source file db/mux_arc.tdf
+    Info (12023): Found entity 1: mux_arc File: U:/CPRE281/lab12/step1/db/mux_arc.tdf Line: 23
+Info (12128): Elaborating entity "mux_arc" for hierarchy "BUSMUX:inst1|lpm_mux:$00000|mux_arc:auto_generated" File: c:/intelfpga/22.1std/quartus/libraries/megafunctions/lpm_mux.tdf Line: 87
+Warning (12125): Using design file seven_seg_decoder.v, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: seven_seg_decoder File: U:/CPRE281/lab12/step1/seven_seg_decoder.v Line: 1
+Info (12128): Elaborating entity "seven_seg_decoder" for hierarchy "seven_seg_decoder:inst5"
+Info (286030): Timing-Driven Synthesis is running
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Info (21057): Implemented 142 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 18 input pins
+    Info (21059): Implemented 16 output pins
+    Info (21061): Implemented 108 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 8 warnings
+    Info: Peak virtual memory: 4861 megabytes
+    Info: Processing ended: Thu Nov 30 13:59:02 2023
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:03
+
+

@@ -1,0 +1,62 @@
+package hw4;
+
+
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public class MultiSwitchLink extends AbstractLink{
+	private PointPair[] pairs;
+    private boolean[] connections;
+    
+	public MultiSwitchLink(PointPair[] connections){
+		this.pairs = pairs;
+        this.connections = new boolean[pairs.length];
+        for (int i = 0; i < pairs.length; i++) {
+            this.connections[i] = true;
+        }
+	}
+	
+	public void switchConnection(PointPair pointPair, int index) {
+		if (pointPair.equals(pairs[index])) {
+            connections[index] = !connections[index];
+        }
+	}
+
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		for (int i = 0; i < pairs.length; i++) {
+            if (point.equals(pairs[i].getPointA()) && connections[i]) {
+                return pairs[i].getPointB();
+            } else if (point.equals(pairs[i].getPointB()) && connections[i]) {
+                return pairs[i].getPointA();
+            }
+        }
+        return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		// TODO Auto-generated method stub
+		return pairs.length * 2;;
+	}
+
+}

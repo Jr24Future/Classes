@@ -1,0 +1,437 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "Clock_LEDOUT",
+					"strict" : false
+				},
+				{
+					"name" : "Reset_LEDOUT",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name1",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name2",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name3",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name4",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name5",
+					"strict" : false
+				},
+				{
+					"name" : "pin_name6",
+					"strict" : false
+				},
+				{
+					"name" : "REG2_ZERO",
+					"strict" : false
+				},
+				{
+					"name" : "REG2_ONE",
+					"strict" : false
+				},
+				{
+					"name" : "REG1_ZERO",
+					"strict" : false
+				},
+				{
+					"name" : "REG1_ONE",
+					"strict" : false
+				},
+				{
+					"name" : "Negative_Flag",
+					"strict" : false
+				},
+				{
+					"name" : "Zero_Flag",
+					"strict" : false
+				},
+				{
+					"name" : "Carry_Flag",
+					"strict" : false
+				},
+				{
+					"name" : "OverFlow_Flag",
+					"strict" : false
+				},
+				{
+					"name" : "OPCODE0",
+					"strict" : false
+				},
+				{
+					"name" : "OPCODE1",
+					"strict" : false
+				},
+				{
+					"name" : "OPCODE2",
+					"strict" : false
+				},
+				{
+					"name" : "OPCODE3",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL0",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL1",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL2",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL3",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL4",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL5",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL6",
+					"strict" : false
+				},
+				{
+					"name" : "IMMEDVAL7",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut0[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut2[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut3[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut4[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut5[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut6[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Seven_SegOut7[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Register_View",
+					"strict" : false
+				},
+				{
+					"name" : "Direct_Video_Map",
+					"strict" : false
+				},
+				{
+					"name" : "ManAuto",
+					"strict" : false
+				},
+				{
+					"name" : "Reset_In",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[8]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[9]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[10]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[11]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[12]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[13]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[14]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[15]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[0]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[1]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[2]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[3]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[4]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[5]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Switch_Input[7]",
+					"strict" : false
+				},
+				{
+					"name" : "Clock_In",
+					"strict" : false
+				},
+				{
+					"name" : "TURBO",
+					"strict" : false
+				},
+				{
+					"name" : "Board_Clock",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

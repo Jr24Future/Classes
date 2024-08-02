@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Thu Nov 30 13:59:02 2023
+Quartus Prime Version : 22.1std.1 Build 917 02/14/2023 SC Standard Edition
+Revision Name : register
+Top-level Entity Name : register1
+Family : Cyclone IV E
+Total logic elements : 104
+    Total combinational functions : 76
+    Dedicated logic registers : 32
+Total registers : 32
+Total pins : 34
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

@@ -1,0 +1,48 @@
+m255
+K4
+z2
+!s12c _opt
+Z0 !s99 nomlopt
+!s11f vlog 2023.2 2023.04, Apr 11 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z1 dU:/CPRE281/lab03/lab3step2
+T_opt
+!s110 1694710181
+V?IgNb?lDhZ`]D5W??OC>]0
+04 9 4 work lab3step2 fast 0
+=1-c45ab1e6cc9d-650339a5-89-3b00
+R0
+!s12b OEM100
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work
+Z2 tCvgOpt 0
+n@_opt
+OL;O;2023.2;77
+vlab3step2
+2U:/CPRE281/lab03/lab3step2/lab3step2.v
+!s110 1694710171
+!i10b 1
+!s100 jP]H0aZiV`^z6KPbeBZ>X0
+IMbXGhWJ^VR:PljjKhWi<X1
+R1
+w1694709923
+8U:/CPRE281/lab03/lab3step2/lab3step2.v
+FU:/CPRE281/lab03/lab3step2/lab3step2.v
+!i122 0
+L0 1 7
+VDg1SIo80bB@j0V0VzS_@n1
+OL;L;2023.2;77
+r1
+!s85 0
+31
+!s108 1694710170.000000
+!s107 U:/CPRE281/lab03/lab3step2/lab3step2.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab03/lab3step2/lab3step2.v|
+!i113 0
+o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2

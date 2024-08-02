@@ -1,0 +1,97 @@
+package hw4;
+
+import java.util.Arrays;
+
+import api.Crossable;
+import api.Path;
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public abstract class AbstractLink extends java.lang.Object implements Crossable{
+	protected PointPair[] pairs = null;
+	protected Point highP;
+	protected Point lowP;
+	protected Point lowP2;
+	
+	/**
+	 * Constructor for abstract link, should only be called by classes extending
+	 * this one.
+	 * 
+	 * @param connections the list of PointPairs that Abstract link needs to operate; if not
+	 *           passed by constructor, create own list of each possible PointPair;
+	 *           not needed for links with one path
+	 */
+	protected AbstractLink(PointPair[] connections) {
+		pairs = connections;
+		
+	}
+
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		Point connectedPoint = this.getConnectedPoint(positionVector.getPointB());
+		positionVector.setPointA(connectedPoint.getPath().getLowpoint());
+		positionVector.setPointB(connectedPoint.getPath().getPointByIndex(1));
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		for (PointPair pair : pairs) {
+			if (pair.getPointA() == point) {
+				return pair.getPointB();
+			} else if (pair.getPointB() == point) {
+				return pair.getPointA();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		// TODO Auto-generated method stub
+		//Don't know what it does aka no purpose i guess
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		// TODO Auto-generated method stub
+		//Don't know what it does aka no purpose i guess
+	}
+	/**
+	 * Returns the list of store PointPair values
+	 * 
+	 * @return stored PointPair values
+	 */
+	protected PointPair[] getpairs() {
+		return pairs;
+	}
+	
+	@Override
+	public int getNumPaths() {
+		Path[] pairsL = new Path[] {};
+		for (PointPair pair : pairs) {
+			Boolean A = true;
+			Boolean B = true;
+			if (pairsL.length > 0) {
+				for (Path pairs : pairsL) {
+					if (pair.getPointA().getPath() == pairs) {
+						A = false;
+					}
+					if (pair.getPointB().getPath() == pairs) {
+						B = false;
+					}
+				}
+			}
+			if (A) {
+				pairsL = Arrays.copyOf(pairsL, pairsL.length + 1);
+				pairsL[pairsL.length - 1] = pair.getPointA().getPath();
+			}
+			if (B) {
+				pairsL = Arrays.copyOf(pairsL, pairsL.length + 1);
+				pairsL[pairsL.length - 1] = pair.getPointB().getPath();
+			}
+		}
+		return pairsL.length;
+	}
+}

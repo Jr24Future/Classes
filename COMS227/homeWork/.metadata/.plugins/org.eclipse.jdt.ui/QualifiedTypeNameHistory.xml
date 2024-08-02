@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.io.BufferedReader"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="java.util.Scanner"/>
+    <fullyQualifiedTypeName name="api.Tile"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="hw3.ConnectGame"/>
+    <fullyQualifiedTypeName name="api.ShowDialogListener"/>
+    <fullyQualifiedTypeName name="api.ScoreUpdateListener"/>
+    <fullyQualifiedTypeName name="api.PointPair"/>
+    <fullyQualifiedTypeName name="api.Path"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,59 @@
+package hw4;
+
+
+import api.Point;
+import api.PositionVector;
+
+public class TurnLink extends AbstractLink{
+    private Point highP;
+	private Point lowP;
+	private Point lowP2;
+    
+	public TurnLink(Point highpoint, Point lowpoint, Point lowpoint2) {
+        highP = highpoint;
+		lowP = lowpoint;
+		lowP2 = lowpoint2;
+	}
+
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		// TODO Auto-generated method stub
+//		if (positionVector.getPointA() == highP) {
+//            positionVector.setPointA(lowP2);
+//            positionVector.setPointB(lowP);
+//        } else {
+//            positionVector.setPointA(lowP);
+//            positionVector.setPointB(lowP2);
+//        }
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+//		if (point.equals(highP)) {
+//            return lowP2;
+//        } else if (point.equals(lowP)) {
+//            return highP;
+//        } else {
+//            return null;
+//        }
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		// TODO Auto-generated method stub
+		return 3;
+	}
+
+}

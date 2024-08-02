@@ -1,0 +1,60 @@
+package hw4;
+
+
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public class MultiFixedLink extends AbstractLink{
+	
+	/**
+	 * Constructor for MultiFixedLink
+	 * @param connections given list of PointPairs
+	 */
+	public MultiFixedLink(PointPair[] connections) {
+		super(connections);
+	}
+
+	
+	
+	
+	
+	
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		for (PointPair pair : pairs) {
+            if (pair.getPointA().equals(point)) {
+                return pair.getPointB();
+            } else if (pair.getPointB().equals(point)) {
+                return pair.getPointA();
+            }
+        }
+        // If the given point is not found in any pair, return null
+        return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		// TODO Auto-generated method stub
+		return pairs.length * 2;
+	}
+
+}

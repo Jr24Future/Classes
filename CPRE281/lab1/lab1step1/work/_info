@@ -1,0 +1,44 @@
+m255
+K4
+z2
+!s99 nomlopt
+!s11f vlog 2021.2 2021.04, Apr 14 2021
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dU:/Documents/C281/Fall2021/Lab 1 CPR E 281
+T_opt
+!s110 1630024560
+Vo]JK;JV9Y=bg=I8=MenBM2
+04 9 4 work lab1step1 fast 0
+=1-1866da11c7b8-6128336f-66-27a4
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work
+Z0 tCvgOpt 0
+n@_opt
+OL;O;2021.2;73
+vlab1step1
+!s110 1630023443
+!i10b 1
+!s100 oNHHDUBe02Ek84z?JzC351
+I2USB46`i[??g^lbNzM`[g2
+dU:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1
+w1589833554
+8U:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v
+FU:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v
+!i122 0
+L0 19 19
+VDg1SIo80bB@j0V0VzS_@n1
+OL;L;2021.2;73
+r1
+!s85 0
+31
+!s108 1630023443.000000
+!s107 U:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|U:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v|
+!i113 0
+o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R0

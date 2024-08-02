@@ -1,0 +1,24 @@
+Feb/14
+
+Today we looked in to libraries for java do to someone telling us to write our code in java and not in C so Swing is the library we are going to learn about and we started tutorial to learn about swing. 
+
+Feb/21
+Looking in to AWT. Java Library because of the the graphic properties and started creating my files and main to my game  
+
+Feb/28
+I came to class late due to that I was not able to due a lot but I was able to fix my broken code and show a half working game. But I have been looking up how to make are main work with a .txt file and hopefully I will get that done by next week on my free time.
+
+Mar/7
+Work with Dameon to create the txt file to a acceptable state of working condition.
+
+Mar/18 
+Over spring break I have been working on my game and trying to improve it with multithreading and hoping to fix some of the bugs i was running in to like that. I did accomplish fixing some bugs by implicating multithreading but it looks like there are still some left that I need to fix. also, some more functions I need to add so it can be as original to the real game. We also decided as a group we will leave out the scoring system for now and come back to it if we have time left in the class due to that reason I have postpone working on the main file.
+
+Mar/21
+Was working on getting the other types of alines in my game but ran into problems due to the array I have that controls the Alines also the multithreading will need updating so it can run the new add on alines so just some common stuff I need to fix.
+
+Mar/28
+Learn about java inheritance. still working on my issue with the other enemy's other then that helped out one of my team mate with adding graphs to his game. Going to Trying adding inheritance to my code to see if that fixes every thing.
+
+Apr/25
+A lot has want on since my last updated but the mean issue with the arrays has been solved by creating sub-arrays and searching true every single object that comparison it to every object in the sub-arrays the find the wight of the array and uses that as its barrier. I have been also working on the score system and that was not as difficult as it turned out to be because a basically covered the enemy life tracker to add point to the dedicated sub-array. Now we are working on the main to connected all 3 games.

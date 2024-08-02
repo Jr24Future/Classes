@@ -1,0 +1,50 @@
+package hw4;
+
+import api.Point;
+import api.PositionVector;
+
+public class CouplingLink extends AbstractLink{
+	private Point highP;
+	private Point lowP;
+	public CouplingLink(Point endpoint1, Point endpoint2) {
+		highP = endpoint1;
+		lowP = endpoint2;
+	}
+	
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		if(point == highP){
+			
+		}
+		if(point == lowP) {
+			
+		}
+		return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		
+		return 0;
+	}
+
+	
+}

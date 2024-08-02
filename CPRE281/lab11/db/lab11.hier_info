@@ -1,0 +1,114 @@
+|Block4
+s1g[6] <= lab11partb:inst3.seg[6]
+s1g[5] <= lab11partb:inst3.seg[5]
+s1g[4] <= lab11partb:inst3.seg[4]
+s1g[3] <= lab11partb:inst3.seg[3]
+s1g[2] <= lab11partb:inst3.seg[2]
+s1g[1] <= lab11partb:inst3.seg[1]
+s1g[0] <= lab11partb:inst3.seg[0]
+W => lab11partb:inst3.w
+W => lab11partb:inst.w
+M_clock => better_clk:inst2.Manual
+M_clock => lab11partb:inst.clk
+S_clock => better_clk:inst2.Board
+seg[6] <= lab11partb:inst.seg[6]
+seg[5] <= lab11partb:inst.seg[5]
+seg[4] <= lab11partb:inst.seg[4]
+seg[3] <= lab11partb:inst.seg[3]
+seg[2] <= lab11partb:inst.seg[2]
+seg[1] <= lab11partb:inst.seg[1]
+seg[0] <= lab11partb:inst.seg[0]
+
+
+|Block4|lab11partb:inst3
+seg[6] <= seven_seg_decoder:inst.seg[6]
+seg[5] <= seven_seg_decoder:inst.seg[5]
+seg[4] <= seven_seg_decoder:inst.seg[4]
+seg[3] <= seven_seg_decoder:inst.seg[3]
+seg[2] <= seven_seg_decoder:inst.seg[2]
+seg[1] <= seven_seg_decoder:inst.seg[1]
+seg[0] <= seven_seg_decoder:inst.seg[0]
+clk => inst8.CLK
+clk => inst7.CLK
+w => inst13.IN1
+w => inst14.IN0
+w => inst5.IN2
+
+
+|Block4|lab11partb:inst3|seven_seg_decoder:inst
+bcd[0] => Decoder0.IN3
+bcd[1] => Decoder0.IN2
+bcd[2] => Decoder0.IN1
+bcd[3] => Decoder0.IN0
+seg[6] <= WideOr6.DB_MAX_OUTPUT_PORT_TYPE
+seg[5] <= WideOr5.DB_MAX_OUTPUT_PORT_TYPE
+seg[4] <= WideOr4.DB_MAX_OUTPUT_PORT_TYPE
+seg[3] <= WideOr3.DB_MAX_OUTPUT_PORT_TYPE
+seg[2] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+seg[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+seg[0] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|Block4|better_clk:inst2
+Smooth <= inst2.DB_MAX_OUTPUT_PORT_TYPE
+Board => clock_divider_1024:inst.CLK_IN
+Manual => inst2.DATAIN
+
+
+|Block4|better_clk:inst2|clock_divider_1024:inst1
+CLK_OUT <= inst10.DB_MAX_OUTPUT_PORT_TYPE
+CLK_IN => inst1.CLK
+CLK_IN => inst2.CLK
+CLK_IN => inst3.CLK
+CLK_IN => inst4.CLK
+CLK_IN => inst5.CLK
+CLK_IN => inst6.CLK
+CLK_IN => inst7.CLK
+CLK_IN => inst8.CLK
+CLK_IN => inst9.CLK
+CLK_IN => inst10.CLK
+
+
+|Block4|better_clk:inst2|clock_divider_1024:inst
+CLK_OUT <= inst10.DB_MAX_OUTPUT_PORT_TYPE
+CLK_IN => inst1.CLK
+CLK_IN => inst2.CLK
+CLK_IN => inst3.CLK
+CLK_IN => inst4.CLK
+CLK_IN => inst5.CLK
+CLK_IN => inst6.CLK
+CLK_IN => inst7.CLK
+CLK_IN => inst8.CLK
+CLK_IN => inst9.CLK
+CLK_IN => inst10.CLK
+
+
+|Block4|lab11partb:inst
+seg[6] <= seven_seg_decoder:inst.seg[6]
+seg[5] <= seven_seg_decoder:inst.seg[5]
+seg[4] <= seven_seg_decoder:inst.seg[4]
+seg[3] <= seven_seg_decoder:inst.seg[3]
+seg[2] <= seven_seg_decoder:inst.seg[2]
+seg[1] <= seven_seg_decoder:inst.seg[1]
+seg[0] <= seven_seg_decoder:inst.seg[0]
+clk => inst8.CLK
+clk => inst7.CLK
+w => inst13.IN1
+w => inst14.IN0
+w => inst5.IN2
+
+
+|Block4|lab11partb:inst|seven_seg_decoder:inst
+bcd[0] => Decoder0.IN3
+bcd[1] => Decoder0.IN2
+bcd[2] => Decoder0.IN1
+bcd[3] => Decoder0.IN0
+seg[6] <= WideOr6.DB_MAX_OUTPUT_PORT_TYPE
+seg[5] <= WideOr5.DB_MAX_OUTPUT_PORT_TYPE
+seg[4] <= WideOr4.DB_MAX_OUTPUT_PORT_TYPE
+seg[3] <= WideOr3.DB_MAX_OUTPUT_PORT_TYPE
+seg[2] <= WideOr2.DB_MAX_OUTPUT_PORT_TYPE
+seg[1] <= WideOr1.DB_MAX_OUTPUT_PORT_TYPE
+seg[0] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+

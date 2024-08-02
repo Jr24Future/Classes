@@ -1,0 +1,35 @@
+What have you done?
+What are you going to do next time?
+What are some issues you're coming into?
+(template added 2/28/23)
+
+2/14/23 
+followed this tutorial https://www.youtube.com/watch?v=1vVJPzVzaK8&ab_channel=JavaCodeJunkie
+
+2/21/23 
+followed these tutorials:
+https://www.youtube.com/watch?v=4PfDdJ8GFHI&ab_channel=JavaCodeJunkie
+https://www.youtube.com/watch?v=4BRUmU-ETRk&t=283s&ab_channel=JavaCodeJunkie
+
+2/28/23
+Instead of following a tutorial line for line, I watched https://www.youtube.com/watch?v=91a7ceECNTc&ab_channel=MobileiGames make a snake game.
+I tried to see what he did and how it affected what. I found out a better way to make a window than the tutorials I followed in 2/21/23
+
+Next time, I'll try to keep focused on the tutorial, I didn't have enough time to complete it today (I had to tend to other work).
+
+I see no apparent major issues.
+
+3/07/23
+So I abandoned the snake game and followed this tutorial: https://www.youtube.com/watch?v=r8Qiz9Bn1Ag&ab_channel=ProgrammingKnowledge
+Shows you how to make a windo with little typing.
+
+I'll be focused on this tutorial for now.
+
+Unless the drag and drop design method is severely limiting, I see no apparent issues
+
+04/04/23
+I added a square that you can move with WASD keys
+
+I will try to add projectiles
+
+It's hard to understand the code as I follow the tutorials (they don't really teach)

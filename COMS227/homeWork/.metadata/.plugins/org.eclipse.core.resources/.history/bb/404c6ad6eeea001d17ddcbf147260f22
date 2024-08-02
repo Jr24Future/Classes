@@ -1,0 +1,46 @@
+package hw4;
+
+
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public class MultiSwitchLink extends AbstractLink{
+	 
+	/**
+	 * The saved value of which PointPair will be used when the train passes through this link
+	 */
+	private PointPair pairs = null;
+	
+	/**
+	 * Constructor for MultiSwitchLink
+	 * @param connections given list of PointPairs
+	 */
+	public MultiSwitchLink(PointPair[] connections){
+		super(connections);
+		pairs = connections[0];
+	}
+	
+	/**
+	 * When used on a MultiSwitchLink, will change which point pair is used as it moves through the link.
+	 * -Will have no effect on other links
+	 * 
+	 * @param pointPair The new point pair that the link will use
+	 * 
+	 * @param index Honestly, I haven't figured this one out yet
+	 */
+	public void switchConnection(PointPair pointPair, int index) {
+		pairs = pointPair;
+	}
+
+	
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		if (point == pairs.getPointA()) {
+			return pairs.getPointB();
+		}
+		else {
+			return pairs.getPointA();
+		}
+}

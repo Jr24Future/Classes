@@ -1,0 +1,53 @@
+package hw4;
+
+import api.Point;
+import api.PointPair;
+import api.PositionVector;
+
+public class CouplingLink extends AbstractLink{
+	/**
+	 * Constructor for CouplingLink
+	 * @param highpoint top endpoint of path 1
+	 * @param lowpoint bottom endpoint of path 2
+	 */
+	
+	public CouplingLink(Point highpoint, Point lowpoint) {
+		super(new PointPair[] {new PointPair(highpoint, lowpoint)});
+
+		
+		
+	}
+	
+	
+	
+	
+	
+ 
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		positionVector.setPointA(lowP);
+		positionVector.setPointB(lowP.getPath().getPointByIndex(lowP.getPointIndex() + 1));
+	
+		
+	}
+	
+	@Override
+	public Point getConnectedPoint(Point point) {
+		if(point.getX()==highP.getX() && point.getY()==highP.getY()){
+			return lowP;
+		}
+		if(point.getX()==lowP.getX() && point.getY()==lowP.getY()) {
+			return highP;
+		}
+		return null;
+	}
+
+
+	@Override
+	public int getNumPaths() {
+		
+		return 2;
+	}
+
+	
+}

@@ -1,0 +1,43 @@
+package hw4;
+
+import api.Point;
+import api.PositionVector;
+
+//Models a link that connects a single path to nothing. 
+//getConnectedPoint() returns null and shiftPoints() does nothing.
+public class DeadEndLink extends AbstractLink{
+	public DeadEndLink() {
+		
+	}
+
+	@Override
+	public void shiftPoints(PositionVector positionVector) {
+		
+		
+	}
+
+	@Override
+	public Point getConnectedPoint(Point point) {
+		
+		return null;
+	}
+
+	@Override
+	public void trainEnteredCrossing() {
+		
+		
+	}
+
+	@Override
+	public void trainExitedCrossing() {
+		
+		
+	}
+
+	@Override
+	public int getNumPaths() {
+		
+		return 1;
+	}
+
+}

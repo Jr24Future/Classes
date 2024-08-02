@@ -1,0 +1,47 @@
+[
+    {
+        "title": "Software",
+        "title-image": "./images/backend.png",
+        "header": "Software Engineer",
+        "description": "Software engineering is the systematic approach to the design, development, testing, and maintenance of software systems. It encompasses various methodologies and practices aimed at creating reliable, efficient, and scalable software solutions. With a focus on both technical excellence and collaboration, software engineering seeks to address complex problems by applying principles of computer science, project management, and quality assurance.",
+        "src": "./images/michigan-tech-logo-full-yellow.svg",
+        "link": "https://www.mtu.edu/cs/undergraduate/software/what/#:~:text=Software%20engineering%20is%20the%20branch,software%20solutions%20for%20end%20users.",
+        "image-width": 150,
+        "image-height": 100,
+        "color": "0x73be"
+    },
+    {
+        "title": "Electrical",
+        "title-image": "./images/technician.png",
+        "header": "Electrical Engineer",
+        "description": "Electrical engineering is a field dedicated to the study, design, and application of electrical systems, devices, and technologies. It spans a wide range of areas including power generation, transmission, electronics, telecommunications, and signal processing. Electrical engineers employ principles of mathematics, physics, and computer science to develop solutions that power our modern world. From designing circuit boards to optimizing energy distribution networks, electrical engineering plays a critical role in advancing technology and shaping the infrastructure of society.",
+        "src": "./images/Unknown.png",
+        "link": "https://www.careerexplorer.com/careers/electrical-engineer/",
+        "image-width": 60,
+        "image-height": 60,
+        "color": "0xf5e716"
+    },
+    {
+        "title": "Computer",
+        "title-image": "./images/engineer.png",
+        "header": "Computer Engineer",
+        "description": "Computer engineering combines electrical engineering and computer science to design, develop, and optimize computer systems and hardware. It involves studying digital circuits and microprocessors. Computer engineers play a crucial role in advancing technology by creating innovative computing solutions for applications ranging from embedded systems to high-performance computing. With a strong foundation in both hardware and software, computer engineering drives progress in areas like artificial intelligence, robotics, and networking.",
+        "src": "./images/logo-header.svg",
+        "link": "https://www.computerscience.org/careers/computer-engineering/#:~:text=A%20computer%20engineer%20fuses%20electrical,unified%20system%20safely%20and%20efficiently.",
+        "image-width": 150,
+        "image-height": 100,
+        "color": "0x7d2bff"
+    },
+    {
+        "title": "Cybersecurity",
+        "title-image": "./images/hack.png",
+        "header": "Cyber Security",
+        "description": "Cybersecurity involves safeguarding digital systems, networks, and data from unauthorized access, cyberattacks, and breaches. It encompasses various practices such as encryption, intrusion detection, and vulnerability assessment. As technology advances, cybersecurity becomes increasingly vital in protecting individuals, organizations, and nations from cyber threats. By employing techniques rooted in computer science and information technology, cybersecurity professionals play a critical role in maintaining the integrity and confidentiality of digital assets.",
+        "src": "./images/synopsys-logo-color.svg",
+        "link": "https://www.synopsys.com/glossary/what-is-cyber-security.html",
+        "image-width": 150,
+        "image-height": 100,
+        "color": "0xff6464"
+    }
+
+]

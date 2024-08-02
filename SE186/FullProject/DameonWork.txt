@@ -1,0 +1,13 @@
+Watched Some Java.Swing Tutorials
+
+
+https://www.youtube.com/watch?v=1vVJPzVzaK8&ab_channel=JavaCodeJunkie
+https://www.youtube.com/watch?v=4BRUmU-ETRk&ab_channel=JavaCodeJunkie
+
+
+2/28
+Created a JFrame with a grid layout
+Populated the grid with JPanels
+Decided that my way of doing things is bad
+Pushed work in progress
+Added to Erroll's code

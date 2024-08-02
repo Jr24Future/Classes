@@ -1,0 +1,35 @@
+# Compile of lab1step3.v was successful.
+vsim -gui work.lab1step3
+# vsim -gui work.lab1step3 
+# Start time: 12:27:08 on Aug 31,2023
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.lab1step3(fast)
+add wave -position insertpoint  \
+sim:/lab1step3/A \
+sim:/lab1step3/B \
+sim:/lab1step3/C \
+sim:/lab1step3/F
+force -freeze sim:/lab1step3/A 1'h0 0
+force -freeze sim:/lab1step3/B 1'h0 0
+force -freeze sim:/lab1step3/C 1'h0 0
+run 100
+force -freeze sim:/lab1step3/C 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h0 0
+force -freeze sim:/lab1step3/B 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h0 0
+force -freeze sim:/lab1step3/B 1'h0 0
+force -freeze sim:/lab1step3/A 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h0 0
+force -freeze sim:/lab1step3/B 1'h1 0
+run 100
+force -freeze sim:/lab1step3/C 1'h1 0
+run 100
+# End time: 12:36:59 on Aug 31,2023, Elapsed time: 0:09:51
+# Errors: 0, Warnings: 5

@@ -1,0 +1,126 @@
+m255
+K4
+z2
+!s12c _opt2
+Z0 !s99 nomlopt
+Z1 !s12c _opt1
+R0
+R1
+R0
+!s12c _opt
+R0
+!s11f vlog 2023.2 2023.04, Apr 11 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z2 dU:/CPRE281/lab09/lab9step2
+T_opt
+!s110 1698944176
+VY`l2a=011;OA]Q>@o<Y3T0
+04 9 4 work lab9step2 fast 0
+=1-c45ab1e6ccb1-6543d4af-336-1208
+R0
+Z3 !s12b OEM100
+Z4 !s124 OEM100
+Z5 o-quiet -auto_acc_if_foreign -work work
+Z6 tCvgOpt 0
+n@_opt
+Z7 OL;O;2023.2;77
+R2
+T_opt1
+!s110 1698944755
+VCV]FJBHDeoA@NBcYfZ7``2
+04 10 4 work lab9step2a fast 0
+=1-c45ab1e6ccb1-6543d6f3-a6-23bc
+R0
+R3
+R4
+R5
+R6
+n@_opt1
+R7
+R2
+T_opt2
+!s110 1698945099
+VSIcS[;WFfSWfLVlmW^JO72
+04 10 4 work lab9step2b fast 0
+=1-c45ab1e6ccb1-6543d84b-19e-3118
+R0
+R3
+R4
+R5
+R6
+n@_opt2
+R7
+vlab9step2
+2U:/CPRE281/lab09/lab9step2/lab9step2.v
+!s110 1698944170
+!i10b 1
+!s100 3H?fm5NjiOnS<ZNIDhg7d3
+IiLMML3A_XL<SLVja@T5li2
+R2
+w1698944065
+8U:/CPRE281/lab09/lab9step2/lab9step2.v
+FU:/CPRE281/lab09/lab9step2/lab9step2.v
+!i122 0
+L0 20 36
+Z8 VDg1SIo80bB@j0V0VzS_@n1
+Z9 OL;L;2023.2;77
+r1
+!s85 0
+31
+!s108 1698944170.000000
+!s107 U:/CPRE281/lab09/lab9step2/lab9step2.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab09/lab9step2/lab9step2.v|
+!i113 0
+Z10 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R6
+vlab9step2a
+2U:/CPRE281/lab09/lab9step2/lab9step2a.v
+!s110 1698944749
+!i10b 1
+!s100 Z:Z<TkSReTekmU?RU>JV43
+IWCz48>0HnYDR4XkJG^NSK1
+R2
+w1698944718
+8U:/CPRE281/lab09/lab9step2/lab9step2a.v
+FU:/CPRE281/lab09/lab9step2/lab9step2a.v
+!i122 2
+L0 20 37
+R8
+R9
+r1
+!s85 0
+31
+!s108 1698944749.000000
+!s107 U:/CPRE281/lab09/lab9step2/lab9step2a.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab09/lab9step2/lab9step2a.v|
+!i113 0
+R10
+R6
+vlab9step2b
+2U:/CPRE281/lab09/lab9step2/lab9step2b.v
+!s110 1698945095
+!i10b 1
+!s100 oc@H7CD1^jSWRfBKSn[^<3
+IAgPVkLNO8_ZSc7J0h9@H13
+R2
+w1698945064
+8U:/CPRE281/lab09/lab9step2/lab9step2b.v
+FU:/CPRE281/lab09/lab9step2/lab9step2b.v
+!i122 3
+L0 20 40
+R8
+R9
+r1
+!s85 0
+31
+!s108 1698945095.000000
+!s107 U:/CPRE281/lab09/lab9step2/lab9step2b.v|
+!s90 -reportprogress|300|-work|work|U:/CPRE281/lab09/lab9step2/lab9step2b.v|
+!i113 0
+R10
+R6

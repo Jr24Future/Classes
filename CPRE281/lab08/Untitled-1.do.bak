@@ -1,0 +1,49 @@
+force W0 1
+force W1 0
+force W2 0
+force W3 1
+force Xc3 1
+force Xc2 1
+Force Xc1 0
+force S 2'b01
+run 
+
+force W0 1
+force W1 1
+force W2 1
+force W3 0
+force Xc3 0
+force Xc2 0
+Force Xc1 0
+force S 2'b11
+run 
+
+force W0 1
+force W1 1
+force W2 1
+force W3 0
+force Xc3 0
+force Xc2 1
+Force Xc1 1
+force S 2'b00
+run 
+
+force W0 1
+force W1 1
+force W2 0
+force W3 1
+force Xc3 0
+force Xc2 1
+Force Xc1 0
+force S 2'b10
+run 
+
+force W0 1
+force W1 0
+force W2 1
+force W3 1
+force Xc3 0
+force Xc2 1
+Force Xc1 0
+force S 2'b01
+run 

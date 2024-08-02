@@ -1,0 +1,389 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'Direct_Video_Map'
+Slack : -19.582
+TNS   : -11159.874
+
+Type  : Slow 1200mV 85C Model Setup 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -3.320
+TNS   : -3.320
+
+Type  : Slow 1200mV 85C Model Setup 'Board_Clock'
+Slack : -2.641
+TNS   : -13.879
+
+Type  : Slow 1200mV 85C Model Setup 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -2.501
+TNS   : -8.823
+
+Type  : Slow 1200mV 85C Model Setup 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -2.395
+TNS   : -7.368
+
+Type  : Slow 1200mV 85C Model Setup 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -2.330
+TNS   : -6.696
+
+Type  : Slow 1200mV 85C Model Setup 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -1.573
+TNS   : -3.090
+
+Type  : Slow 1200mV 85C Model Setup 'clock_divider_1024:inst2|inst10'
+Slack : -1.318
+TNS   : -6.653
+
+Type  : Slow 1200mV 85C Model Hold 'Direct_Video_Map'
+Slack : -3.352
+TNS   : -92.528
+
+Type  : Slow 1200mV 85C Model Hold 'Board_Clock'
+Slack : 0.403
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : 0.403
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : 0.404
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_divider_1024:inst2|inst10'
+Slack : 0.404
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : 0.405
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : 0.405
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : 3.318
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'Direct_Video_Map'
+Slack : -3.490
+TNS   : -1785.304
+
+Type  : Slow 1200mV 85C Model Recovery '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -2.940
+TNS   : -5.686
+
+Type  : Slow 1200mV 85C Model Removal 'Direct_Video_Map'
+Slack : 0.368
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : 0.787
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Direct_Video_Map'
+Slack : -3.000
+TNS   : -1077.260
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Board_Clock'
+Slack : -3.000
+TNS   : -19.705
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -1.446
+TNS   : -32.594
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_divider_1024:inst2|inst10'
+Slack : -1.285
+TNS   : -11.565
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -1.285
+TNS   : -5.140
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst1|inst10'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_Low:inst2|inst39'
+Slack : 0.437
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_High:inst251|inst39'
+Slack : 0.456
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'Direct_Video_Map'
+Slack : -18.107
+TNS   : -10203.592
+
+Type  : Slow 1200mV 0C Model Setup 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -2.908
+TNS   : -2.908
+
+Type  : Slow 1200mV 0C Model Setup 'Board_Clock'
+Slack : -2.336
+TNS   : -11.353
+
+Type  : Slow 1200mV 0C Model Setup 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -2.195
+TNS   : -7.078
+
+Type  : Slow 1200mV 0C Model Setup 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -2.104
+TNS   : -5.848
+
+Type  : Slow 1200mV 0C Model Setup 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -2.039
+TNS   : -5.226
+
+Type  : Slow 1200mV 0C Model Setup 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -1.312
+TNS   : -2.577
+
+Type  : Slow 1200mV 0C Model Setup 'clock_divider_1024:inst2|inst10'
+Slack : -1.001
+TNS   : -5.098
+
+Type  : Slow 1200mV 0C Model Hold 'Direct_Video_Map'
+Slack : -3.148
+TNS   : -95.333
+
+Type  : Slow 1200mV 0C Model Hold 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : 0.353
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'Board_Clock'
+Slack : 0.354
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : 0.354
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_divider_1024:inst2|inst10'
+Slack : 0.355
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : 0.355
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : 0.356
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : 3.061
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'Direct_Video_Map'
+Slack : -3.074
+TNS   : -1529.597
+
+Type  : Slow 1200mV 0C Model Recovery '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -2.752
+TNS   : -5.323
+
+Type  : Slow 1200mV 0C Model Removal 'Direct_Video_Map'
+Slack : 0.121
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : 0.485
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Direct_Video_Map'
+Slack : -3.000
+TNS   : -1077.260
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Board_Clock'
+Slack : -3.000
+TNS   : -19.705
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -1.306
+TNS   : -30.935
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -1.285
+TNS   : -12.850
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_divider_1024:inst2|inst10'
+Slack : -1.285
+TNS   : -11.565
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -1.285
+TNS   : -5.140
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst1|inst10'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_Low:inst2|inst39'
+Slack : 0.442
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_High:inst251|inst39'
+Slack : 0.476
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'Direct_Video_Map'
+Slack : -9.296
+TNS   : -5216.751
+
+Type  : Fast 1200mV 0C Model Setup 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -1.213
+TNS   : -1.213
+
+Type  : Fast 1200mV 0C Model Setup 'Board_Clock'
+Slack : -0.843
+TNS   : -1.976
+
+Type  : Fast 1200mV 0C Model Setup 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -0.745
+TNS   : -0.803
+
+Type  : Fast 1200mV 0C Model Setup 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -0.667
+TNS   : -0.698
+
+Type  : Fast 1200mV 0C Model Setup 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -0.656
+TNS   : -0.656
+
+Type  : Fast 1200mV 0C Model Setup 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -0.322
+TNS   : -0.583
+
+Type  : Fast 1200mV 0C Model Setup 'clock_divider_1024:inst2|inst10'
+Slack : -0.231
+TNS   : -0.391
+
+Type  : Fast 1200mV 0C Model Hold 'Direct_Video_Map'
+Slack : -1.653
+TNS   : -58.507
+
+Type  : Fast 1200mV 0C Model Hold 'Board_Clock'
+Slack : 0.181
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : 0.181
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_divider_1024:inst2|inst10'
+Slack : 0.183
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : 0.183
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : 0.183
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : 0.184
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : 1.618
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'Direct_Video_Map'
+Slack : -1.638
+TNS   : -804.836
+
+Type  : Fast 1200mV 0C Model Recovery '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -1.577
+TNS   : -3.057
+
+Type  : Fast 1200mV 0C Model Removal 'Direct_Video_Map'
+Slack : 0.210
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : 0.739
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Direct_Video_Map'
+Slack : -3.000
+TNS   : -1261.229
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Board_Clock'
+Slack : -3.000
+TNS   : -16.819
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width '4x8BitRegisters:inst|Registers8bit:A|inst3'
+Slack : -1.000
+TNS   : -10.987
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst|inst10'
+Slack : -1.000
+TNS   : -10.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst|inst10'
+Slack : -1.000
+TNS   : -10.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst|inst10'
+Slack : -1.000
+TNS   : -10.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_divider_1024:inst2|inst10'
+Slack : -1.000
+TNS   : -9.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_generator:inst18|clock_divider_1024:inst8|inst10'
+Slack : -1.000
+TNS   : -4.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst34|clock_divider_1024:inst1|inst10'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'Debouncer:inst36|clock_divider_1024:inst1|inst10'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_High:inst251|inst39'
+Slack : 0.460
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'IMEM:inst22|ReadOnly_16x16_Register_File_Low:inst2|inst39'
+Slack : 0.468
+TNS   : 0.000
+
+------------------------------------------------------------

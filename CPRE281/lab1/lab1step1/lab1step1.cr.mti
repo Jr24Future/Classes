@@ -1,0 +1,8 @@
+{U:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v} {1 {vlog -work work -vopt -stats=none {U:/Documents/C281/Fall2021/Lab 1 CPR E 281/Lab1 CPRE281 ToGo/lab1/lab1step1/lab1step1.v}
+QuestaSim-64 vlog 2021.2 Compiler 2021.04 Apr 14 2021
+-- Compiling module lab1step1
+
+Top level modules:
+	lab1step1
+
+} {} {}}

@@ -1,0 +1,2 @@
+https://www.youtube.com/watch?v=lctZ-NAWgDU&t=382s
+followed this tutorial on how to install swing in eclipse

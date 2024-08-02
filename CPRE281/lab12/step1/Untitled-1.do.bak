@@ -1,0 +1,17 @@
+force Y 4'b0101
+force X 4'b1011
+force control 1
+run 400
+
+
+force Y 4'b0101
+force X 4'b1011
+force control 0
+run 400
+
+
+
+force Y 4'b0100
+force X 4'b0011
+force control 1 
+run 400

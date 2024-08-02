@@ -1,0 +1,113 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2018  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
+*/
+(header "symbol" (version "1.2"))
+(symbol
+	(rect 64 64 352 224)
+	(text "ALU" (rect 5 0 29 19)(font "Intel Clear" (font_size 8)))
+	(text "inst" (rect 8 139 24 156)(font "Intel Clear" ))
+	(port
+		(pt 0 80)
+		(input)
+		(text "ALU_Select0" (rect 0 0 76 19)(font "Intel Clear" (font_size 8)))
+		(text "ALU_Select0" (rect 21 75 97 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 80)(pt 16 80))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "ALU_Input0[7..0]" (rect 0 0 101 19)(font "Intel Clear" (font_size 8)))
+		(text "ALU_Input0[7..0]" (rect 21 107 122 126)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 112)(pt 16 112)(line_width 3))
+	)
+	(port
+		(pt 0 96)
+		(input)
+		(text "ALU_Select1" (rect 0 0 76 19)(font "Intel Clear" (font_size 8)))
+		(text "ALU_Select1" (rect 21 91 97 110)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 96)(pt 16 96))
+	)
+	(port
+		(pt 0 128)
+		(input)
+		(text "ALU_Input1[7..0]" (rect 0 0 101 19)(font "Intel Clear" (font_size 8)))
+		(text "ALU_Input1[7..0]" (rect 21 123 122 142)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 128)(pt 16 128)(line_width 3))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "Clock" (rect 0 0 31 19)(font "Intel Clear" (font_size 8)))
+		(text "Clock" (rect 21 43 52 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 48)(pt 16 48))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "Reset" (rect 0 0 33 19)(font "Intel Clear" (font_size 8)))
+		(text "Reset" (rect 21 59 54 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 64)(pt 16 64))
+	)
+	(port
+		(pt 0 32)
+		(input)
+		(text "Flags_Write_Enable" (rect 0 0 116 19)(font "Intel Clear" (font_size 8)))
+		(text "Flags_Write_Enable" (rect 21 27 137 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 32)(pt 16 32))
+	)
+	(port
+		(pt 288 128)
+		(output)
+		(text "ALU_OUTPUT[7..0]" (rect 0 0 115 19)(font "Intel Clear" (font_size 8)))
+		(text "ALU_OUTPUT[7..0]" (rect 152 123 267 142)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 128)(pt 272 128)(line_width 3))
+	)
+	(port
+		(pt 288 32)
+		(output)
+		(text "NegativeFlagOut" (rect 0 0 99 19)(font "Intel Clear" (font_size 8)))
+		(text "NegativeFlagOut" (rect 168 27 267 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 32)(pt 272 32))
+	)
+	(port
+		(pt 288 48)
+		(output)
+		(text "ZeroFlagOut" (rect 0 0 73 19)(font "Intel Clear" (font_size 8)))
+		(text "ZeroFlagOut" (rect 194 43 267 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 48)(pt 272 48))
+	)
+	(port
+		(pt 288 64)
+		(output)
+		(text "CarryFlagOut" (rect 0 0 77 19)(font "Intel Clear" (font_size 8)))
+		(text "CarryFlagOut" (rect 190 59 267 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 64)(pt 272 64))
+	)
+	(port
+		(pt 288 80)
+		(output)
+		(text "OverFlowFlagOut" (rect 0 0 101 19)(font "Intel Clear" (font_size 8)))
+		(text "OverFlowFlagOut" (rect 166 75 267 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 80)(pt 272 80))
+	)
+	(drawing
+		(rectangle (rect 16 16 272 144))
+	)
+)

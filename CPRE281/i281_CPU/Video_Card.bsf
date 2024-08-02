@@ -1,0 +1,183 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2018  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
+*/
+(header "symbol" (version "1.2"))
+(symbol
+	(rect 64 64 352 360)
+	(text "Video_Card" (rect 5 0 74 19)(font "Intel Clear" (font_size 8)))
+	(text "inst" (rect 8 267 24 284)(font "Intel Clear" ))
+	(port
+		(pt 0 256)
+		(input)
+		(text "Direct_Video_Map" (rect 0 0 109 19)(font "Intel Clear" (font_size 8)))
+		(text "Direct_Video_Map" (rect 21 251 130 270)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 256)(pt 16 256))
+	)
+	(port
+		(pt 0 240)
+		(input)
+		(text "Register_View" (rect 0 0 83 19)(font "Intel Clear" (font_size 8)))
+		(text "Register_View" (rect 21 235 104 254)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 240)(pt 16 240))
+	)
+	(port
+		(pt 0 24)
+		(input)
+		(text "Video_Input0[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input0[7..0]" (rect 21 19 131 38)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 24)(pt 16 24)(line_width 3))
+	)
+	(port
+		(pt 0 40)
+		(input)
+		(text "Video_Input1[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input1[7..0]" (rect 21 35 131 54)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 40)(pt 16 40)(line_width 3))
+	)
+	(port
+		(pt 0 56)
+		(input)
+		(text "Video_Input2[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input2[7..0]" (rect 21 51 131 70)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 56)(pt 16 56)(line_width 3))
+	)
+	(port
+		(pt 0 72)
+		(input)
+		(text "Video_Input3[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input3[7..0]" (rect 21 67 131 86)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 72)(pt 16 72)(line_width 3))
+	)
+	(port
+		(pt 0 88)
+		(input)
+		(text "Video_Input4[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input4[7..0]" (rect 21 83 131 102)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 88)(pt 16 88)(line_width 3))
+	)
+	(port
+		(pt 0 104)
+		(input)
+		(text "Video_Input5[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input5[7..0]" (rect 21 99 131 118)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 104)(pt 16 104)(line_width 3))
+	)
+	(port
+		(pt 0 120)
+		(input)
+		(text "Video_Input6[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input6[7..0]" (rect 21 115 131 134)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 120)(pt 16 120)(line_width 3))
+	)
+	(port
+		(pt 0 136)
+		(input)
+		(text "Video_Input7[7..0]" (rect 0 0 110 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Input7[7..0]" (rect 21 131 131 150)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 136)(pt 16 136)(line_width 3))
+	)
+	(port
+		(pt 0 216)
+		(input)
+		(text "REG_IN_D[7..0]" (rect 0 0 92 19)(font "Intel Clear" (font_size 8)))
+		(text "REG_IN_D[7..0]" (rect 21 211 113 230)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 216)(pt 16 216)(line_width 3))
+	)
+	(port
+		(pt 0 200)
+		(input)
+		(text "REG_IN_C[7..0]" (rect 0 0 90 19)(font "Intel Clear" (font_size 8)))
+		(text "REG_IN_C[7..0]" (rect 21 195 111 214)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 200)(pt 16 200)(line_width 3))
+	)
+	(port
+		(pt 0 184)
+		(input)
+		(text "REG_IN_B[7..0]" (rect 0 0 90 19)(font "Intel Clear" (font_size 8)))
+		(text "REG_IN_B[7..0]" (rect 21 179 111 198)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 184)(pt 16 184)(line_width 3))
+	)
+	(port
+		(pt 0 168)
+		(input)
+		(text "REG_IN_A[7..0]" (rect 0 0 90 19)(font "Intel Clear" (font_size 8)))
+		(text "REG_IN_A[7..0]" (rect 21 163 111 182)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 168)(pt 16 168)(line_width 3))
+	)
+	(port
+		(pt 288 32)
+		(output)
+		(text "Video_Output0[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output0[6..0]" (rect 146 27 267 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 32)(pt 272 32)(line_width 3))
+	)
+	(port
+		(pt 288 48)
+		(output)
+		(text "Video_Output1[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output1[6..0]" (rect 146 43 267 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 48)(pt 272 48)(line_width 3))
+	)
+	(port
+		(pt 288 64)
+		(output)
+		(text "Video_Output2[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output2[6..0]" (rect 146 59 267 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 64)(pt 272 64)(line_width 3))
+	)
+	(port
+		(pt 288 80)
+		(output)
+		(text "Video_Output3[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output3[6..0]" (rect 146 75 267 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 80)(pt 272 80)(line_width 3))
+	)
+	(port
+		(pt 288 96)
+		(output)
+		(text "Video_Output4[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output4[6..0]" (rect 146 91 267 110)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 96)(pt 272 96)(line_width 3))
+	)
+	(port
+		(pt 288 112)
+		(output)
+		(text "Video_Output5[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output5[6..0]" (rect 146 107 267 126)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 112)(pt 272 112)(line_width 3))
+	)
+	(port
+		(pt 288 128)
+		(output)
+		(text "Video_Output6[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output6[6..0]" (rect 146 123 267 142)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 128)(pt 272 128)(line_width 3))
+	)
+	(port
+		(pt 288 144)
+		(output)
+		(text "Video_Output7[6..0]" (rect 0 0 121 19)(font "Intel Clear" (font_size 8)))
+		(text "Video_Output7[6..0]" (rect 146 139 267 158)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 144)(pt 272 144)(line_width 3))
+	)
+	(drawing
+		(rectangle (rect 16 16 272 280))
+	)
+)
