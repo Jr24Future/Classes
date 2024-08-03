@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CardListActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">CardListActivity.java</span></div><h1>CardListActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L24">public class CardListActivity extends AppCompatActivity {</span>
+    private static final int EDIT_CARD_REQUEST_CODE = 1;
+
+    private RecyclerView recyclerView;
+    private CardAdapter adapter;
+    private ArrayList&lt;Card&gt; cardList;
+    private String userId;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L35">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L36">        setContentView(R.layout.activity_card_list);</span>
+
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (LoginActivity.UUID != null) {</span>
+<span class="fc" id="L39">            userId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+        } else {
+            // Handle the null case appropriately (e.g., return to login screen)
+<span class="nc" id="L42">            Toast.makeText(this, &quot;User ID is not available&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L43">            finish();</span>
+<span class="nc" id="L44">            return;</span>
+        }
+
+<span class="fc" id="L47">        Button btnAddCard = findViewById(R.id.btn_add_card);</span>
+<span class="fc" id="L48">        btnAddCard.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+                // Start EditCardActivity with no extra, indicating a new card is being added
+<span class="fc" id="L52">                Intent intent = new Intent(CardListActivity.this, EditCardActivity.class);</span>
+<span class="fc" id="L53">                startActivityForResult(intent, EDIT_CARD_REQUEST_CODE);</span>
+<span class="fc" id="L54">            }</span>
+        });
+
+<span class="fc" id="L57">        Button btnReturnMain = findViewById(R.id.btn_return_main);</span>
+<span class="fc" id="L58">        btnReturnMain.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+                // Return to the MainActivity when the button is clicked
+<span class="fc" id="L62">                Intent intent = new Intent(CardListActivity.this, MainActivity.class);</span>
+<span class="fc" id="L63">                startActivity(intent);</span>
+<span class="fc" id="L64">            }</span>
+        });
+
+<span class="fc" id="L67">        recyclerView = findViewById(R.id.cardListRecyclerView);</span>
+<span class="fc" id="L68">        recyclerView.setLayoutManager(new LinearLayoutManager(this));</span>
+<span class="fc" id="L69">        cardList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L71">        adapter = new CardAdapter(cardList, this);</span>
+<span class="fc" id="L72">        recyclerView.setAdapter(adapter);</span>
+
+<span class="fc" id="L74">        fetchCards();</span>
+<span class="fc" id="L75">    }</span>
+
+    private void fetchCards() {
+<span class="fc" id="L78">        String cardsUrl = &quot;http://coms-309-056.class.las.iastate.edu:8080/cards/userId/&quot; + userId;</span>
+<span class="fc" id="L79">        StringRequest stringRequest = new StringRequest(Request.Method.GET, cardsUrl,</span>
+<span class="fc" id="L80">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+<span class="fc" id="L84">                            JSONArray cardsJsonArray = new JSONArray(response);</span>
+<span class="fc" id="L85">                            cardList.clear();</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                            for (int i = 0; i &lt; cardsJsonArray.length(); i++) {</span>
+<span class="fc" id="L87">                                cardList.add(Card.fromJson(cardsJsonArray.getJSONObject(i)));</span>
+                            }
+<span class="fc" id="L89">                            adapter.notifyDataSetChanged();</span>
+<span class="nc" id="L90">                        } catch (JSONException e) {</span>
+<span class="nc" id="L91">                            e.printStackTrace();</span>
+<span class="nc" id="L92">                            Toast.makeText(CardListActivity.this, &quot;Error parsing card data&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L93">                        }</span>
+<span class="fc" id="L94">                    }</span>
+                },
+<span class="fc" id="L96">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L99">                        Toast.makeText(CardListActivity.this, &quot;Error retrieving cards: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L100">                    }</span>
+                });
+
+<span class="fc" id="L103">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L104">    }</span>
+    public void startEditCardActivity(Card card) {
+<span class="nc" id="L106">        Intent intent = new Intent(this, EditCardActivity.class);</span>
+<span class="nc" id="L107">        intent.putExtra(&quot;card_id&quot;, card.getId()); // Assuming `getId()` returns a String representation of the ID</span>
+        // Other card data can be put as extras if necessary
+<span class="nc" id="L109">        startActivityForResult(intent, EDIT_CARD_REQUEST_CODE);</span>
+<span class="nc" id="L110">    }</span>
+    protected void onResume() {
+<span class="fc" id="L112">        super.onResume();</span>
+<span class="fc" id="L113">        fetchCards();</span>
+<span class="fc" id="L114">    }</span>
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+<span class="fc" id="L118">        super.onActivityResult(requestCode, resultCode, data);</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        if (requestCode == EDIT_CARD_REQUEST_CODE &amp;&amp; resultCode == RESULT_OK) {</span>
+            // A card was edited or added, so refresh the list
+<span class="nc" id="L121">            fetchCards();</span>
+        }
+<span class="fc" id="L123">    }</span>
+    public void setDefaultCard(String cardId) {
+<span class="nc" id="L125">        String setDefaultCardUrl = &quot;http://yourapi.com/setDefaultCard/&quot; + cardId; // Replace with your actual URL</span>
+<span class="nc" id="L126">        StringRequest stringRequest = new StringRequest(Request.Method.POST, setDefaultCardUrl,</span>
+<span class="nc" id="L127">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the successful default card set response
+                        // This might include refreshing the list of cards
+<span class="nc" id="L132">                    }</span>
+<span class="nc" id="L133">                }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error setting the default card
+<span class="nc" id="L137">            }</span>
+        });
+
+<span class="nc" id="L140">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="nc" id="L141">    }</span>
+    public void deleteCard(String cardId, int position) {
+<span class="nc" id="L143">        String deleteCardUrl = &quot;http://yourapi.com/deleteCard/&quot; + cardId; // Replace with your actual URL</span>
+<span class="nc" id="L144">        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, deleteCardUrl,</span>
+<span class="nc" id="L145">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the successful card deletion response
+                        // Update your RecyclerView by removing the card from the list and notifying the adapter
+<span class="nc" id="L150">                        adapter.removeAt(position);</span>
+<span class="nc" id="L151">                    }</span>
+<span class="nc" id="L152">                }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Handle the error deleting the card
+<span class="nc" id="L156">            }</span>
+        });
+
+<span class="nc" id="L159">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="nc" id="L160">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

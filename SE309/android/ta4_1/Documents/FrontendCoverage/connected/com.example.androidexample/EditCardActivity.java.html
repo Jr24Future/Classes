@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditCardActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">EditCardActivity.java</span></div><h1>EditCardActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.braintreepayments.cardform.view.CardForm;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="fc" id="L19">public class EditCardActivity extends AppCompatActivity {</span>
+
+    private String cardId;
+    private CardForm cardForm;
+    private Card card; // Keep a reference to the original card to update
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L27">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L28">        setContentView(R.layout.activity_edit_card);</span>
+
+<span class="fc" id="L30">        cardForm = findViewById(R.id.card_form);</span>
+<span class="fc" id="L31">        cardForm.cardRequired(true)</span>
+<span class="fc" id="L32">                .expirationRequired(true)</span>
+<span class="fc" id="L33">                .cvvRequired(true)</span>
+<span class="fc" id="L34">                .cardholderName(CardForm.FIELD_REQUIRED)</span>
+<span class="fc" id="L35">                .actionLabel(&quot;Add Card&quot;)</span>
+<span class="fc" id="L36">                .setup(this);</span>
+
+<span class="fc" id="L38">        cardForm.getCvvEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);</span>
+
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (getIntent().hasExtra(&quot;card_data&quot;)) {</span>
+<span class="fc" id="L41">            String cardJsonString = getIntent().getStringExtra(&quot;card_data&quot;);</span>
+<span class="fc" id="L42">            Log.d(&quot;EditCardActivity&quot;, &quot;Received card data: &quot; + cardJsonString);</span>
+            try {
+<span class="fc" id="L44">                JSONObject cardDetails = new JSONObject(cardJsonString);</span>
+<span class="fc" id="L45">                populateCardForm(cardDetails);</span>
+<span class="nc" id="L46">            } catch (JSONException e) {</span>
+<span class="nc" id="L47">                e.printStackTrace();</span>
+<span class="nc" id="L48">                Toast.makeText(this, &quot;Failed to load card details&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L49">            }</span>
+        }
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (getIntent().hasExtra(&quot;card_id&quot;)) {</span>
+<span class="fc" id="L52">            cardId = getIntent().getStringExtra(&quot;card_id&quot;);</span>
+        } else {
+<span class="fc" id="L54">            cardId = null; // Indicate that a new card is being added</span>
+        }
+
+
+<span class="fc" id="L58">        Button btnSaveCard = findViewById(R.id.btn_save_card);</span>
+<span class="fc" id="L59">        btnSaveCard.setOnClickListener(v -&gt; {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (cardForm.isValid()) {</span>
+<span class="fc" id="L61">                String cardholderName = cardForm.getCardholderName();</span>
+<span class="fc" id="L62">                String cardNumber = cardForm.getCardNumber();</span>
+<span class="fc" id="L63">                String expirationDate = cardForm.getExpirationMonth() + &quot;/&quot; + cardForm.getExpirationYear();</span>
+<span class="fc" id="L64">                String cvv = cardForm.getCvv();</span>
+
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                if (card == null) {</span>
+                    // If the card is null, create a new card
+<span class="fc" id="L68">                    card = new Card(cardholderName, cardNumber, expirationDate, cvv);</span>
+                } else {
+                    // If the card is not null, update its details
+<span class="nc" id="L71">                    card.setName(cardholderName);</span>
+<span class="nc" id="L72">                    card.setCardNumber(cardNumber);</span>
+<span class="nc" id="L73">                    card.setExpirationDate(expirationDate);</span>
+<span class="nc" id="L74">                    card.setCvv(cvv);</span>
+                }
+<span class="fc" id="L76">                sendCardToBackend(card);</span>
+<span class="fc" id="L77">                finish();</span>
+<span class="fc" id="L78">            } else {</span>
+<span class="fc" id="L79">                Toast.makeText(EditCardActivity.this, &quot;Please fill out the card form correctly.&quot;, Toast.LENGTH_LONG).show();</span>
+            }
+<span class="fc" id="L81">        });</span>
+<span class="fc" id="L82">    }</span>
+
+    private void populateCardForm(JSONObject cardDetails) {
+        try {
+<span class="fc" id="L86">            Log.d(&quot;EditCardActivity&quot;, &quot;Populating card form with: &quot; + cardDetails.toString());</span>
+<span class="fc" id="L87">            String cardNumber = cardDetails.getString(&quot;cardNumber&quot;);</span>
+<span class="fc" id="L88">            String expirationDate = cardDetails.getString(&quot;expirationDate&quot;);</span>
+<span class="fc" id="L89">            String cvv = cardDetails.getString(&quot;cvv&quot;);</span>
+<span class="fc" id="L90">            String name = cardDetails.getString(&quot;name&quot;);</span>
+
+            // Log the individual details
+<span class="fc" id="L93">            Log.d(&quot;EditCardActivity&quot;, &quot;Card Number: &quot; + cardNumber);</span>
+<span class="fc" id="L94">            Log.d(&quot;EditCardActivity&quot;, &quot;Expiration Date: &quot; + expirationDate);</span>
+<span class="fc" id="L95">            Log.d(&quot;EditCardActivity&quot;, &quot;CVV: &quot; + cvv);</span>
+<span class="fc" id="L96">            Log.d(&quot;EditCardActivity&quot;, &quot;Name: &quot; + name);</span>
+
+            // Populate the form fields
+<span class="fc" id="L99">            cardForm.getCardEditText().setText(cardNumber);</span>
+<span class="fc" id="L100">            cardForm.getExpirationDateEditText().setText(expirationDate);</span>
+<span class="fc" id="L101">            cardForm.getCvvEditText().setText(cvv);</span>
+<span class="fc" id="L102">            cardForm.getCardholderNameEditText().setText(name);</span>
+
+            // Set the card's ID
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if (cardDetails.has(&quot;id&quot;)) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                if (card == null) {</span>
+<span class="nc" id="L107">                    card = new Card(name, cardNumber, expirationDate, cvv);</span>
+                }
+<span class="nc" id="L109">                card.setId(cardDetails.getString(&quot;id&quot;)); // Use the setId method to set the ID</span>
+            }
+<span class="nc" id="L111">        } catch (JSONException e) {</span>
+<span class="nc" id="L112">            e.printStackTrace();</span>
+<span class="nc" id="L113">            Log.e(&quot;EditCardActivity&quot;, &quot;JSONException while populating form&quot;, e);</span>
+<span class="nc" id="L114">            Toast.makeText(this, &quot;Failed to parse card details&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L115">        }</span>
+<span class="fc" id="L116">    }</span>
+
+    private void sendCardToBackend(Card card) {
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        if (LoginActivity.UUID == null || LoginActivity.UUID.isEmpty()) {</span>
+<span class="nc" id="L120">            Toast.makeText(this, &quot;User ID is not available&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L121">            return;</span>
+        }
+<span class="fc" id="L123">        String userId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+        String url;
+
+<span class="fc" id="L126">        JSONObject cardJson = card.toJson();</span>
+
+        // Determine if this is an add or update operation based on whether a card ID is available
+<span class="pc bpc" id="L129" title="1 of 4 branches missed.">        if (cardId == null || cardId.isEmpty()) {</span>
+<span class="fc" id="L130">            url = &quot;http://coms-309-056.class.las.iastate.edu:8080/cards/&quot; + userId;</span>
+        } else {
+<span class="fc" id="L132">            url = &quot;http://coms-309-056.class.las.iastate.edu:8080/cards/id/&quot; + userId + &quot;/&quot; + cardId;</span>
+        }
+
+<span class="fc" id="L135">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+<span class="pc bpc" id="L136" title="1 of 4 branches missed.">                cardId == null || cardId.isEmpty() ? Request.Method.POST : Request.Method.PUT, // Use POST for add and PUT for update</span>
+                url,
+                cardJson,
+<span class="fc" id="L139">                response -&gt; Toast.makeText(EditCardActivity.this, &quot;Card saved successfully!&quot;, Toast.LENGTH_SHORT).show(),</span>
+<span class="fc" id="L140">                error -&gt; Toast.makeText(EditCardActivity.this, &quot;Error saving card: &quot; + error.toString(), Toast.LENGTH_SHORT).show()</span>
+        );
+
+<span class="fc" id="L143">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L144">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

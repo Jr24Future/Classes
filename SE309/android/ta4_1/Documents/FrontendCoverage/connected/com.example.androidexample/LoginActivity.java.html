@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">LoginActivity.java</span></div><h1>LoginActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+<span class="fc" id="L19">public class LoginActivity extends AppCompatActivity {</span>
+
+    private EditText usernameEditText;
+    private EditText passwordEditText;
+    public String username;
+    public String password;
+    public Button loginButton;
+    public String check;
+    private Button signupButton;
+    private static final String URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/login&quot;;
+
+    public static String UUID;
+    private String id;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L35">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L36">        setContentView(R.layout.activity_login);</span>
+
+<span class="fc" id="L38">        usernameEditText = findViewById(R.id.login_username_edt);</span>
+<span class="fc" id="L39">        passwordEditText = findViewById(R.id.login_password_edt);</span>
+<span class="fc" id="L40">        loginButton = findViewById(R.id.login_login_btn);</span>
+<span class="fc" id="L41">        signupButton = findViewById(R.id.login_signup_btn);</span>
+
+<span class="fc" id="L43">        loginButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L44">             username = usernameEditText.getText().toString();</span>
+<span class="fc" id="L45">             password = passwordEditText.getText().toString();</span>
+
+<span class="pc bpc" id="L47" title="2 of 4 branches missed.">            if (username.isEmpty() || password.isEmpty()) {</span>
+<span class="nc" id="L48">                Toast.makeText(getApplicationContext(), &quot;Please fill out all fields.&quot;, Toast.LENGTH_LONG).show();</span>
+            } else {
+<span class="fc" id="L50">                check = &quot;Success&quot;;</span>
+<span class="fc" id="L51">                sendPostRequest(username, password);</span>
+            }
+<span class="fc" id="L53">        });</span>
+
+<span class="fc" id="L55">        signupButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L56">            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L57">            startActivity(intent);</span>
+<span class="nc" id="L58">        });</span>
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * Takes a user's Email and Password and Checks to see if both email and password match in the database
+     * @param email
+     * @param password
+     */
+    private void sendPostRequest(String email, String password) {
+<span class="fc" id="L67">        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL + &quot;?email=&quot; + email + &quot;&amp;password=&quot; + password,</span>
+                response -&gt; {
+<span class="fc" id="L69">                    Toast.makeText(LoginActivity.this, &quot;Logged in&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L70">                    UUID = response;</span>
+<span class="fc" id="L71">                    GetUserTypeRequest();</span>
+<span class="fc" id="L72">                    Log.d(&quot;UUID&quot;, UUID + &quot; is the ID!&quot;);</span>
+<span class="fc" id="L73">                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);</span>
+<span class="fc" id="L74">                    startActivity(intent);</span>
+<span class="fc" id="L75">                },</span>
+<span class="nc" id="L76">                error -&gt; Toast.makeText(LoginActivity.this, &quot;Login Failed, please try again&quot;, Toast.LENGTH_LONG).show());</span>
+
+<span class="fc" id="L78">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L79">    }</span>
+
+
+    private void GetUserTypeRequest() {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (UUID != null) {</span>
+<span class="fc" id="L84">            final String type_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/userType/&quot; + UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L85">            RequestQueue queue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L86">            StringRequest stringRequest = new StringRequest(</span>
+                    Request.Method.GET,
+                    type_URL,
+<span class="fc" id="L89">                    new Response.Listener&lt;String&gt;() {</span>
+                        @Override
+                        public void onResponse(String response) {
+<span class="fc" id="L92">                            Log.d(&quot;usertype&quot;, response);</span>
+<span class="fc" id="L93">                            MainActivity.userType = response;</span>
+
+<span class="fc" id="L95">                        }</span>
+                    },
+<span class="fc" id="L97">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle the error
+<span class="nc" id="L101">                            Toast.makeText(LoginActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L102">                        }</span>
+                    }
+            );
+<span class="fc" id="L105">            queue.add(stringRequest);</span>
+        }
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

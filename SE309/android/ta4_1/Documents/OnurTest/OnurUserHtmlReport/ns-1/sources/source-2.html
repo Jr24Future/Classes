@@ -1,0 +1,421 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (ta4_1.MoneyFlow_Backend.Users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (27/27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.2%
+  </span>
+  <span class="absValue">
+    (102/106)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Users;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for managing user-related operations in the MoneyFlow application.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;@RestController
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository; // Injects the UserRepository for database operations.
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BCryptPasswordEncoder passwordEncoder;  // Injects the password encoder for hashing passwords.
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a list of users filtered by their type.
+&nbsp;     *
+&nbsp;     * @param userType the type of users to retrieve
+&nbsp;     * @return a list of users with the specified type
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/users/type/{userType}&quot;)
+&nbsp;    public List&lt;User&gt; getUsersByType(@PathVariable String userType) {
+<b class="fc">&nbsp;        return userRepository.findByType(userType);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a user by their unique ID.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user to retrieve
+&nbsp;     * @return an Optional containing the user if found, or an empty Optional otherwise
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/users/id/{id}&quot;)
+&nbsp;    public Optional&lt;User&gt; getUser(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a list of all users.
+&nbsp;     *
+&nbsp;     * @return a list of all users
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/users&quot;)
+&nbsp;    public List&lt;User&gt; getAllUsers() {
+<b class="fc">&nbsp;        return userRepository.findAllWithFamily();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles user signup by creating a new user with the provided information.
+&nbsp;     *
+&nbsp;     * @param u the user to be created
+&nbsp;     * @return ID of the User
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/signup&quot;)
+&nbsp;    public UUID signup(@RequestBody User u) {
+<b class="fc">&nbsp;        u.setType(&quot;regular&quot;);</b>
+<b class="fc">&nbsp;        u.setCurrencyExchangeSetting(&quot;EUR,CAD&quot;);</b>
+<b class="fc">&nbsp;        if (u.getFamilyStatus() == null) {</b>
+<b class="fc">&nbsp;            u.setFamilyStatus(&quot;independent&quot;); // Set default family status if not provided</b>
+&nbsp;        }
+<b class="fc">&nbsp;        u.setPassword(passwordEncoder.encode(u.getPassword())); // Use the autowired encoder for password encoding</b>
+<b class="fc">&nbsp;        userRepository.save(u);</b>
+<b class="fc">&nbsp;        return u.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles guest login by creating a new user with the type &quot;guest&quot;.
+&nbsp;     *
+&nbsp;     * @return a success message
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/login/type/guest&quot;)
+&nbsp;    public UUID loginGuest() {
+<b class="fc">&nbsp;        User u = new User();</b>
+<b class="fc">&nbsp;        u.setType(&quot;guest&quot;);</b>
+<b class="fc">&nbsp;        u.setFirstName(&quot;Guest&quot;);</b>
+<b class="fc">&nbsp;        u.setLastName(&quot;User&quot;);</b>
+<b class="fc">&nbsp;        u.setPassword(&quot;N/A&quot;);</b>
+<b class="fc">&nbsp;        String uniqueEmail = &quot;guest_&quot; + UUID.randomUUID().toString() + &quot;@example.com&quot;;</b>
+<b class="fc">&nbsp;        u.setEmail(uniqueEmail);</b>
+<b class="fc">&nbsp;        u.setMonthlyIncome(0.0);</b>
+<b class="fc">&nbsp;        u.setAnnualIncome(0.0);</b>
+<b class="fc">&nbsp;        userRepository.save(u);</b>
+<b class="fc">&nbsp;        return u.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles user login by verifying the provided email and password.
+&nbsp;     *
+&nbsp;     * @param email    the email of the user attempting to log in
+&nbsp;     * @param password the password of the user attempting to log in
+&nbsp;     * @return ID of the User
+&nbsp;     * @throws ResponseStatusException if the user is not found or the password is incorrect
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public UUID login(@RequestParam String email, @RequestParam String password) {
+<b class="fc">&nbsp;        User user = userRepository.findByEmail(email)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;No such user&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        if (passwordEncoder.matches(password, user.getPassword())) {</b>
+<b class="fc">&nbsp;            return user.getId();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Incorrect password, Access Denied&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the information of an existing user.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user to be updated
+&nbsp;     * @param u  the updated user information
+&nbsp;     * @return Updated user if the update is successful
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/users/{id}&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;User&gt; updateUser(@PathVariable UUID id, @RequestBody User u) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    user.setFirstName(u.getFirstName());</b>
+<b class="fc">&nbsp;                    user.setLastName(u.getLastName());</b>
+<b class="fc">&nbsp;                    user.setEmail(u.getEmail());</b>
+<b class="fc">&nbsp;                    user.setMonthlyIncome(u.getMonthlyIncome());</b>
+<b class="fc">&nbsp;                    user.setAnnualIncome(u.getAnnualIncome());</b>
+<b class="fc">&nbsp;                    user.setPassword(passwordEncoder.encode(u.getPassword()));</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(userRepository.save(user));</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the income of a user.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user for whom the income is updated.
+&nbsp;     * @return a ResponseEntity of the user.
+&nbsp;     */
+&nbsp;    @PatchMapping(&quot;/users/{id}/income&quot;)
+&nbsp;    public ResponseEntity&lt;User&gt; updateIncome(@PathVariable UUID id, @RequestBody Map&lt;String, Double&gt; incomeMap) {
+<b class="fc">&nbsp;        Double boxedIncome = incomeMap.get(&quot;income&quot;);</b>
+<b class="fc">&nbsp;        if (boxedIncome == null) {  // Check if the value is null</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().build();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double income = boxedIncome;</b>
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    user.setMonthlyIncome(income);</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(userRepository.save(user));</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the monthly income of the user.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user from whom the monthly income is retrieved.
+&nbsp;     * @return a ResponseEntity of the user&#39;s monthly income.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}/monthlyIncome&quot;)
+&nbsp;    public ResponseEntity&lt;Double&gt; getMonthlyIncome(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    double monthlyIncome = user.getMonthlyIncome();</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(monthlyIncome);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the annual income of the user.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user from whom the annual income is retrieved.
+&nbsp;     * @return a ResponseEntity of the user&#39;s annual income.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}/annualIncome&quot;)
+&nbsp;    public ResponseEntity&lt;Double&gt; getAnnualIncome(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    double annualIncome = user.getAnnualIncome();</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(annualIncome);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/getCurrency&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getCurrencyExchangeSetting(@PathVariable UUID id) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; userOptional = userRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (userOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            User user = userOptional.get();</b>
+<b class="fc">&nbsp;            String currencyExchangeSetting = user.getCurrencyExchangeSetting();</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(currencyExchangeSetting);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/{userId}/setCurrency/{Settings}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; setCurrency(@PathVariable UUID userId, @PathVariable String Settings) {
+<b class="fc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    user.setCurrencyExchangeSetting(Settings);</b>
+<b class="fc">&nbsp;                    userRepository.save(user);</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(&quot;User&#39;s currency exchange settings has been updated&quot;);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Upgrades the user to premium.
+&nbsp;     *
+&nbsp;     * @param userId the ID of the user to be upgraded to premium.
+&nbsp;     * @return a ResponseEntity of a confirmation string.
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/upgradeType/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; upgradeType(@PathVariable UUID userId) {
+<b class="fc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    user.setType(&quot;premium&quot;);</b>
+<b class="fc">&nbsp;                    userRepository.save(user);</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(&quot;User upgraded to premium&quot;);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieve the type of the user.
+&nbsp;     *
+&nbsp;     * @param userId the ID of the user whose type is retrieved.
+&nbsp;     * @return a ResponseEntity of the user&#39;s type.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/userType/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getUserType(@PathVariable UUID userId) {
+<b class="fc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="fc">&nbsp;                .map(user -&gt; ResponseEntity.ok(user.getType()))</b>
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a financial report for a user.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user for whom the report is to be generated
+&nbsp;     * @return a ResponseEntity containing the financial report or a not found status
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}/financial-report&quot;)
+&nbsp;    public ResponseEntity&lt;Double&gt; generateFinancialReport(@PathVariable UUID id) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; userOptional = userRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (userOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            User user = userOptional.get();</b>
+<b class="fc">&nbsp;            double budget = user.generateBudget();</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(budget);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a user by their unique ID.
+&nbsp;     *
+&nbsp;     * @param id the ID of the user to be deleted
+&nbsp;     * @return a success message
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/users/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteUser(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    userRepository.deleteById(id);</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(&quot;User deleted successfully&quot;);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/delete-guest-users&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteAllGuestUsers() {
+<b class="fc">&nbsp;        List&lt;User&gt; users = userRepository.findAll();</b>
+<b class="fc">&nbsp;        for (User user : users) {</b>
+<b class="fc">&nbsp;            if (&quot;guest&quot;.equals(user.getType())) {</b>
+<b class="fc">&nbsp;                userRepository.deleteById(user.getId());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;All guest users have been deleted.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/delete-regular-users&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteAllRegularUsers() {
+<b class="fc">&nbsp;        List&lt;User&gt; users = userRepository.findAll();</b>
+<b class="fc">&nbsp;        for (User user : users) {</b>
+<b class="fc">&nbsp;            if (&quot;regular&quot;.equals(user.getType())) {</b>
+<b class="fc">&nbsp;                userRepository.deleteById(user.getId());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;All regular users have been deleted.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/delete-familyMember-users&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteAllFamilyMemberUsers() {
+<b class="fc">&nbsp;        List&lt;User&gt; users = userRepository.findAll();</b>
+<b class="fc">&nbsp;        for (User user : users) {</b>
+<b class="fc">&nbsp;            if (&quot;familyMember&quot;.equals(user.getFamilyStatus())) {</b>
+<b class="fc">&nbsp;                userRepository.deleteById(user.getId());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(&quot;All family member status users have been deleted.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:54</div>
+</div>
+</body>
+</html>

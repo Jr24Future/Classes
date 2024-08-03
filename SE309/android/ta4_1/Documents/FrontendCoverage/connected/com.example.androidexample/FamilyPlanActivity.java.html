@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FamilyPlanActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">FamilyPlanActivity.java</span></div><h1>FamilyPlanActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+<span class="fc" id="L23">public class FamilyPlanActivity extends AppCompatActivity {</span>
+
+<span class="fc" id="L25">    private String fam_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/family/addMember/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+    private EditText fn, ln, m, a;
+    private Button confirm;
+
+    public static String famID;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L33">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L34">        setContentView(R.layout.activity_family_plan);</span>
+
+<span class="fc" id="L36">        fn = findViewById(R.id.fam_first);</span>
+<span class="fc" id="L37">        ln = findViewById(R.id.fam_last);</span>
+<span class="fc" id="L38">        m = findViewById(R.id.fam_mon);</span>
+<span class="fc" id="L39">        a = findViewById(R.id.fam_ann);</span>
+
+<span class="fc" id="L41">        confirm = findViewById(R.id.btn_confirm);</span>
+
+<span class="fc" id="L43">        confirm.setOnClickListener(v -&gt; {</span>
+            try {
+<span class="fc" id="L45">                JSONObject jsonBody = new JSONObject();</span>
+<span class="fc" id="L46">                jsonBody.put(&quot;firstName&quot;, fn.getText().toString());</span>
+<span class="fc" id="L47">                jsonBody.put(&quot;lastName&quot;, ln.getText().toString());</span>
+<span class="fc" id="L48">                jsonBody.put(&quot;monthlyIncome&quot;, m.getText().toString());</span>
+<span class="fc" id="L49">                jsonBody.put(&quot;annualIncome&quot;, a.getText().toString());</span>
+
+<span class="fc" id="L51">                sendPostRequest(jsonBody);</span>
+<span class="nc" id="L52">            } catch (JSONException e) {</span>
+<span class="nc" id="L53">                e.printStackTrace();</span>
+<span class="fc" id="L54">            }</span>
+<span class="fc" id="L55">        });</span>
+<span class="fc" id="L56">    }</span>
+
+    private void setInitialPortfolio(UUID userId) {
+<span class="fc" id="L59">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/portfolio/&quot; + userId.toString();</span>
+<span class="fc" id="L60">        JSONObject postData = new JSONObject();</span>
+        try {
+
+<span class="fc" id="L63">            postData.put(&quot;AAPLShares&quot;, 0.0);</span>
+<span class="fc" id="L64">            postData.put(&quot;AMZNShares&quot;, 0.0);</span>
+<span class="fc" id="L65">            postData.put(&quot;BTCUSDTShares&quot;, 0.0);</span>
+<span class="fc" id="L66">            postData.put(&quot;DOGEUSDTShares&quot;, 0.0);</span>
+<span class="fc" id="L67">            postData.put(&quot;AAPLPrice&quot;, 0.0);</span>
+<span class="fc" id="L68">            postData.put(&quot;AMZNPrice&quot;, 0.0);</span>
+<span class="fc" id="L69">            postData.put(&quot;BTCUSDTPrice&quot;, 0.0);</span>
+<span class="fc" id="L70">            postData.put(&quot;DOGEUSDTPrice&quot;, 0.0);</span>
+<span class="fc" id="L71">            postData.put(&quot;portfoliovalue&quot;, 0.0);</span>
+
+<span class="nc" id="L73">        } catch (JSONException e) {</span>
+<span class="nc" id="L74">            e.printStackTrace();</span>
+<span class="fc" id="L75">        }</span>
+
+<span class="fc" id="L77">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+                response -&gt; {
+<span class="fc" id="L79">                    Log.d(&quot;InitialExpenses&quot;, &quot;Portfolio set&quot;);</span>
+                    // Automatically log in the user after successful signup and initial expenses setup
+<span class="fc" id="L81">                },</span>
+<span class="pc" id="L82">                error -&gt; Log.e(&quot;InitialExpenses&quot;, &quot;Error: &quot; + error.getMessage())) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L85">                return postData.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L90">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L91">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L92">                return headers;</span>
+            }
+        };
+
+        // Add the request to the RequestQueue.
+<span class="fc" id="L97">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L98">    }</span>
+
+    private void sendInitialBudget(UUID userId) {
+<span class="fc" id="L101">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot; + userId.toString();</span>
+<span class="fc" id="L102">        JSONObject postData = new JSONObject();</span>
+        try {
+<span class="fc" id="L104">            postData.put(&quot;personalLimit&quot;, 1000.0); // Default budget for personal expenses</span>
+<span class="fc" id="L105">            postData.put(&quot;workLimit&quot;, 1000.0);     // Default budget for work-related expenses</span>
+<span class="fc" id="L106">            postData.put(&quot;homeLimit&quot;, 1000.0);     // Default budget for home expenses</span>
+<span class="fc" id="L107">            postData.put(&quot;otherLimit&quot;, 1000.0);    // Default budget for other expenses</span>
+<span class="nc" id="L108">        } catch (JSONException e) {</span>
+<span class="nc" id="L109">            e.printStackTrace();</span>
+<span class="fc" id="L110">        }</span>
+
+<span class="fc" id="L112">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+<span class="fc" id="L113">                response -&gt; Log.d(&quot;InitialBudget&quot;, &quot;Budget set successfully&quot;),</span>
+<span class="pc" id="L114">                error -&gt; Log.e(&quot;InitialBudget&quot;, &quot;Error setting initial budget: &quot; + error.getMessage())) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L117">                return postData.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L122">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L123">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L124">                return headers;</span>
+            }
+        };
+
+        // Add the request to the RequestQueue.
+<span class="fc" id="L129">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L130">    }</span>
+
+    private void sendPostRequest(JSONObject jsonBody) {
+<span class="fc" id="L133">        StringRequest stringRequest = new StringRequest(Request.Method.POST, fam_URL,</span>
+                response -&gt; {
+<span class="fc" id="L135">                    famID = response.replace(&quot;\&quot;&quot;, &quot;&quot;);  // Remove any double quotes from the response</span>
+<span class="fc" id="L136">                    UUID userId = UUID.fromString(famID);</span>
+<span class="fc" id="L137">                    setInitialPortfolio(userId);</span>
+<span class="fc" id="L138">                    sendInitialBudget(userId);</span>
+                    // Redirect to AddFamilyExpensesActivity
+<span class="fc" id="L140">                    Intent intent = new Intent(FamilyPlanActivity.this, AddFamilyExpensesActivity.class);</span>
+<span class="fc" id="L141">                    startActivity(intent);</span>
+<span class="fc" id="L142">                },</span>
+<span class="pc" id="L143">                error -&gt; Toast.makeText(FamilyPlanActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_LONG).show()) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L146">                return jsonBody.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L151">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L152">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L153">                return headers;</span>
+            }
+        };
+<span class="fc" id="L156">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L157">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

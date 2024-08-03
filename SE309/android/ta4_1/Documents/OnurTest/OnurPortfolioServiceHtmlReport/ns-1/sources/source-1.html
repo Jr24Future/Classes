@@ -1,0 +1,318 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Portfolio</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Portfolio</a>
+</div>
+
+<h1>Coverage Summary for Class: Portfolio (ta4_1.MoneyFlow_Backend.Portfolio)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Portfolio</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.3%
+  </span>
+  <span class="absValue">
+    (22/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64%
+  </span>
+  <span class="absValue">
+    (32/50)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Portfolio;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.User;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;/**
+&nbsp; * Entity Representing a user investment portfolio.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;portfolio&quot;)
+&nbsp;public class Portfolio {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(generator = &quot;UUID&quot;)
+&nbsp;    private UUID id;
+&nbsp;
+&nbsp;    @Column(name = &quot;portfolio_value&quot;)
+&nbsp;    private double portfolioValue;
+&nbsp;
+&nbsp;    @Column(name = &quot;aapl_shares&quot;)
+&nbsp;    private double AAPLShares;
+&nbsp;
+&nbsp;    @Column(name = &quot;amzn_shares&quot;)
+&nbsp;    private double AMZNShares;
+&nbsp;
+&nbsp;    @Column(name = &quot;btcusdt&quot;)
+&nbsp;    private double BTCUSDTShares;
+&nbsp;
+&nbsp;    @Column(name = &quot;dogeusdt&quot;)
+&nbsp;    private double DOGEUSDTShares;
+&nbsp;
+&nbsp;    @Column(name = &quot;aapl_price&quot;)
+&nbsp;    private double AAPLPrice;
+&nbsp;
+&nbsp;    @Column(name = &quot;amzn_price&quot;)
+&nbsp;    private double AMZNPrice;
+&nbsp;
+&nbsp;    @Column(name = &quot;btcusdt_price&quot;)
+&nbsp;    private double BTCUSDTPrice;
+&nbsp;
+&nbsp;    @Column(name = &quot;dogeusdt_price&quot;)
+&nbsp;    private double DOGEUSDTPrice;
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @OneToOne
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;)
+&nbsp;    private User user;  // The user associated with this portfolio.
+&nbsp;
+<b class="fc">&nbsp;    public Portfolio() {</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public Portfolio(double portfolioValue, double AAPLShares, double AMZNShares, double BTCUSDTShares, double DOGEUSDTShares, double AAPLPrice, double AMZNPrice, double BTCUSDTPrice, double DOGEUSDTPrice) {</b>
+<b class="nc">&nbsp;        this.portfolioValue = portfolioValue;</b>
+<b class="nc">&nbsp;        this.AAPLShares = AAPLShares;</b>
+<b class="nc">&nbsp;        this.AMZNShares = AMZNShares;</b>
+<b class="nc">&nbsp;        this.BTCUSDTShares = BTCUSDTShares;</b>
+<b class="nc">&nbsp;        this.DOGEUSDTShares = DOGEUSDTShares;</b>
+<b class="nc">&nbsp;        this.AAPLPrice = AAPLPrice;</b>
+<b class="nc">&nbsp;        this.AMZNPrice = AMZNPrice;</b>
+<b class="nc">&nbsp;        this.BTCUSDTPrice = BTCUSDTPrice;</b>
+<b class="nc">&nbsp;        this.DOGEUSDTPrice = DOGEUSDTPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getUser() {
+<b class="nc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser(User user) {
+<b class="nc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UUID getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(UUID id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getPortfolioValue() {
+<b class="nc">&nbsp;        return portfolioValue;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPortfolioValue(double portfolioValue) {
+<b class="nc">&nbsp;        if (portfolioValue &gt;= 0) {</b>
+<b class="nc">&nbsp;            this.portfolioValue = roundToTwoDecimalPlaces(portfolioValue);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getAppleShares() {
+<b class="fc">&nbsp;        return AAPLShares;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getAmazonShares() {
+<b class="fc">&nbsp;        return AMZNShares;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getBitcoin() {
+<b class="fc">&nbsp;        return BTCUSDTShares;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getDogecoin() {
+<b class="fc">&nbsp;        return DOGEUSDTShares;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getApplePrice() {
+<b class="fc">&nbsp;        return AAPLPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getAmazonPrice() {
+<b class="fc">&nbsp;        return AMZNPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getBitcoinPrice() {
+<b class="fc">&nbsp;        return BTCUSDTPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getDogecoinPrice() {
+<b class="fc">&nbsp;        return DOGEUSDTPrice;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAppleShares(double AAPLShares) {
+<b class="fc">&nbsp;        if (AAPLShares &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.AAPLShares = AAPLShares;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAmazonShares(double AMZNShares) {
+<b class="fc">&nbsp;        if (AMZNShares &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.AMZNShares = AMZNShares;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBitcoin(double BTCUSDTShares) {
+<b class="fc">&nbsp;        if (BTCUSDTShares &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.BTCUSDTShares = BTCUSDTShares;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDogecoin(double DOGEUSDTShares) {
+<b class="fc">&nbsp;        if (DOGEUSDTShares &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.DOGEUSDTShares = DOGEUSDTShares;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setApplePrice(double AAPLPrice) {
+<b class="fc">&nbsp;        if (AAPLPrice &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.AAPLPrice = AAPLPrice;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAmazonPrice(double AMZNPrice) {
+<b class="fc">&nbsp;        if (AMZNPrice &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.AMZNPrice = AMZNPrice;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBitcoinPrice(double BTCUSDTPrice) {
+<b class="fc">&nbsp;        if (BTCUSDTPrice &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.BTCUSDTPrice = BTCUSDTPrice;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDogecoinPrice(double DOGEUSDTPrice) {
+<b class="fc">&nbsp;        if (DOGEUSDTPrice &gt;= 0) {</b>
+<b class="fc">&nbsp;            this.DOGEUSDTPrice = DOGEUSDTPrice;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private double roundToTwoDecimalPlaces(double value) {
+<b class="fc">&nbsp;        BigDecimal bd = new BigDecimal(value);</b>
+<b class="fc">&nbsp;        bd = bd.setScale(2, RoundingMode.HALF_UP);</b>
+<b class="fc">&nbsp;        return bd.doubleValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getValueOfAppleStock() {
+<b class="fc">&nbsp;        return roundToTwoDecimalPlaces(AAPLShares * AAPLPrice);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getValueOfAmazonStock() {
+<b class="fc">&nbsp;        return roundToTwoDecimalPlaces(AMZNShares * AMZNPrice);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getValueOfBitcoin() {
+<b class="fc">&nbsp;        return roundToTwoDecimalPlaces(BTCUSDTShares * BTCUSDTPrice);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getValueOfDogecoin() {
+<b class="fc">&nbsp;        return roundToTwoDecimalPlaces(DOGEUSDTShares * DOGEUSDTPrice);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Portfolio{&quot; +</b>
+&nbsp;                &quot;id=&quot; + id +
+&nbsp;                &quot;, Apple Shares=&quot; + AAPLShares +
+&nbsp;                &quot;, Amazon Shares=&quot; + AMZNShares +
+&nbsp;                &quot;, Bitcoin=&quot; + BTCUSDTShares +
+&nbsp;                &quot;, Dogecoin=&quot; + DOGEUSDTShares +
+&nbsp;                &quot;, Apple Price=&quot; + AAPLPrice +
+&nbsp;                &quot;, Amazon Price=&quot; + AMZNPrice +
+&nbsp;                &quot;, Bitcoin Price=&quot; + BTCUSDTPrice +
+&nbsp;                &quot;, Dogecoin Price=&quot; + DOGEUSDTPrice +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:52</div>
+</div>
+</body>
+</html>

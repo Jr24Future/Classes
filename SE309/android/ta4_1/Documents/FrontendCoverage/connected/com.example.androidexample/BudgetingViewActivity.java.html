@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BudgetingViewActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">BudgetingViewActivity.java</span></div><h1>BudgetingViewActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+
+<span class="fc" id="L19">public class BudgetingViewActivity extends AppCompatActivity {</span>
+
+    private double P, W, H, O;
+    private double PBud, WBud, HBud, OBud;
+    private int Personal, Work, Home, Other;
+    private TextView Pin, Win, Oin, Hin;
+    private Button backhome;
+    private ProgressBar pProgress, wProgress, hProgress, oProgress;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L30">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L31">        setContentView(R.layout.activity_budgeting_view);</span>
+
+        // Initialize views
+<span class="fc" id="L34">        Hin = findViewById(R.id.HomLim);</span>
+<span class="fc" id="L35">        Pin = findViewById(R.id.persLim);</span>
+<span class="fc" id="L36">        Win = findViewById(R.id.WorkLim);</span>
+<span class="fc" id="L37">        Oin = findViewById(R.id.OthLim);</span>
+<span class="fc" id="L38">        pProgress = findViewById(R.id.personalprog);</span>
+<span class="fc" id="L39">        wProgress = findViewById(R.id.workprog);</span>
+<span class="fc" id="L40">        hProgress = findViewById(R.id.homeprog);</span>
+<span class="fc" id="L41">        oProgress = findViewById(R.id.otherprog);</span>
+<span class="fc" id="L42">        backhome = findViewById(R.id.bkhome);</span>
+
+        // Fetch data and set progress
+<span class="fc" id="L45">        GetRequest();</span>
+<span class="fc" id="L46">        GetExpensesRequest();</span>
+<span class="fc" id="L47">        GetBudgetsRequest();</span>
+
+<span class="fc" id="L49">        backhome.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L52">                startActivity(new Intent(BudgetingViewActivity.this, BudgetingActivity.class));</span>
+<span class="fc" id="L53">            }</span>
+        });
+<span class="fc" id="L55">    }</span>
+
+    private void GetRequest() {
+<span class="fc" id="L58">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/check/&quot; + MainActivity.selectedMemberId;</span>
+
+<span class="fc" id="L60">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                if (response.has(&quot;Personal&quot;)) {</span>
+<span class="fc" id="L63">                    P = response.getDouble(&quot;Personal&quot;);</span>
+<span class="fc" id="L64">                    Pin.setText(Double.toString(P));</span>
+                }
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                if (response.has(&quot;Work&quot;)) {</span>
+<span class="fc" id="L67">                    W = response.getDouble(&quot;Work&quot;);</span>
+<span class="fc" id="L68">                    Win.setText(Double.toString(W));</span>
+                }
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                if (response.has(&quot;Home&quot;)) {</span>
+<span class="fc" id="L71">                    H = response.getDouble(&quot;Home&quot;);</span>
+<span class="fc" id="L72">                    Hin.setText(Double.toString(H));</span>
+                }
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                if (response.has(&quot;Other&quot;)) {</span>
+<span class="fc" id="L75">                    O = response.getDouble(&quot;Other&quot;);</span>
+<span class="fc" id="L76">                    Oin.setText(Double.toString(O));</span>
+                }
+<span class="nc" id="L78">            } catch (JSONException e) {</span>
+<span class="nc" id="L79">                throw new RuntimeException(e);</span>
+<span class="fc" id="L80">            }</span>
+<span class="fc" id="L81">        }, error -&gt; {</span>
+<span class="nc" id="L82">            Toast.makeText(BudgetingViewActivity.this, &quot;Failed: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L83">            error.printStackTrace(); // Print error details for debugging</span>
+<span class="nc" id="L84">        });</span>
+
+<span class="fc" id="L86">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L87">    }</span>
+    private void GetExpensesRequest() {
+<span class="fc" id="L89">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + MainActivity.selectedMemberId;</span>
+
+<span class="fc" id="L91">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                if (response.has(&quot;personal&quot;)) {</span>
+<span class="fc" id="L94">                    Personal = (int) Math.round(response.getDouble(&quot;personal&quot;));</span>
+                }
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                if (response.has(&quot;work&quot;)) {</span>
+<span class="fc" id="L97">                    Work = (int) Math.round(response.getDouble(&quot;work&quot;));</span>
+                }
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">                if (response.has(&quot;home&quot;)) {</span>
+<span class="fc" id="L100">                    Home = (int) Math.round(response.getDouble(&quot;home&quot;));</span>
+                }
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                if (response.has(&quot;other&quot;)) {</span>
+<span class="fc" id="L103">                    Other = (int) Math.round(response.getDouble(&quot;other&quot;));</span>
+                }
+
+                // After expenses are fetched, fetch budgets
+<span class="fc" id="L107">                GetBudgetsRequest();</span>
+
+<span class="nc" id="L109">            } catch (JSONException e) {</span>
+<span class="nc" id="L110">                e.printStackTrace();</span>
+<span class="nc" id="L111">                Toast.makeText(BudgetingViewActivity.this, &quot;Failed to parse expenses data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L112">            }</span>
+<span class="fc" id="L113">        }, error -&gt; {</span>
+<span class="nc" id="L114">            error.printStackTrace();</span>
+<span class="nc" id="L115">            Toast.makeText(BudgetingViewActivity.this, &quot;Failed to fetch expenses data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L116">        });</span>
+
+<span class="fc" id="L118">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L119">    }</span>
+
+    private void GetBudgetsRequest() {
+<span class="fc" id="L122">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot; + MainActivity.selectedMemberId;</span>
+
+<span class="fc" id="L124">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="fc" id="L126">                PBud = response.getDouble(&quot;personalLimit&quot;);</span>
+<span class="fc" id="L127">                WBud = response.getDouble(&quot;workLimit&quot;);</span>
+<span class="fc" id="L128">                HBud = response.getDouble(&quot;homeLimit&quot;);</span>
+<span class="fc" id="L129">                OBud = response.getDouble(&quot;otherLimit&quot;);</span>
+
+                // After budgets are fetched, set progress
+<span class="fc" id="L132">                setProgress();</span>
+
+<span class="nc" id="L134">            } catch (JSONException e) {</span>
+<span class="nc" id="L135">                e.printStackTrace();</span>
+<span class="nc" id="L136">                Toast.makeText(BudgetingViewActivity.this, &quot;Failed to parse budgets data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L137">            }</span>
+<span class="fc" id="L138">        }, error -&gt; {</span>
+<span class="nc" id="L139">            error.printStackTrace();</span>
+<span class="nc" id="L140">            Toast.makeText(BudgetingViewActivity.this, &quot;Failed to fetch budgets data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L141">        });</span>
+
+<span class="fc" id="L143">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L144">    }</span>
+
+    private void setProgress() {
+        // Calculate percentages
+<span class="fc" id="L148">        double pPercentage = (double) Personal / PBud * 100;</span>
+<span class="fc" id="L149">        double wPercentage = (double) Work / WBud * 100;</span>
+<span class="fc" id="L150">        double hPercentage = (double) Home / HBud * 100;</span>
+<span class="fc" id="L151">        double oPercentage = (double) Other / OBud * 100;</span>
+
+        // Set progress
+<span class="fc" id="L154">        pProgress.setProgress((int) pPercentage);</span>
+<span class="fc" id="L155">        wProgress.setProgress((int) wPercentage);</span>
+<span class="fc" id="L156">        hProgress.setProgress((int) hPercentage);</span>
+<span class="fc" id="L157">        oProgress.setProgress((int) oPercentage);</span>
+<span class="fc" id="L158">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

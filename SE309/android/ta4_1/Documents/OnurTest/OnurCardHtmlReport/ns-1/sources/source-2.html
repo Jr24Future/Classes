@@ -1,0 +1,369 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CardController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Cards</a>
+</div>
+
+<h1>Coverage Summary for Class: CardController (ta4_1.MoneyFlow_Backend.Cards)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CardController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75.7%
+  </span>
+  <span class="absValue">
+    (78/103)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Cards;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import ta4_1.MoneyFlow_Backend.Family.Family;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.User;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.UserRepository;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for Cards
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;@RestController
+<b class="fc">&nbsp;public class CardController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CardRepository cardRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all cards for all users.
+&nbsp;     *
+&nbsp;     * @return A list of lists containing cards for each user.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/cards&quot;)
+&nbsp;    public List&lt;List&lt;Card&gt;&gt; getAllCards() {
+<b class="fc">&nbsp;        List&lt;User&gt; users = userRepository.findAll();</b>
+<b class="fc">&nbsp;        List&lt;List&lt;Card&gt;&gt; allCards = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (User u : users) {</b>
+<b class="fc">&nbsp;            allCards.add(u.getCards());</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return allCards;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all cards for a specific user.
+&nbsp;     *
+&nbsp;     * @param id The UUID of the user.
+&nbsp;     * @return A list of cards for the specified user.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/cards/userId/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Card&gt;&gt; getAllCardsOfUser(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;                return ResponseEntity.ok(user.getCards());</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all cards for a specific user&#39;s family.
+&nbsp;     *
+&nbsp;     * @param id The UUID of the user.
+&nbsp;     * @return A list of cards for the specified user&#39;s family.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/cards/userId/{id}/family&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Card&gt;&gt; getAllCardsOfUserFamily(@PathVariable UUID id) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    List&lt;Card&gt; familyCards = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;                    Family family = user.getFamily();</b>
+&nbsp;
+<b class="fc">&nbsp;                    for (User u : family.getUsers()) {</b>
+<b class="fc">&nbsp;                        for (Card c : u.getCards()) {</b>
+<b class="fc">&nbsp;                            familyCards.add(c);</b>
+<b class="fc">&nbsp;                        }</b>
+<b class="fc">&nbsp;                    }</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(familyCards);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a specific card of a user.
+&nbsp;     *
+&nbsp;     * @param userId The UUID of the user.
+&nbsp;     * @param cardId The UUID of the card.
+&nbsp;     * @return The card with the specified ID.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/cards/id/{userId}/{cardId}&quot;)
+&nbsp;    public ResponseEntity&lt;Card&gt; getCard(@PathVariable UUID userId, @PathVariable UUID cardId) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; userOptional = userRepository.findById(userId);</b>
+<b class="fc">&nbsp;        if (!userOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user = userOptional.get();</b>
+<b class="fc">&nbsp;        List&lt;Card&gt; userCards = user.getCards();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Card c : userCards) {</b>
+<b class="fc">&nbsp;            if (c.getId().equals(cardId)) {</b>
+<b class="fc">&nbsp;                return ResponseEntity.ok(c);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.notFound().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the default card of a specific user.
+&nbsp;     *
+&nbsp;     * @param id The UUID of the user.
+&nbsp;     * @return The card with the specified ID.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/cards/userId/{id}/default&quot;)
+&nbsp;    public ResponseEntity&lt;Card&gt; getDefaultCard(@PathVariable UUID id) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; userOptional = userRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!userOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user = userOptional.get();</b>
+<b class="fc">&nbsp;        List&lt;Card&gt; userCards = user.getCards();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Card c : userCards) {</b>
+<b class="fc">&nbsp;            if (c.getIsDefault()) {</b>
+<b class="fc">&nbsp;                return ResponseEntity.ok(c);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.notFound().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new card for a user.
+&nbsp;     *
+&nbsp;     * @param id   The UUID of the user.
+&nbsp;     * @param card The card to be created.
+&nbsp;     * @return The UUID of the newly created card.
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/cards/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createCard(@PathVariable UUID id, @RequestBody Card card) {
+<b class="fc">&nbsp;        return userRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    card.setUser(user);</b>
+<b class="fc">&nbsp;                    cardRepository.save(card);</b>
+<b class="fc">&nbsp;                    user.addCard(card);</b>
+<b class="fc">&nbsp;                    userRepository.save(user);</b>
+&nbsp;                    // Wrap the UUID in a JSON object
+<b class="fc">&nbsp;                    return ResponseEntity.ok(Map.of(&quot;id&quot;, card.getId()));</b>
+&nbsp;
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a new default card for a user.
+&nbsp;     *
+&nbsp;     * @param userId The UUID of the user.
+&nbsp;     * @param cardId The UUID of the card.
+&nbsp;     * @return The new default card.
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/cards/id/{userId}/{cardId}/setDefault&quot;)
+&nbsp;    public ResponseEntity&lt;Card&gt; setDefaultCard(@PathVariable UUID userId, @PathVariable UUID cardId) {
+<b class="nc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    List&lt;Card&gt; userCards = user.getCards();</b>
+<b class="nc">&nbsp;                    Card card = null;</b>
+&nbsp;
+<b class="nc">&nbsp;                    for (Card c : userCards) {</b>
+<b class="nc">&nbsp;                        if (c.getId().equals(cardId)) {</b>
+<b class="nc">&nbsp;                            c.setIsDefault(true);</b>
+<b class="nc">&nbsp;                            card = c;</b>
+<b class="nc">&nbsp;                            cardRepository.save(c);</b>
+<b class="nc">&nbsp;                        } else if (c.getIsDefault() == true) {</b>
+<b class="nc">&nbsp;                            c.setIsDefault(false);</b>
+<b class="nc">&nbsp;                            cardRepository.save(c);</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                    }</b>
+&nbsp;
+<b class="nc">&nbsp;                    return ResponseEntity.ok(card);</b>
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates a card of a user.
+&nbsp;     *
+&nbsp;     * @param userId The UUID of the user.
+&nbsp;     * @param cardId The UUID of the card.
+&nbsp;     * @return The updated card.
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/cards/id/{userId}/{cardId}&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;?&gt; updateCard(@PathVariable UUID userId, @PathVariable UUID cardId, @RequestBody Card card) {
+<b class="fc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    Card updatedCard = null;</b>
+<b class="fc">&nbsp;                    for (Card c : user.getCards()) {</b>
+<b class="fc">&nbsp;                        if (c.getId().equals(cardId)) {</b>
+<b class="fc">&nbsp;                            updatedCard = c;</b>
+<b class="fc">&nbsp;                            break;</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                    }</b>
+<b class="fc">&nbsp;                    if (updatedCard == null) {</b>
+<b class="nc">&nbsp;                        return ResponseEntity.notFound().build();</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (!card.getCardNumber().equals(null)) {</b>
+<b class="fc">&nbsp;                        updatedCard.setCardNumber(card.getCardNumber());</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (!card.getExpirationDate().equals(null)) {</b>
+<b class="fc">&nbsp;                        updatedCard.setExpirationDate(card.getExpirationDate());</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (!card.getName().equals(null)) {</b>
+<b class="fc">&nbsp;                        updatedCard.setName(card.getName());</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (!card.getCvv().equals(null)) {</b>
+<b class="fc">&nbsp;                        updatedCard.setCvv(card.getCvv());</b>
+&nbsp;                    }
+&nbsp;
+<b class="fc">&nbsp;                    cardRepository.save(updatedCard);</b>
+<b class="fc">&nbsp;                    return ResponseEntity.ok(updatedCard);</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a card by its unique ID.
+&nbsp;     *
+&nbsp;     * @param userId The UUID of the user.
+&nbsp;     * @param cardId The UUID of the card.
+&nbsp;     * @return success message
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/cards/id/{userId}/{cardId}&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;?&gt; deleteCard(@PathVariable UUID userId, @PathVariable UUID cardId) {
+<b class="fc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="fc">&nbsp;                .map(user -&gt; {</b>
+<b class="fc">&nbsp;                    Card deletedCard = null;</b>
+<b class="fc">&nbsp;                    boolean isCardDeleted = false;</b>
+<b class="fc">&nbsp;                    for (Card c : user.getCards()) {</b>
+<b class="fc">&nbsp;                        if (c.getId().equals(cardId)) {</b>
+<b class="fc">&nbsp;                            deletedCard = c;</b>
+<b class="fc">&nbsp;                            isCardDeleted = true;</b>
+<b class="fc">&nbsp;                            break;</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                    }</b>
+<b class="fc">&nbsp;                    if (isCardDeleted) {</b>
+<b class="fc">&nbsp;                        user.getCards().remove(deletedCard);</b>
+<b class="fc">&nbsp;                        if ((deletedCard.getIsDefault()) &amp;&amp; (!user.getCards().isEmpty())) {</b>
+<b class="nc">&nbsp;                            user.getCards().iterator().next().setIsDefault(true);</b>
+&nbsp;                        }
+<b class="fc">&nbsp;                        return ResponseEntity.ok(&quot;Card deleted successfully&quot;);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        return ResponseEntity.notFound().build();</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="fc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:49</div>
+</div>
+</body>
+</html>

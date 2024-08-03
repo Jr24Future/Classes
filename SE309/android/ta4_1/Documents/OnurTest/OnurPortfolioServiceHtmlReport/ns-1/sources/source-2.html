@@ -1,0 +1,334 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PortfolioController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Portfolio</a>
+</div>
+
+<h1>Coverage Summary for Class: PortfolioController (ta4_1.MoneyFlow_Backend.Portfolio)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PortfolioController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/82)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Portfolio;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.User;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.UserRepository;
+&nbsp;
+&nbsp;import javax.sound.sampled.Port;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for managing portfolios.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/portfolio&quot;)
+<b class="nc">&nbsp;public class PortfolioController {</b>
+&nbsp;    @Autowired
+&nbsp;    private PortfolioRepository portfolioRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PortfolioService portfolioService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a portfolio value of a user.
+&nbsp;     *
+&nbsp;     * @param id The ID of the user.
+&nbsp;     * @return ResponseEntity with the found portfolio&#39;s value.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}/value&quot;)
+&nbsp;    public ResponseEntity&lt;Double&gt; getPortfolioValue(@PathVariable UUID id) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; ResponseEntity.ok(user.getPortfolio().getPortfolioValue()))</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a portfolio of a user.
+&nbsp;     *
+&nbsp;     * @param id The ID of the user.
+&nbsp;     * @return ResponseEntity with the found portfolio.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Portfolio&gt; getPortfolioOfUser(@PathVariable UUID id) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; ResponseEntity.ok(user.getPortfolio()))</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all portfolios.
+&nbsp;     *
+&nbsp;     * @return List of all portfolios.
+&nbsp;     */
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;Portfolio&gt; getAllPortfolios() {
+<b class="nc">&nbsp;        return portfolioRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a portfolio for a user.
+&nbsp;     *
+&nbsp;     * @param userId    The ID of the user.
+&nbsp;     * @param portfolio The portfolio object to be created.
+&nbsp;     * @return ResponseEntity with the created portfolio.
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createPortfolio(@PathVariable UUID userId, @RequestBody Portfolio portfolio) {
+<b class="nc">&nbsp;        Optional&lt;User&gt; userOptional = userRepository.findById(userId);</b>
+<b class="nc">&nbsp;        if (!userOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        User user = userOptional.get();</b>
+<b class="nc">&nbsp;        portfolio.setUser(user);</b>
+<b class="nc">&nbsp;        Portfolio savedPortfolio = portfolioRepository.save(portfolio);</b>
+<b class="nc">&nbsp;        user.setPortfolio(savedPortfolio);</b>
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(Map.of(&quot;portfolioId&quot;, portfolio.getId()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the detailed portfolio values of a user.
+&nbsp;     *
+&nbsp;     * @param id The ID of the user.
+&nbsp;     * @return ResponseEntity containing the portfolio values.
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{id}/detailedValues&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getDetailedPortfolioValues(@PathVariable UUID id) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    Portfolio portfolio = user.getPortfolio();</b>
+<b class="nc">&nbsp;                    if (portfolio != null) {</b>
+<b class="nc">&nbsp;                        Map&lt;String, Double&gt; values = portfolioService.mapPortfolioValues(portfolio);</b>
+<b class="nc">&nbsp;                        return ResponseEntity.ok(values);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        return ResponseEntity.notFound().build();</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Purchases a stock for a user.
+&nbsp;     *
+&nbsp;     * @param id               The ID of the user who purchases the stock.
+&nbsp;     * @param updatedPortfolio The updated portfolio object.
+&nbsp;     * @return ResponseEntity with the updated portfolio.
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/{id}/buy&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;Portfolio&gt; buyShares(@PathVariable UUID id, @RequestBody Portfolio updatedPortfolio) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    Portfolio currentPortfolio = user.getPortfolio();</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getApplePrice() != 0.0) { currentPortfolio.setApplePrice(updatedPortfolio.getApplePrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getAmazonPrice() != 0.0) { currentPortfolio.setAmazonPrice(updatedPortfolio.getAmazonPrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getBitcoinPrice() != 0.0) { currentPortfolio.setBitcoinPrice(updatedPortfolio.getBitcoinPrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getDogecoinPrice() != 0.0) { currentPortfolio.setDogecoinPrice(updatedPortfolio.getDogecoinPrice()); }</b>
+<b class="nc">&nbsp;                    currentPortfolio.setAppleShares(currentPortfolio.getAppleShares() + updatedPortfolio.getAppleShares());</b>
+<b class="nc">&nbsp;                    currentPortfolio.setAmazonShares(currentPortfolio.getAmazonShares() + updatedPortfolio.getAmazonShares());</b>
+<b class="nc">&nbsp;                    currentPortfolio.setBitcoin(currentPortfolio.getBitcoin() + updatedPortfolio.getBitcoin());</b>
+<b class="nc">&nbsp;                    currentPortfolio.setDogecoin(currentPortfolio.getDogecoin() + updatedPortfolio.getDogecoin());</b>
+<b class="nc">&nbsp;                    currentPortfolio.setPortfolioValue(portfolioService.updatePortfolioValue(currentPortfolio));</b>
+&nbsp;
+<b class="nc">&nbsp;                    portfolioRepository.save(currentPortfolio);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.ok(currentPortfolio);</b>
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sells a stock for a user.
+&nbsp;     *
+&nbsp;     * @param id               The ID of the user who sells the stock.
+&nbsp;     * @param updatedPortfolio The updated portfolio object.
+&nbsp;     * @return ResponseEntity with the updated portfolio.
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/{id}/sell&quot;)
+&nbsp;    @Transactional
+&nbsp;    public ResponseEntity&lt;Portfolio&gt; sellShares(@PathVariable UUID id, @RequestBody Portfolio updatedPortfolio) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    Portfolio currentPortfolio = user.getPortfolio();</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getApplePrice() != 0.0) { currentPortfolio.setApplePrice(updatedPortfolio.getApplePrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getAmazonPrice() != 0.0) { currentPortfolio.setAmazonPrice(updatedPortfolio.getAmazonPrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getBitcoinPrice() != 0.0) { currentPortfolio.setBitcoinPrice(updatedPortfolio.getBitcoinPrice()); }</b>
+<b class="nc">&nbsp;                    if (updatedPortfolio.getDogecoinPrice() != 0.0) { currentPortfolio.setDogecoinPrice(updatedPortfolio.getDogecoinPrice()); }</b>
+<b class="nc">&nbsp;                    currentPortfolio.setAppleShares(Math.max(currentPortfolio.getAppleShares() - updatedPortfolio.getAppleShares(), 0));</b>
+<b class="nc">&nbsp;                    currentPortfolio.setAmazonShares(Math.max(currentPortfolio.getAmazonShares() - updatedPortfolio.getAmazonShares(), 0));</b>
+<b class="nc">&nbsp;                    currentPortfolio.setBitcoin(Math.max(currentPortfolio.getBitcoin() - updatedPortfolio.getBitcoin(), 0));</b>
+<b class="nc">&nbsp;                    currentPortfolio.setDogecoin(Math.max(currentPortfolio.getDogecoin() - updatedPortfolio.getDogecoin(), 0));</b>
+<b class="nc">&nbsp;                    currentPortfolio.setPortfolioValue(portfolioService.updatePortfolioValue(currentPortfolio));</b>
+&nbsp;
+<b class="nc">&nbsp;                    portfolioRepository.save(currentPortfolio);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.ok(currentPortfolio);</b>
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates stock prices.
+&nbsp;     *
+&nbsp;     * @param id            The ID of the user.
+&nbsp;     * @param updatedPrices A map of the updated prices.
+&nbsp;     * @return ResponseEntity with the updated portfolio.
+&nbsp;     */
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Portfolio&gt; updateStockPrices(@PathVariable UUID id, @RequestBody Map&lt;String, Double&gt; updatedPrices) {
+<b class="nc">&nbsp;        return userRepository.findById(id)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    Portfolio currentPortfolio = user.getPortfolio();</b>
+<b class="nc">&nbsp;                    updatedPrices.forEach((key, value) -&gt; {</b>
+<b class="nc">&nbsp;                        switch (key) {</b>
+&nbsp;                            case &quot;applePrice&quot;:
+<b class="nc">&nbsp;                                currentPortfolio.setApplePrice(value);</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;                            case &quot;amazonPrice&quot;:
+<b class="nc">&nbsp;                                currentPortfolio.setAmazonPrice(value);</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;                            case &quot;bitcoinPrice&quot;:
+<b class="nc">&nbsp;                                currentPortfolio.setBitcoinPrice(value);</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;                            case &quot;dogecoinPrice&quot;:
+<b class="nc">&nbsp;                                currentPortfolio.setDogecoinPrice(value);</b>
+<b class="nc">&nbsp;                                break;</b>
+&nbsp;                            default:
+&nbsp;                                break;
+&nbsp;                        }
+&nbsp;                    });
+<b class="nc">&nbsp;                    currentPortfolio.setPortfolioValue(portfolioService.updatePortfolioValue(currentPortfolio));</b>
+<b class="nc">&nbsp;                    portfolioRepository.save(currentPortfolio);</b>
+<b class="nc">&nbsp;                    return ResponseEntity.ok(currentPortfolio);</b>
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete portfolio by user ID.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user whose portfolio is to be deleted.
+&nbsp;     * @return ResponseEntity indicating the result of the deletion.
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deletePortfolio(@PathVariable UUID userId) {
+<b class="nc">&nbsp;        return userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .map(user -&gt; {</b>
+<b class="nc">&nbsp;                    Portfolio portfolio = user.getPortfolio();</b>
+<b class="nc">&nbsp;                    if (portfolio != null) {</b>
+<b class="nc">&nbsp;                        portfolioRepository.delete(portfolio);</b>
+<b class="nc">&nbsp;                        user.setPortfolio(null);</b>
+<b class="nc">&nbsp;                        userRepository.save(user);</b>
+<b class="nc">&nbsp;                        return ResponseEntity.ok().&lt;Void&gt;build();</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        return ResponseEntity.notFound().build();</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .orElseGet(() -&gt; ResponseEntity.notFound().build());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:52</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GoalListActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">GoalListActivity.java</span></div><h1>GoalListActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L31">public class GoalListActivity extends AppCompatActivity {</span>
+
+<span class="fc" id="L33">    private ArrayList&lt;String&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L34">    private ArrayList&lt;String&gt; goalID = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L35">    private ArrayList&lt;String&gt; goalStrings = new ArrayList&lt;&gt;(); // Added for passing goalString to adapter</span>
+
+<span class="fc" id="L37">    private ArrayList&lt;Double&gt; finalamts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">    private ArrayList&lt;Double&gt; amts = new ArrayList&lt;&gt;();</span>
+    private CustomArrayAdapter itemsAdapter; // Changed to CustomArrayAdapter
+    private RecyclerView recyclerView;
+    private Button button, rtn_home, clr_a;
+
+
+    private double GoalAmount;
+    public String goalString;
+<span class="fc" id="L46">    private String URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/goals/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L47">    private final String DelAllURL = &quot;http://coms-309-056.class.las.iastate.edu:8080/goals/deleteAll/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+    private AlertDialog.Builder builder;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L52">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L53">        setContentView(R.layout.activity_goalview);</span>
+<span class="fc" id="L54">        builder = new AlertDialog.Builder(this);</span>
+
+<span class="fc" id="L56">        recyclerView = findViewById(R.id.recyclerView);</span>
+<span class="fc" id="L57">        button = findViewById(R.id.addButton);</span>
+<span class="fc" id="L58">        rtn_home = findViewById(R.id.return_home);</span>
+<span class="fc" id="L59">        clr_a = findViewById(R.id.clr_all);</span>
+
+<span class="fc" id="L61">        itemsAdapter = new CustomArrayAdapter(this, items, goalID, goalStrings, finalamts, amts, LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;));</span>
+<span class="fc" id="L62">        recyclerView.setAdapter(itemsAdapter);</span>
+<span class="fc" id="L63">        recyclerView.setLayoutManager(new LinearLayoutManager(this));</span>
+
+<span class="fc" id="L65">        setUpRecyclerViewListener(); // Set up RecyclerView listener after initializing itemsAdapter</span>
+
+<span class="fc" id="L67">        GetRequest();</span>
+
+<span class="fc" id="L69">        button.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L72">                startActivity(new Intent(GoalListActivity.this, Goal_Add_Activity1.class));</span>
+<span class="fc" id="L73">            }</span>
+        });
+
+<span class="fc" id="L76">        clr_a.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L79">                deleteAllGoals();</span>
+<span class="fc" id="L80">            }</span>
+        });
+
+<span class="fc" id="L83">        rtn_home.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L86">                startActivity(new Intent(GoalListActivity.this, MainActivity.class));</span>
+<span class="fc" id="L87">            }</span>
+        });
+<span class="fc" id="L89">    }</span>
+
+    private void GetRequest() {
+<span class="fc" id="L92">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener&lt;JSONArray&gt;() {</span>
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                    for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="fc" id="L97">                        JSONObject jsonObject = response.getJSONObject(i);</span>
+<span class="fc" id="L98">                        goalString = jsonObject.getString(&quot;goalString&quot;);</span>
+<span class="fc" id="L99">                        GoalAmount = jsonObject.getDouble(&quot;amount&quot;);</span>
+<span class="fc" id="L100">                        String goalIDSTRING = jsonObject.getString(&quot;id&quot;);</span>
+<span class="fc" id="L101">                        Double amt = jsonObject.getDouble(&quot;totalAmount&quot;);</span>
+<span class="fc" id="L102">                        Double amt2 = jsonObject.getDouble(&quot;amount&quot;);</span>
+<span class="fc" id="L103">                        amts.add(amt2);</span>
+<span class="fc" id="L104">                        finalamts.add(amt);</span>
+<span class="fc" id="L105">                        items.add(goalString);</span>
+<span class="fc" id="L106">                        goalID.add(goalIDSTRING);</span>
+<span class="fc" id="L107">                        goalStrings.add(goalString); // Add goalString to the list</span>
+<span class="fc" id="L108">                        itemsAdapter.notifyDataSetChanged(); // Notify adapter after adding all items</span>
+                    }
+
+<span class="nc" id="L111">                } catch (JSONException e) {</span>
+<span class="nc" id="L112">                    e.printStackTrace();</span>
+<span class="fc" id="L113">                }</span>
+<span class="fc" id="L114">            }</span>
+<span class="fc" id="L115">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L118">                Toast.makeText(GoalListActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L119">            }</span>
+        });
+<span class="fc" id="L121">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L122">        requestQueue.add(jsonArrayRequest);</span>
+<span class="fc" id="L123">    }</span>
+
+
+
+
+
+    private void deleteAllGoals() {
+<span class="fc" id="L130">        StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, DelAllURL,</span>
+<span class="fc" id="L131">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle successful deletion
+<span class="fc" id="L135">                        items.clear(); // Clear items list directly</span>
+<span class="fc" id="L136">                        goalID.clear(); // Clear goalID list directly</span>
+<span class="fc" id="L137">                        goalStrings.clear(); // Clear goalStrings list directly</span>
+<span class="fc" id="L138">                        itemsAdapter.notifyDataSetChanged();</span>
+<span class="fc" id="L139">                        Toast.makeText(GoalListActivity.this, &quot;All Goals Removed!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L140">                    }</span>
+                },
+<span class="fc" id="L142">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error
+<span class="nc" id="L146">                        Toast.makeText(GoalListActivity.this, &quot;Error deleting goal: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L147">                    }</span>
+                });
+
+<span class="fc" id="L150">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L151">        requestQueue.add(deleteRequest);</span>
+<span class="fc" id="L152">    }</span>
+
+    private void deleteGoal(String goalId) {
+<span class="fc" id="L155">        String deleteURL = &quot;http://coms-309-056.class.las.iastate.edu:8080/goals/&quot; + goalId;</span>
+
+<span class="fc" id="L157">        StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteURL,</span>
+<span class="fc" id="L158">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle successful deletion
+<span class="fc" id="L162">                        itemsAdapter.notifyDataSetChanged();</span>
+<span class="fc" id="L163">                        Toast.makeText(GoalListActivity.this, &quot;Goal Removed!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L164">                    }</span>
+                },
+<span class="fc" id="L166">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error
+<span class="nc" id="L170">                        Toast.makeText(GoalListActivity.this, &quot;Error deleting goal: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L171">                    }</span>
+                });
+
+<span class="fc" id="L174">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L175">        requestQueue.add(deleteRequest);</span>
+<span class="fc" id="L176">    }</span>
+
+
+    private void setUpRecyclerViewListener() {
+<span class="fc" id="L180">        itemsAdapter.setOnItemLongClickListener(new CustomArrayAdapter.OnItemLongClickListener() {</span>
+            @Override
+            public void onItemLongClick(int position) {
+<span class="fc" id="L183">                Context context = getApplicationContext();</span>
+<span class="fc" id="L184">                String G_ID = goalID.get(position);</span>
+<span class="fc" id="L185">                builder.setTitle(&quot;Warning!&quot;).setMessage(&quot;Are you sure you would like to remove this goal?&quot;)</span>
+<span class="fc" id="L186">                        .setCancelable(true)</span>
+<span class="fc" id="L187">                        .setPositiveButton(&quot;Yes&quot;, new DialogInterface.OnClickListener() {</span>
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+<span class="fc" id="L190">                                items.remove(position);</span>
+<span class="fc" id="L191">                                goalID.remove(position); // Remove corresponding goalID as well</span>
+<span class="fc" id="L192">                                goalStrings.remove(position); // Remove corresponding goalString as well</span>
+<span class="fc" id="L193">                                deleteGoal(G_ID);</span>
+<span class="fc" id="L194">                                dialog.cancel();</span>
+<span class="fc" id="L195">                            }</span>
+                        })
+<span class="fc" id="L197">                        .setNegativeButton(&quot;No&quot;, new DialogInterface.OnClickListener() {</span>
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+<span class="nc" id="L200">                                dialog.cancel();</span>
+<span class="nc" id="L201">                            }</span>
+                        })
+<span class="fc" id="L203">                        .show();</span>
+<span class="fc" id="L204">            }</span>
+        });
+<span class="fc" id="L206">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstPageActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">FirstPageActivity.java</span></div><h1>FirstPageActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+<span class="fc" id="L26">public class FirstPageActivity extends AppCompatActivity {</span>
+
+    private Button loginButton;
+    private Button signupButton;
+    private Button guestButton;
+<span class="fc" id="L31">    private final String GuestURL = &quot;http://coms-309-056.class.las.iastate.edu:8080/login/type/guest&quot;;</span>
+    private String userType;
+    public static String ID;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L39">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L40">        setContentView(R.layout.activity_first_page);</span>
+
+<span class="fc" id="L42">        loginButton = findViewById(R.id.startup_login_btn);</span>
+<span class="fc" id="L43">        signupButton = findViewById(R.id.startup_signup_btn);</span>
+<span class="fc" id="L44">        guestButton = findViewById(R.id.startup_guest_btn);</span>
+
+<span class="fc" id="L46">        loginButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L49">                Intent intent = new Intent(FirstPageActivity.this, LoginActivity.class);</span>
+<span class="fc" id="L50">                startActivity(intent);</span>
+<span class="fc" id="L51">            }</span>
+        });
+
+<span class="fc" id="L54">        signupButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L57">                Intent intent = new Intent(FirstPageActivity.this, SignupActivity.class);</span>
+<span class="fc" id="L58">                startActivity(intent);</span>
+<span class="fc" id="L59">            }</span>
+        });
+
+<span class="fc" id="L62">        guestButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L65">                sendPostRequest();</span>
+<span class="fc" id="L66">            }</span>
+        });
+
+<span class="fc" id="L69">    }</span>
+
+    private void sendPostRequest() {
+<span class="fc" id="L72">        StringRequest stringRequest = new StringRequest(Request.Method.POST, GuestURL,</span>
+                response -&gt; {
+<span class="pc bpc" id="L74" title="2 of 4 branches missed.">                    if (response != null &amp;&amp; !response.isEmpty()) {</span>
+<span class="fc" id="L75">                        LoginActivity.UUID = response;</span>
+<span class="fc" id="L76">                        ID = response;</span>
+<span class="fc" id="L77">                        GetUserTypeRequest();</span>
+                        // Send initial expenses after creating the guest user
+<span class="fc" id="L79">                        sendInitialExpenses(UUID.fromString(response.replace(&quot;\&quot;&quot;, &quot;&quot;)));</span>
+<span class="fc" id="L80">                        setInitialPortfolio(UUID.fromString(response.replace(&quot;\&quot;&quot;, &quot;&quot;)));</span>
+<span class="fc" id="L81">                        sendInitialBudget(UUID.fromString(response.replace(&quot;\&quot;&quot;, &quot;&quot;)));</span>
+                        // Redirect to MainActivity
+<span class="fc" id="L83">                        Intent intent = new Intent(FirstPageActivity.this, MainActivity.class);</span>
+<span class="fc" id="L84">                        startActivity(intent);</span>
+<span class="fc" id="L85">                    } else {</span>
+<span class="nc" id="L86">                        Toast.makeText(FirstPageActivity.this, &quot;UUID is null or empty&quot;, Toast.LENGTH_LONG).show();</span>
+                    }
+<span class="fc" id="L88">                },</span>
+<span class="nc" id="L89">                error -&gt; Toast.makeText(FirstPageActivity.this, &quot;Login Error: &quot; + error.toString(), Toast.LENGTH_LONG).show()</span>
+<span class="fc" id="L90">        ) {</span>
+            @Override
+            protected Map&lt;String, String&gt; getParams() {
+                // Since the endpoint does not require any parameters, we return an empty map.
+<span class="fc" id="L94">                return new HashMap&lt;&gt;();</span>
+            }
+        };
+
+<span class="fc" id="L98">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L99">    }</span>
+
+    private void sendInitialExpenses(UUID userId) {
+<span class="fc" id="L102">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + userId.toString();</span>
+<span class="fc" id="L103">        JSONObject postData = new JSONObject();</span>
+        try {
+<span class="fc" id="L105">            postData.put(&quot;personal&quot;, 0.0);</span>
+<span class="fc" id="L106">            postData.put(&quot;work&quot;, 0.0);</span>
+<span class="fc" id="L107">            postData.put(&quot;home&quot;, 0.0);</span>
+<span class="fc" id="L108">            postData.put(&quot;other&quot;, 0.0);</span>
+<span class="nc" id="L109">        } catch (JSONException e) {</span>
+<span class="nc" id="L110">            e.printStackTrace();</span>
+<span class="fc" id="L111">        }</span>
+
+<span class="fc" id="L113">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+<span class="fc" id="L114">                response -&gt; Log.d(&quot;InitialExpenses&quot;, &quot;Expenses added successfully&quot;),</span>
+<span class="pc" id="L115">                error -&gt; Log.e(&quot;InitialExpenses&quot;, &quot;Error adding expenses: &quot; + error.getMessage())) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L118">                return postData.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L123">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L124">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L125">                return headers;</span>
+            }
+        };
+
+        // Add the request to the RequestQueue.
+<span class="fc" id="L130">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L131">    }</span>
+
+    private void setInitialPortfolio(UUID userId) {
+<span class="fc" id="L134">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/portfolio/&quot; + userId.toString();</span>
+<span class="fc" id="L135">        JSONObject postData = new JSONObject();</span>
+        try {
+
+<span class="fc" id="L138">            postData.put(&quot;AAPLShares&quot;, 0.0);</span>
+<span class="fc" id="L139">            postData.put(&quot;AMZNShares&quot;, 0.0);</span>
+<span class="fc" id="L140">            postData.put(&quot;BTCUSDTShares&quot;, 0.0);</span>
+<span class="fc" id="L141">            postData.put(&quot;DOGEUSDTShares&quot;, 0.0);</span>
+<span class="fc" id="L142">            postData.put(&quot;AAPLPrice&quot;, 0.0);</span>
+<span class="fc" id="L143">            postData.put(&quot;AMZNPrice&quot;, 0.0);</span>
+<span class="fc" id="L144">            postData.put(&quot;BTCUSDTPrice&quot;, 0.0);</span>
+<span class="fc" id="L145">            postData.put(&quot;DOGEUSDTPrice&quot;, 0.0);</span>
+<span class="fc" id="L146">            postData.put(&quot;portfoliovalue&quot;, 0.0);</span>
+
+<span class="nc" id="L148">        } catch (JSONException e) {</span>
+<span class="nc" id="L149">            e.printStackTrace();</span>
+<span class="fc" id="L150">        }</span>
+
+<span class="fc" id="L152">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+                response -&gt; {
+<span class="fc" id="L154">                    Log.d(&quot;InitialExpenses&quot;, &quot;Portfolio set&quot;);</span>
+                    // Automatically log in the user after successful signup and initial expenses setup
+<span class="fc" id="L156">                },</span>
+<span class="pc" id="L157">                error -&gt; Log.e(&quot;InitialExpenses&quot;, &quot;Error: &quot; + error.getMessage())) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L160">                return postData.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L165">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L166">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L167">                return headers;</span>
+            }
+        };
+
+        // Add the request to the RequestQueue.
+<span class="fc" id="L172">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L173">    }</span>
+
+    private void sendInitialBudget(UUID userId) {
+<span class="fc" id="L176">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot; + userId.toString();</span>
+<span class="fc" id="L177">        JSONObject postData = new JSONObject();</span>
+        try {
+<span class="fc" id="L179">            postData.put(&quot;personalLimit&quot;, 1000.0); // Default budget for personal expenses</span>
+<span class="fc" id="L180">            postData.put(&quot;workLimit&quot;, 1000.0);     // Default budget for work-related expenses</span>
+<span class="fc" id="L181">            postData.put(&quot;homeLimit&quot;, 1000.0);     // Default budget for home expenses</span>
+<span class="fc" id="L182">            postData.put(&quot;otherLimit&quot;, 1000.0);    // Default budget for other expenses</span>
+<span class="nc" id="L183">        } catch (JSONException e) {</span>
+<span class="nc" id="L184">            e.printStackTrace();</span>
+<span class="fc" id="L185">        }</span>
+
+<span class="fc" id="L187">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+<span class="fc" id="L188">                response -&gt; Log.d(&quot;InitialBudget&quot;, &quot;Budget set successfully&quot;),</span>
+<span class="pc" id="L189">                error -&gt; Log.e(&quot;InitialBudget&quot;, &quot;Error setting initial budget: &quot; + error.getMessage())) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L192">                return postData.toString().getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L197">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L198">                headers.put(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;);</span>
+<span class="fc" id="L199">                return headers;</span>
+            }
+        };
+
+        // Add the request to the RequestQueue.
+<span class="fc" id="L204">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L205">    }</span>
+
+
+    private void GetUserTypeRequest() {
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if(ID != null) {</span>
+<span class="fc" id="L210">            final String type_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/userType/&quot; + ID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+
+<span class="fc" id="L212">            RequestQueue queue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L213">            StringRequest stringRequest = new StringRequest(</span>
+                    Request.Method.GET,
+                    type_URL,
+<span class="fc" id="L216">                    new Response.Listener&lt;String&gt;() {</span>
+                        @Override
+                        public void onResponse(String response) {
+<span class="fc" id="L219">                            Log.d(&quot;usertype&quot;, response);</span>
+<span class="fc" id="L220">                            MainActivity.userType = response;</span>
+
+<span class="fc" id="L222">                        }</span>
+                    },
+<span class="fc" id="L224">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle the error
+<span class="nc" id="L228">                            Toast.makeText(FirstPageActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L229">                        }</span>
+                    }
+            );
+<span class="fc" id="L232">            queue.add(stringRequest);</span>
+        }
+<span class="fc" id="L234">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

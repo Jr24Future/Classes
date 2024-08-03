@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendationActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">RecommendationActivity.java</span></div><h1>RecommendationActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="fc" id="L32">public class RecommendationActivity extends AppCompatActivity {</span>
+<span class="fc" id="L33">    private static final String M_I_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/monthlyIncome&quot;;</span>
+<span class="fc" id="L34">    private static final String A_I_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/annualIncome&quot;;</span>
+<span class="fc" id="L35">    private static final String BASE_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L36">    private static final String Save_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/recommendations/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+    private static final String URLEP = &quot;https://api.openai.com/v1/chat/completions&quot;;
+    private static final String APIKEY = &quot;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&quot;;
+    private TextView output;
+    private double PBud, HBud, WBud, OBud;
+    private Button save, Return, b, PrevRec;
+    public static double monIncome; // Monthly income
+    public static double annIncome; // Annual income
+
+<span class="fc" id="L45">    private ArrayList&lt;String&gt; goals = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L46">    private boolean goalFound = false; // Track if a goal is found</span>
+    private double P, H, W, O; // Expense categories
+    private String r; // Recommendation result string
+
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L51">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L52">        setContentView(R.layout.activity_recommendation);</span>
+
+<span class="fc" id="L54">        save = findViewById(R.id.save_b);</span>
+<span class="fc" id="L55">        Return = findViewById(R.id.return_b);</span>
+<span class="fc" id="L56">        output = findViewById(R.id.output);</span>
+<span class="fc" id="L57">        b = findViewById(R.id.start);</span>
+<span class="fc" id="L58">        PrevRec = findViewById(R.id.previous_rec);</span>
+
+<span class="fc" id="L60">        save.setVisibility(View.GONE);</span>
+
+<span class="fc" id="L62">        PrevRec.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L63">            Intent intent = new Intent(RecommendationActivity.this, PrevRecommendationActivity.class);</span>
+<span class="fc" id="L64">            startActivity(intent);</span>
+<span class="fc" id="L65">        });</span>
+
+<span class="fc" id="L67">        Return.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L68">            Intent intent = new Intent(RecommendationActivity.this, MainActivity.class);</span>
+<span class="fc" id="L69">            startActivity(intent);</span>
+<span class="fc" id="L70">        });</span>
+
+<span class="fc" id="L72">        save.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L73">            String recommendationtext = output.getText().toString();</span>
+<span class="fc" id="L74">            Log.d(&quot;recommend&quot;, recommendationtext);</span>
+<span class="fc" id="L75">            sendPostRequest(recommendationtext);</span>
+<span class="fc" id="L76">        });</span>
+
+<span class="fc" id="L78">        b.setOnClickListener(v -&gt; fetchAllData());</span>
+<span class="fc" id="L79">    }</span>
+
+    private void fetchAllData() {
+<span class="fc" id="L82">        GetMonIncomeRequest(() -&gt;</span>
+<span class="fc" id="L83">                GetAnnIncomeRequest(() -&gt;</span>
+<span class="fc" id="L84">                        GetRequest(() -&gt;</span>
+<span class="fc" id="L85">                                GetBudgetsRequest(() -&gt;</span>
+<span class="fc" id="L86">                                        FindGoals(() -&gt; {</span>
+<span class="fc" id="L87">                                            String prompt = constructPrompt();</span>
+<span class="fc" id="L88">                                            Recommend(prompt);</span>
+<span class="fc" id="L89">                                        })</span>
+                                )
+                        )
+                )
+        );
+<span class="fc" id="L94">    }</span>
+
+
+    private String constructPrompt() {
+<span class="fc" id="L98">        StringBuilder prompt = new StringBuilder(&quot;These are my expense amounts per month for the categories listed:\n&quot; +</span>
+                &quot;\n&quot; +
+                &quot;Personal - &quot; + P + &quot;\n&quot; +
+                &quot;Work - &quot; + W + &quot;\n&quot; +
+                &quot;Home - &quot; + H + &quot;\n&quot; +
+                &quot;Other - &quot; + O + &quot;\n&quot; +
+                &quot;\n&quot; +
+                &quot;This is my estimated annual income: &quot; + annIncome + &quot;\n&quot; +
+                &quot;This is how much money I made this month: &quot; + monIncome + &quot;\n&quot;);
+
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (goalFound) {</span>
+<span class="fc" id="L109">            prompt.append(&quot;\nThese are my financial goals:\n&quot;).append(ListAllGoals());</span>
+        }
+
+<span class="fc" id="L112">        prompt.append(&quot;\nThese are my Budgeting Values: If my values are 0, don't involve them in the response you will make soon.\n&quot;)</span>
+<span class="fc" id="L113">                .append(&quot;personalBudget: &quot;).append(PBud).append(&quot;\n&quot;)</span>
+<span class="fc" id="L114">                .append(&quot;workBudget: &quot;).append(WBud).append(&quot;\n&quot;)</span>
+<span class="fc" id="L115">                .append(&quot;otherBudget: &quot;).append(OBud).append(&quot;\n&quot;)</span>
+<span class="fc" id="L116">                .append(&quot;homeBudget: &quot;).append(HBud).append(&quot;\n&quot;);</span>
+
+<span class="fc" id="L118">        prompt.append(&quot;\nWhat will be your recommendation on how much I should be spending with the amount I make monthly for the specific categories that I provided. Make sure to list my categories.\n&quot;)</span>
+<span class="fc" id="L119">                .append(&quot;\nCan you answer this question exactly with this template in a short paragraph:\n&quot;)</span>
+<span class="fc" id="L120">                .append(&quot;\nWelcome back user, Here is a recommendation I can provide you with:\n&quot;)</span>
+<span class="fc" id="L121">                .append(&quot;\n{Insert Recommendation Here}\n&quot;)</span>
+<span class="fc" id="L122">                .append(&quot;\nI hope this will help you with your future spendings. If you have any trouble, reach out to our Support Team&quot;);</span>
+<span class="fc" id="L123">        Log.e(&quot;Necati&quot;, String.valueOf(prompt));</span>
+<span class="fc" id="L124">        return prompt.toString();</span>
+    }
+
+    private String ListAllGoals() {
+<span class="fc" id="L128">        StringBuilder values = new StringBuilder();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for (String goal : goals) {</span>
+<span class="fc" id="L130">            values.append(goal).append(&quot;\n&quot;);</span>
+<span class="fc" id="L131">        }</span>
+<span class="fc" id="L132">        return values.toString();</span>
+    }
+
+    public void Recommend(String prompt) {
+        try {
+<span class="fc" id="L137">            JSONObject jsonObjectMessage = new JSONObject();</span>
+<span class="fc" id="L138">            jsonObjectMessage.put(&quot;role&quot;, &quot;user&quot;);</span>
+<span class="fc" id="L139">            jsonObjectMessage.put(&quot;content&quot;, prompt);</span>
+
+<span class="fc" id="L141">            JSONArray jsonArray = new JSONArray();</span>
+<span class="fc" id="L142">            jsonArray.put(jsonObjectMessage);</span>
+
+<span class="fc" id="L144">            JSONObject jsonObject = new JSONObject();</span>
+<span class="fc" id="L145">            jsonObject.put(&quot;model&quot;, &quot;gpt-3.5-turbo&quot;);</span>
+<span class="fc" id="L146">            jsonObject.put(&quot;messages&quot;, jsonArray);</span>
+
+<span class="fc" id="L148">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URLEP, jsonObject, response -&gt; {</span>
+                try {
+<span class="fc" id="L150">                    r = response.getJSONArray(&quot;choices&quot;)</span>
+<span class="fc" id="L151">                            .getJSONObject(0)</span>
+<span class="fc" id="L152">                            .getJSONObject(&quot;message&quot;)</span>
+<span class="fc" id="L153">                            .getString(&quot;content&quot;);</span>
+<span class="fc" id="L154">                    output.setText(r);</span>
+<span class="fc" id="L155">                    save.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L156">                } catch (JSONException e) {</span>
+<span class="nc" id="L157">                    Log.e(&quot;ChatGPT Error&quot;, &quot;JSON Exception&quot;, e);</span>
+<span class="nc" id="L158">                    Toast.makeText(RecommendationActivity.this, &quot;JSON Error: &quot; + e.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L159">                }</span>
+<span class="fc" id="L160">            }, error -&gt; {</span>
+<span class="nc" id="L161">                String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L162">                Log.e(&quot;ChatGPT Error&quot;, &quot;Error response: &quot; + responseBody);</span>
+<span class="nc" id="L163">                Toast.makeText(RecommendationActivity.this, &quot;Invalid: &quot; + responseBody, Toast.LENGTH_LONG).show();</span>
+<span class="pc" id="L164">            }) {</span>
+                @Override
+                public Map&lt;String, String&gt; getHeaders() throws AuthFailureError {
+<span class="fc" id="L167">                    Map&lt;String, String&gt; mapHeader = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L168">                    mapHeader.put(&quot;Authorization&quot;, &quot;Bearer &quot; + APIKEY);</span>
+<span class="fc" id="L169">                    mapHeader.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L170">                    return mapHeader;</span>
+                }
+            };
+
+<span class="fc" id="L174">            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));</span>
+<span class="fc" id="L175">            Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);</span>
+<span class="nc" id="L176">        } catch (JSONException e) {</span>
+<span class="nc" id="L177">            Log.e(&quot;ChatGPT Error&quot;, &quot;JSON Exception&quot;, e);</span>
+<span class="nc" id="L178">            Toast.makeText(RecommendationActivity.this, &quot;JSON Error: &quot; + e.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L179">        }</span>
+<span class="fc" id="L180">    }</span>
+
+    private void GetRequest(final Runnable onSuccess) {
+<span class="fc" id="L183">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, BASE_URL, null, response -&gt; {</span>
+            try {
+<span class="fc" id="L185">                P = response.getDouble(&quot;personal&quot;);</span>
+<span class="fc" id="L186">                W = response.getDouble(&quot;work&quot;);</span>
+<span class="fc" id="L187">                O = response.getDouble(&quot;other&quot;);</span>
+<span class="fc" id="L188">                H = response.getDouble(&quot;home&quot;);</span>
+<span class="fc" id="L189">                Log.d(&quot;Personal&quot;, String.valueOf(P));</span>
+<span class="fc" id="L190">                Log.d(&quot;Work&quot;, String.valueOf(W));</span>
+<span class="fc" id="L191">                Log.d(&quot;Other&quot;, String.valueOf(O));</span>
+<span class="fc" id="L192">                Log.d(&quot;Home&quot;, String.valueOf(H));</span>
+<span class="fc" id="L193">                onSuccess.run();</span>
+<span class="nc" id="L194">            } catch (JSONException e) {</span>
+<span class="nc" id="L195">                throw new RuntimeException(e);</span>
+<span class="fc" id="L196">            }</span>
+<span class="pc" id="L197">        }, error -&gt; Toast.makeText(RecommendationActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show());</span>
+
+<span class="fc" id="L199">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L200">        requestQueue.add(jsonObjectRequest);</span>
+<span class="fc" id="L201">    }</span>
+
+    private void GetAnnIncomeRequest(final Runnable onSuccess) {
+<span class="fc" id="L204">        RequestQueue queue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L205">        StringRequest stringRequest = new StringRequest(</span>
+                Request.Method.GET,
+                A_I_URL,
+                response -&gt; {
+<span class="fc" id="L209">                    annIncome = Double.parseDouble(response);</span>
+<span class="fc" id="L210">                    onSuccess.run();</span>
+<span class="fc" id="L211">                },</span>
+<span class="nc" id="L212">                error -&gt; Toast.makeText(RecommendationActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show()</span>
+        );
+<span class="fc" id="L214">        queue.add(stringRequest);</span>
+<span class="fc" id="L215">    }</span>
+
+    private void GetMonIncomeRequest(final Runnable onSuccess) {
+<span class="fc" id="L218">        RequestQueue queue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L219">        StringRequest stringRequest = new StringRequest(</span>
+                Request.Method.GET,
+                M_I_URL,
+                response -&gt; {
+<span class="fc" id="L223">                    monIncome = Double.parseDouble(response);</span>
+<span class="fc" id="L224">                    onSuccess.run();</span>
+<span class="fc" id="L225">                },</span>
+<span class="nc" id="L226">                error -&gt; Toast.makeText(RecommendationActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show()</span>
+        );
+<span class="fc" id="L228">        queue.add(stringRequest);</span>
+<span class="fc" id="L229">    }</span>
+
+    private void sendPostRequest(String recommendtext) {
+<span class="fc" id="L232">        StringRequest stringRequest = new StringRequest(Request.Method.POST, Save_URL,</span>
+<span class="fc" id="L233">                response -&gt; Toast.makeText(RecommendationActivity.this, &quot;Success&quot;, Toast.LENGTH_LONG).show(),</span>
+<span class="pc" id="L234">                error -&gt; Toast.makeText(RecommendationActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_LONG).show()) {</span>
+            @Override
+            public byte[] getBody() {
+<span class="fc" id="L237">                return recommendtext.getBytes();</span>
+            }
+
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="fc" id="L242">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L243">                headers.put(&quot;Content-Type&quot;, &quot;text/plain; charset=utf-8&quot;);</span>
+<span class="fc" id="L244">                return headers;</span>
+            }
+        };
+<span class="fc" id="L247">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L248">    }</span>
+
+    private void FindGoals(Runnable onSuccess) {
+<span class="fc" id="L251">        String URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/goals/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L252">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null, response -&gt; {</span>
+            try {
+<span class="fc bfc" id="L254" title="All 2 branches covered.">                for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="fc" id="L255">                    JSONObject jsonObject = response.getJSONObject(i);</span>
+<span class="fc" id="L256">                    String goalString = jsonObject.getString(&quot;goalString&quot;);</span>
+<span class="fc" id="L257">                    goals.add(goalString);</span>
+<span class="fc" id="L258">                    goalFound = true; // Set flag if any goals are found</span>
+                }
+<span class="fc" id="L260">                onSuccess.run();</span>
+<span class="nc" id="L261">            } catch (JSONException e) {</span>
+<span class="nc" id="L262">                e.printStackTrace();</span>
+<span class="fc" id="L263">            }</span>
+<span class="pc" id="L264">        }, error -&gt; Toast.makeText(RecommendationActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show());</span>
+
+<span class="fc" id="L266">        Volley.newRequestQueue(this).add(jsonArrayRequest);</span>
+<span class="fc" id="L267">    }</span>
+
+
+    private void GetBudgetsRequest(final Runnable onSuccess) {
+<span class="fc" id="L271">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+
+<span class="fc" id="L273">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="fc" id="L275">                PBud = response.getDouble(&quot;personalLimit&quot;);</span>
+<span class="fc" id="L276">                WBud = response.getDouble(&quot;workLimit&quot;);</span>
+<span class="fc" id="L277">                HBud = response.getDouble(&quot;homeLimit&quot;);</span>
+<span class="fc" id="L278">                OBud = response.getDouble(&quot;otherLimit&quot;);</span>
+<span class="fc" id="L279">                onSuccess.run();</span>
+<span class="nc" id="L280">            } catch (JSONException e) {</span>
+<span class="nc" id="L281">                e.printStackTrace();</span>
+<span class="nc" id="L282">                Toast.makeText(RecommendationActivity.this, &quot;Failed to parse budgets data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L283">            }</span>
+<span class="fc" id="L284">        }, error -&gt; {</span>
+<span class="nc" id="L285">            error.printStackTrace();</span>
+<span class="nc" id="L286">            Toast.makeText(RecommendationActivity.this, &quot;Failed to fetch budgets data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L287">        });</span>
+
+<span class="fc" id="L289">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L290">    }</span>
+
+    public void Recommend(View view) {
+<span class="nc" id="L293">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrevRecommendationActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">PrevRecommendationActivity.java</span></div><h1>PrevRecommendationActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L29">public class PrevRecommendationActivity extends AppCompatActivity {</span>
+
+<span class="fc" id="L31">    private String DATE_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/recommendations/userId/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/dates&quot;;</span>
+<span class="fc" id="L32">    private String REC_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/recommendations/userId/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/byDate&quot;;</span>
+<span class="fc" id="L33">    private ArrayList&lt;String&gt; DateArr = new ArrayList&lt;String&gt;();</span>
+    public String date;
+    public String Rec;
+
+    private TextView PrevView;
+    private Button previous;
+    private Button genprev;
+    public String selectedDate;
+
+    private Spinner datelist;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L46">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L47">        setContentView(R.layout.activity_prev_recommendation);</span>
+<span class="fc" id="L48">        datelist = findViewById(R.id.date_list);</span>
+<span class="fc" id="L49">        previous = findViewById(R.id.return_rec);</span>
+<span class="fc" id="L50">        genprev = findViewById(R.id.btn_view);</span>
+<span class="fc" id="L51">        PrevView = findViewById(R.id.prevoutput);</span>
+<span class="fc" id="L52">        GetRequest();</span>
+
+
+<span class="fc" id="L55">        previous.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L58">                Intent intent = new Intent(PrevRecommendationActivity.this, RecommendationActivity.class);</span>
+<span class="fc" id="L59">                startActivity(intent);</span>
+
+<span class="fc" id="L61">            }</span>
+        });
+
+<span class="fc" id="L64">        genprev.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L67">                Rec = &quot;&quot;;</span>
+<span class="fc" id="L68">                PrevView.setText(&quot;&quot;);</span>
+<span class="fc" id="L69">                sendRecRequest(date);</span>
+
+
+
+<span class="fc" id="L73">            }</span>
+        });
+
+
+
+
+<span class="fc" id="L79">    }</span>
+
+    private void populateSpinner() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+<span class="fc" id="L83">        ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;&gt;(this, android.R.layout.simple_spinner_item, DateArr);</span>
+
+        // Specify the layout to use when the list of choices appears
+<span class="fc" id="L86">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+
+        // Apply the adapter to the spinner
+<span class="fc" id="L89">        datelist.setAdapter(adapter);</span>
+
+        // Set item selection listener to handle selection events
+<span class="fc" id="L92">        datelist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+                // Handle the selected date here
+<span class="fc" id="L96">              selectedDate = DateArr.get(position);</span>
+<span class="fc" id="L97">                date = selectedDate;</span>
+                //Toast.makeText(PrevRecommendationActivity.this, &quot;Selected Date: &quot; + selectedDate, Toast.LENGTH_SHORT).show();
+<span class="fc" id="L99">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+                // Handle case where nothing is selected
+<span class="nc" id="L104">            }</span>
+        });
+<span class="fc" id="L106">    }</span>
+
+    private void GetRequest() {
+<span class="fc" id="L109">        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, DATE_URL, null, new Response.Listener&lt;JSONArray&gt;() {</span>
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                    for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="fc" id="L114">                        date = response.getString(i);</span>
+<span class="fc" id="L115">                        Log.d(&quot;DATE&quot;, date);</span>
+<span class="fc" id="L116">                        DateArr.add(date);</span>
+                    }
+
+
+<span class="fc" id="L120">                    populateSpinner();</span>
+<span class="nc" id="L121">                } catch (JSONException e) {</span>
+<span class="nc" id="L122">                    e.printStackTrace();</span>
+<span class="fc" id="L123">                }</span>
+<span class="fc" id="L124">            }</span>
+<span class="fc" id="L125">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L128">                Toast.makeText(PrevRecommendationActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L129">            }</span>
+        });
+
+<span class="fc" id="L132">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L133">        requestQueue.add(jsonArrayRequest);</span>
+<span class="fc" id="L134">    }</span>
+
+    private void sendRecRequest(String d) {
+<span class="fc" id="L137">        StringRequest stringRequest = new StringRequest(Request.Method.GET, REC_URL + &quot;?date=&quot; + d,</span>
+                response -&gt; {
+<span class="fc" id="L139">                    String Rec = response;</span>
+<span class="fc" id="L140">                    PrevView.setText(Rec);</span>
+<span class="fc" id="L141">                    Toast.makeText(PrevRecommendationActivity.this, &quot;Success!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L142">                },</span>
+<span class="nc" id="L143">                error -&gt; Toast.makeText(PrevRecommendationActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_LONG).show());</span>
+
+<span class="fc" id="L145">        Volley.newRequestQueue(this).add(stringRequest);</span>
+<span class="fc" id="L146">    }</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

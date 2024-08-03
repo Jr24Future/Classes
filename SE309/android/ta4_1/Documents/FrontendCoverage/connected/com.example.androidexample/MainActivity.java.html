@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">MainActivity.java</span></div><h1>MainActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import static com.example.androidexample.R.id;
+import static com.example.androidexample.R.layout;
+
+import android.Manifest;
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.groupdocs.cloud.conversion.api.ConvertApi;
+import com.groupdocs.cloud.conversion.api.FileApi;
+import com.groupdocs.cloud.conversion.client.ApiException;
+import com.groupdocs.cloud.conversion.client.Configuration;
+import com.groupdocs.cloud.conversion.model.ConvertSettings;
+import com.groupdocs.cloud.conversion.model.FilesUploadResult;
+import com.groupdocs.cloud.conversion.model.StoredConvertedResult;
+import com.groupdocs.cloud.conversion.model.requests.ConvertDocumentRequest;
+import com.groupdocs.cloud.conversion.model.requests.DownloadFileRequest;
+import com.groupdocs.cloud.conversion.model.requests.UploadFileRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+
+<span class="fc" id="L79">public class MainActivity extends AppCompatActivity {</span>
+    private String POST_URL;
+    private String GET_URL;
+    private PieChart pieChart;
+    private RequestQueue requestQueue;
+    private Spinner spinnerCategories;
+<span class="fc" id="L85">    private Map&lt;String, Double&gt; stockPrices = new HashMap&lt;&gt;();</span>
+
+    private Spinner spinnerFinancialDetails;
+    private double P, W,O, H;
+    private TextView display_p, display_w, display_h, display_o;
+    private Double PLimit, HLimit, OLimit, WLimit;
+    private Spinner spinnerFamilyMembers;
+    private EditText editTextAmount;
+    private Button btnSubmit;
+    private Button btnChat;
+    private String selectedCategory;
+    private TextView selectedCurrency1;
+    private TextView selectedCurrency2;
+    public static String userType;
+    private final static String API_KEY = &quot;co7n979r01qgik2hbdkgco7n979r01qgik2hbdl0&quot;;
+    private static final int PICK_PDF_FILE = 1;
+    private AlertDialog.Builder builder;
+    private Configuration configuration;
+    private FileApi fileApi;
+    private ConvertApi convertApi;
+<span class="fc" id="L105">    private Map&lt;String, StockData&gt; stockDataBuffer = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L106">    public static String selectedMemberId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+    public String Limited;
+<span class="fc" id="L108">    private ExecutorService executor = Executors.newSingleThreadExecutor();</span>
+    public String G_ID;
+    Button btnShowPopup; // At the beginning of your class
+    Button btnUpload; // At the beginning of your class
+<span class="fc" id="L112">    private Handler exchangeRateHandler = new Handler();</span>
+<span class="fc" id="L113">    private Runnable exchangeRateRunnable = new Runnable() {</span>
+        @Override
+        public void run() {
+<span class="fc" id="L116">            fetchCurrencyExchangeRates();</span>
+<span class="fc" id="L117">            exchangeRateHandler.postDelayed(this, TimeUnit.SECONDS.toMillis(300));</span>
+<span class="fc" id="L118">        }</span>
+    };
+<span class="fc" id="L120">    private Handler stockUpdateHandler = new Handler(Looper.getMainLooper());</span>
+<span class="fc" id="L121">    private Runnable stockUpdateRunnable = new Runnable() {</span>
+        @Override
+        public void run() {
+<span class="fc" id="L124">            stockUpdateHandler.postDelayed(this, 5000); // Re-post the Runnable every 5 seconds</span>
+<span class="fc" id="L125">        }</span>
+    };
+<span class="fc" id="L127">    private Runnable fetchStocksRunnable = new Runnable() {</span>
+        @Override
+        public void run() {
+            // Clear previous prices
+<span class="fc" id="L131">            stockPrices.clear();</span>
+            // Fetch new stock prices
+<span class="fc" id="L133">            fetchAndProcessStock(&quot;AAPL&quot;, &quot;applePrice&quot;);</span>
+<span class="fc" id="L134">            fetchAndProcessStock(&quot;AMZN&quot;, &quot;amazonPrice&quot;);</span>
+<span class="fc" id="L135">            fetchAndProcessStock(&quot;BINANCE:BTCUSDT&quot;, &quot;bitcoinPrice&quot;);</span>
+<span class="fc" id="L136">            fetchAndProcessStock(&quot;BINANCE:DOGEUSDT&quot;, &quot;dogecoinPrice&quot;);</span>
+            // Schedule the next run
+<span class="fc" id="L138">            handler.postDelayed(this, 5000);</span>
+<span class="fc" id="L139">        }</span>
+    };
+
+<span class="fc" id="L142">    private Handler handler = new Handler(Looper.getMainLooper());</span>
+<span class="fc" id="L143">    private Runnable updateRunnable = new Runnable() {</span>
+        @Override
+        public void run() {
+<span class="fc" id="L146">            updateChartDataBasedOnSelection();</span>
+<span class="fc" id="L147">            handler.postDelayed(this, 5000);  // Update every 5 seconds</span>
+<span class="fc" id="L148">        }</span>
+    };
+
+    private static final String CserverUrl = &quot;ws://coms-309-056.class.las.iastate.edu:8080/chat/AppUser&quot;;
+<span class="fc" id="L152">    private static final String BudURL = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/check/&quot;+ selectedMemberId;</span>
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L156">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L157">        setContentView(R.layout.activity_main);</span>
+<span class="fc" id="L158">        GetRequest();</span>
+<span class="fc" id="L159">        String clientId = &quot;edc9fbff-8efd-429f-96ff-166b70b31302&quot;;</span>
+<span class="fc" id="L160">        String clientSecret = &quot;7c7debf3f85e9e8675f834fe43089126&quot;;</span>
+<span class="fc" id="L161">        configuration = new Configuration(clientId, clientSecret);</span>
+<span class="fc" id="L162">        fileApi = new FileApi(configuration);</span>
+<span class="fc" id="L163">        convertApi = new ConvertApi(configuration);</span>
+
+//        display_p = findViewById(id.p_display);
+//        display_w = findViewById(id.w_display);
+//        display_o = findViewById(id.o_display);
+//        display_h = findViewById(id.h_display);
+
+
+<span class="fc" id="L171">        requestQueue = Volley.newRequestQueue(this);  // Initialize Volley Request Queue</span>
+
+
+<span class="fc" id="L174">        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PackageManager.PERMISSION_GRANTED);</span>
+
+<span class="fc" id="L176">        builder = new AlertDialog.Builder(this);</span>
+
+<span class="fc" id="L178">        Log.d(&quot;ID&quot;, LoginActivity.UUID);</span>
+
+<span class="pc bpc" id="L180" title="2 of 4 branches missed.">        if (LoginActivity.UUID != null &amp;&amp; !LoginActivity.UUID.isEmpty()) {</span>
+<span class="fc" id="L181">            POST_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L182">            GET_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/financial-report&quot;;</span>
+        } else {
+<span class="nc" id="L184">            POST_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/default&quot;;</span>
+<span class="nc" id="L185">            GET_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/default/financial-report&quot;;</span>
+        }
+
+<span class="fc" id="L188">        pieChart = findViewById(R.id.pieChart);</span>
+<span class="fc" id="L189">        setupPieChart();</span>
+<span class="fc" id="L190">        fetchChartData();</span>
+
+<span class="fc" id="L192">        btnShowPopup = findViewById(R.id.btn_show_popup);</span>
+<span class="fc" id="L193">        btnShowPopup.setOnClickListener(this::showPopupMenu);</span>
+<span class="fc" id="L194">        btnUpload = findViewById(R.id.btn_upload);</span>
+<span class="fc" id="L195">        btnUpload.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">            if (userType.equals(&quot;guest&quot;)) {</span>
+<span class="fc" id="L197">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="fc" id="L198">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L199">                startActivity(intent);</span>
+<span class="fc" id="L200">            } else {</span>
+<span class="nc" id="L201">                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);</span>
+<span class="nc" id="L202">                intent.setType(&quot;application/pdf&quot;);</span>
+<span class="nc" id="L203">                startActivityForResult(intent, PICK_PDF_FILE);</span>
+            }
+<span class="fc" id="L205">        });</span>
+
+<span class="fc" id="L207">        spinnerCategories = findViewById(R.id.spinner_categories);</span>
+<span class="fc" id="L208">        editTextAmount = findViewById(R.id.editText_amount);</span>
+<span class="fc" id="L209">        btnSubmit = findViewById(R.id.btn_submit);</span>
+<span class="fc" id="L210">        btnChat = findViewById(R.id.btn_chat);</span>
+
+<span class="fc" id="L212">        ArrayAdapter&lt;CharSequence&gt; adapter = ArrayAdapter.createFromResource(</span>
+                this, R.array.categories_array, android.R.layout.simple_spinner_item);
+<span class="fc" id="L214">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="fc" id="L215">        spinnerCategories.setAdapter(adapter);</span>
+
+<span class="fc" id="L217">        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="fc" id="L220">                selectedCategory = parent.getItemAtPosition(position).toString();</span>
+<span class="fc" id="L221">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L225">            }</span>
+        });
+
+<span class="fc" id="L228">        spinnerFinancialDetails = findViewById(R.id.spinner_financial_details);</span>
+<span class="fc" id="L229">        setupFinancialDetailsSpinner();</span>
+
+<span class="fc" id="L231">        btnChat.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (LoginActivity.UUID != null) {</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">                if (userType.equals(&quot;guest&quot;)) {</span>
+<span class="fc" id="L234">                    Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="fc" id="L235">                    Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L236">                    startActivity(intent);</span>
+<span class="fc" id="L237">                } else {</span>
+<span class="fc" id="L238">                    WebSocketManager.getInstance().connectWebSocket(CserverUrl);</span>
+<span class="fc" id="L239">                    Intent intent = new Intent(MainActivity.this, ChatActivity.class);</span>
+<span class="fc" id="L240">                    startActivity(intent);</span>
+                }
+            }
+<span class="fc" id="L243">        });</span>
+
+<span class="fc" id="L245">        btnSubmit.setOnClickListener(v -&gt; {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="fc" id="L247">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="fc" id="L248">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L249">                startActivity(intent);</span>
+<span class="fc" id="L250">            } else {</span>
+<span class="fc" id="L251">                String amountString = editTextAmount.getText().toString();</span>
+<span class="pc bpc" id="L252" title="2 of 4 branches missed.">                if (!amountString.isEmpty() &amp;&amp; selectedCategory != null) {</span>
+<span class="fc" id="L253">                    GetBudVals();</span>
+<span class="pc bpc" id="L254" title="3 of 8 branches missed.">                    if (PLimit != null &amp;&amp; HLimit != null &amp;&amp; OLimit != null &amp;&amp; WLimit != null) {</span>
+<span class="pc bpc" id="L255" title="3 of 4 branches missed.">                        if (PLimit &lt;= 0 &amp;&amp; selectedCategory.equals(&quot;personal&quot;)) {</span>
+<span class="nc" id="L256">                            Limited = &quot;Personal&quot;;</span>
+<span class="nc" id="L257">                            builder.setTitle(&quot;Budget Limit Reached!&quot;).setMessage(&quot;You have reached the limit on adding your &quot; + Limited + &quot; expense.&quot;)</span>
+<span class="nc" id="L258">                                    .setCancelable(true)</span>
+<span class="nc" id="L259">                                    .setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.cancel())</span>
+<span class="nc" id="L260">                                    .show();</span>
+<span class="pc bpc" id="L261" title="3 of 4 branches missed.">                        } else if (HLimit &lt;= 0 &amp;&amp; selectedCategory.equals(&quot;home&quot;)) {</span>
+<span class="nc" id="L262">                            Limited = &quot;Home&quot;;</span>
+<span class="nc" id="L263">                            builder.setTitle(&quot;Budget Limit Reached!&quot;).setMessage(&quot;You have reached the limit on adding your &quot; + Limited + &quot; expense.&quot;)</span>
+<span class="nc" id="L264">                                    .setCancelable(true)</span>
+<span class="nc" id="L265">                                    .setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.cancel())</span>
+<span class="nc" id="L266">                                    .show();</span>
+<span class="pc bpc" id="L267" title="3 of 4 branches missed.">                        } else if (OLimit &lt;= 0 &amp;&amp; selectedCategory.equals(&quot;other&quot;)) {</span>
+<span class="nc" id="L268">                            Limited = &quot;Other&quot;;</span>
+<span class="nc" id="L269">                            builder.setTitle(&quot;Budget Limit Reached!&quot;).setMessage(&quot;You have reached the limit on adding your &quot; + Limited + &quot; expense.&quot;)</span>
+<span class="nc" id="L270">                                    .setCancelable(true)</span>
+<span class="nc" id="L271">                                    .setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.cancel())</span>
+<span class="nc" id="L272">                                    .show();</span>
+
+<span class="pc bpc" id="L274" title="3 of 4 branches missed.">                        } else if (WLimit &lt;= 0 &amp;&amp; selectedCategory.equals(&quot;work&quot;)) {</span>
+<span class="nc" id="L275">                            Limited = &quot;Work&quot;;</span>
+<span class="nc" id="L276">                            builder.setTitle(&quot;Budget Limit Reached!&quot;).setMessage(&quot;You have reached the limit on adding your &quot; + Limited + &quot; expense.&quot;)</span>
+<span class="nc" id="L277">                                    .setCancelable(true)</span>
+<span class="nc" id="L278">                                    .setPositiveButton(&quot;OK&quot;, (dialog, which) -&gt; dialog.cancel())</span>
+<span class="nc" id="L279">                                    .show();</span>
+                        }
+
+                    }
+<span class="fc" id="L283">                    double amount = Double.parseDouble(amountString);</span>
+<span class="fc" id="L284">                    sendExpenseToBackend(selectedCategory, amount);</span>
+
+<span class="fc" id="L286">                } else {</span>
+<span class="nc" id="L287">                    Toast.makeText(MainActivity.this, &quot;Please enter an amount and select a category&quot;, Toast.LENGTH_SHORT).show();</span>
+                }
+            }
+<span class="fc" id="L290">        });</span>
+
+<span class="fc" id="L292">        selectedCurrency1 = findViewById(R.id.selectedCurrency1);</span>
+<span class="fc" id="L293">        selectedCurrency2 = findViewById(R.id.selectedCurrency2);</span>
+<span class="fc" id="L294">        exchangeRateHandler.post(exchangeRateRunnable);</span>
+
+
+<span class="fc" id="L297">        spinnerFamilyMembers = findViewById(R.id.spinner_family_members);</span>
+
+<span class="fc" id="L299">        fetchFamilyMembers();</span>
+<span class="fc" id="L300">        spinnerFamilyMembers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="fc" id="L303">                updateChartDataBasedOnSelection();</span>
+<span class="fc" id="L304">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L308">            }</span>
+        });
+<span class="fc" id="L310">        requestQueue = Volley.newRequestQueue(this);</span>
+        // Start the repeated task
+<span class="fc" id="L312">        handler.post(fetchStocksRunnable);</span>
+
+<span class="fc" id="L314">    }</span>
+
+    private void setupFinancialDetailsSpinner() {
+<span class="fc" id="L317">        ArrayAdapter&lt;CharSequence&gt; adapter = ArrayAdapter.createFromResource(</span>
+                this, R.array.chart_types_array, android.R.layout.simple_spinner_item);
+<span class="fc" id="L319">        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="fc" id="L320">        spinnerFinancialDetails.setAdapter(adapter);</span>
+
+<span class="fc" id="L322">        spinnerFinancialDetails.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="fc" id="L325">                updateChartDataBasedOnSelection();</span>
+<span class="fc" id="L326">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L330">            }</span>
+        });
+<span class="fc" id="L332">    }</span>
+
+
+
+    private void fetchAndProcessStock(String symbol, String jsonKey) {
+<span class="fc" id="L337">        String url = &quot;https://finnhub.io/api/v1/quote?symbol=&quot; + symbol + &quot;&amp;token=&quot; + API_KEY;</span>
+<span class="fc" id="L338">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+                response -&gt; {
+                    try {
+<span class="fc" id="L341">                        double price = response.getDouble(&quot;c&quot;); // 'c' for current price</span>
+<span class="fc" id="L342">                        stockPrices.put(jsonKey, price);</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">                        if (stockPrices.size() == 4) { // Ensure all prices are fetched</span>
+<span class="fc" id="L344">                            sendAllStockPricesToBackend();</span>
+                        }
+<span class="nc" id="L346">                    } catch (Exception e) {</span>
+<span class="nc" id="L347">                        Log.e(&quot;API Error&quot;, &quot;Error parsing stock data for &quot; + symbol, e);</span>
+<span class="fc" id="L348">                    }</span>
+<span class="fc" id="L349">                },</span>
+                this::handleError
+        );
+<span class="fc" id="L352">        requestQueue.add(jsonObjectRequest);</span>
+<span class="fc" id="L353">    }</span>
+
+    private void sendAllStockPricesToBackend() {
+<span class="fc" id="L356">        JSONObject pricesJson = new JSONObject(stockPrices);</span>
+<span class="fc" id="L357">        Log.d(&quot;StockMarketActivity&quot;, &quot;JSON to send: &quot; + pricesJson.toString());</span>
+
+<span class="fc" id="L359">        String updateUrl = &quot;http://coms-309-056.class.las.iastate.edu:8080/portfolio/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L360">        JsonObjectRequest updateRequest = new JsonObjectRequest(Request.Method.PUT, updateUrl, pricesJson,</span>
+<span class="fc" id="L361">                response -&gt; Log.d(&quot;Update Success&quot;, &quot;Stock prices updated successfully.&quot;),</span>
+                this::handleError);
+<span class="fc" id="L363">        requestQueue.add(updateRequest);</span>
+<span class="fc" id="L364">    }</span>
+
+    private void handleError(VolleyError error) {
+<span class="fc bfc" id="L367" title="All 2 branches covered.">        if(!&quot;guest&quot;.equals(userType)) {</span>
+<span class="fc" id="L368">            Log.e(&quot;API Error&quot;, &quot;Error: &quot; + error.toString());</span>
+        }
+<span class="fc" id="L370">    }</span>
+
+
+
+
+
+
+
+    private void updateChartDataBasedOnSelection() {
+
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        if (spinnerFamilyMembers.getSelectedItem() == null) {</span>
+<span class="fc" id="L381">            selectedMemberId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;); // Use the main user's ID as default</span>
+        } else {
+<span class="fc" id="L383">            JSONObject selectedMember = (JSONObject) spinnerFamilyMembers.getSelectedItem();</span>
+            try {
+<span class="fc" id="L385">                selectedMemberId = selectedMember.getString(&quot;id&quot;);</span>
+<span class="nc" id="L386">            } catch (JSONException e) {</span>
+<span class="nc" id="L387">                Toast.makeText(MainActivity.this, &quot;Failed to get the selected member's ID&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L388">                return;  // Exit if we cannot get an ID</span>
+<span class="fc" id="L389">            }</span>
+        }
+
+<span class="fc" id="L392">        int selectedFinancialDetailIndex = spinnerFinancialDetails.getSelectedItemPosition();</span>
+<span class="pc bpc" id="L393" title="1 of 4 branches missed.">        switch (selectedFinancialDetailIndex) {</span>
+            case 0: // Expenses
+<span class="fc" id="L395">                fetchAndDisplayData(&quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + selectedMemberId);</span>
+<span class="fc" id="L396">                break;</span>
+            case 1: // Portfolio
+<span class="fc" id="L398">                fetchAndDisplayPortfolioData(selectedMemberId);  // Method to fetch and display portfolio data</span>
+<span class="fc" id="L399">                break;</span>
+            case 2: // Assets
+<span class="fc" id="L401">                fetchIncomeVsAssets(selectedMemberId);  // Method to fetch and display income vs assets data</span>
+<span class="fc" id="L402">                break;</span>
+            default:
+<span class="nc" id="L404">                fetchAndDisplayData(&quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + selectedMemberId);</span>
+                break;
+        }
+<span class="fc" id="L407">    }</span>
+
+
+    private void fetchAndDisplayData(String url) {
+<span class="fc" id="L411">        StringRequest request = new StringRequest(Request.Method.GET, url, response -&gt; {</span>
+<span class="fc" id="L412">            updateChart(response); // Assume updateChart parses the JSON and updates the pie chart</span>
+<span class="fc" id="L413">        }, error -&gt; {</span>
+<span class="nc" id="L414">            Toast.makeText(MainActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L415">        });</span>
+<span class="fc" id="L416">        Volley.newRequestQueue(this).add(request);</span>
+<span class="fc" id="L417">    }</span>
+
+    private void fetchAndDisplayPortfolioData(String memberId) {
+<span class="fc" id="L420">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/portfolio/&quot; + memberId + &quot;/detailedValues&quot;;  // Endpoint that returns detailed portfolio data</span>
+
+<span class="fc" id="L422">        StringRequest request = new StringRequest(Request.Method.GET, url,</span>
+                response -&gt; {
+<span class="fc" id="L424">                    updatePortfolioChart(response);</span>
+<span class="fc" id="L425">                },</span>
+<span class="nc" id="L426">                error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching portfolio data: &quot; + error.toString(), Toast.LENGTH_SHORT).show());</span>
+
+<span class="fc" id="L428">        Volley.newRequestQueue(this).add(request);</span>
+<span class="fc" id="L429">    }</span>
+
+    private void fetchIncomeVsAssets(String memberId) {
+<span class="fc" id="L432">        String portfolioUrl = &quot;http://coms-309-056.class.las.iastate.edu:8080/portfolio/&quot; + memberId + &quot;/value&quot;;</span>
+<span class="fc" id="L433">        String incomeUrl = &quot;http://coms-309-056.class.las.iastate.edu:8080/&quot; + memberId + &quot;/monthlyIncome&quot;;</span>
+
+        // Request for Portfolio Value
+<span class="fc" id="L436">        StringRequest portfolioRequest = new StringRequest(Request.Method.GET, portfolioUrl,</span>
+                portfolioResponse -&gt; {
+                    try {
+<span class="fc" id="L439">                        double portfolioValue = Double.parseDouble(portfolioResponse);</span>
+                        // Request for Income
+<span class="fc" id="L441">                        StringRequest incomeRequest = new StringRequest(Request.Method.GET, incomeUrl,</span>
+                                incomeResponse -&gt; {
+                                    try {
+<span class="fc" id="L444">                                        double monthlyIncome = Double.parseDouble(incomeResponse);</span>
+<span class="fc" id="L445">                                        updateIncomeVsAssetsChart(monthlyIncome, portfolioValue);</span>
+<span class="nc" id="L446">                                    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L447">                                        Toast.makeText(MainActivity.this, &quot;Number format error in parsing income: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L448">                                    }</span>
+<span class="fc" id="L449">                                },</span>
+<span class="nc" id="L450">                                error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching income: &quot; + error.toString(), Toast.LENGTH_SHORT).show());</span>
+<span class="fc" id="L451">                        Volley.newRequestQueue(getApplicationContext()).add(incomeRequest);</span>
+<span class="nc" id="L452">                    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L453">                        Toast.makeText(MainActivity.this, &quot;Number format error in parsing portfolio value: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L454">                    }</span>
+<span class="fc" id="L455">                },</span>
+<span class="nc" id="L456">                error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching portfolio: &quot; + error.toString(), Toast.LENGTH_SHORT).show());</span>
+<span class="fc" id="L457">        Volley.newRequestQueue(getApplicationContext()).add(portfolioRequest);</span>
+<span class="fc" id="L458">    }</span>
+
+    private void updatePortfolioChart(String jsonData) {
+        try {
+<span class="fc" id="L462">            JSONObject jsonObject = new JSONObject(jsonData);</span>
+<span class="fc" id="L463">            ArrayList&lt;PieEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L464" title="1 of 2 branches missed.">            if(jsonObject.getDouble(&quot;Apple&quot;) &gt; 0) {</span>
+<span class="nc" id="L465">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;Apple&quot;), &quot;Apple&quot;));</span>
+            }
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">            if(jsonObject.getDouble(&quot;Amazon&quot;) &gt; 0) {</span>
+<span class="nc" id="L468">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;Amazon&quot;), &quot;Amazon&quot;));</span>
+            }
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">            if(jsonObject.getDouble(&quot;Bitcoin&quot;) &gt; 0) {</span>
+<span class="nc" id="L471">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;Bitcoin&quot;), &quot;Bitcoin&quot;));</span>
+            }
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if(jsonObject.getDouble(&quot;Dogecoin&quot;) &gt; 0) {</span>
+<span class="nc" id="L474">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;Dogecoin&quot;), &quot;Dogecoin&quot;));</span>
+            }
+
+<span class="fc" id="L477">            PieDataSet dataSet = new PieDataSet(entries, &quot;Portfolio Distribution&quot;);</span>
+<span class="fc" id="L478">            dataSet.setColors(ColorTemplate.JOYFUL_COLORS);</span>
+<span class="fc" id="L479">            PieData data = new PieData(dataSet);</span>
+<span class="fc" id="L480">            pieChart.setData(data);</span>
+<span class="fc" id="L481">            pieChart.invalidate();</span>
+<span class="nc" id="L482">        } catch (JSONException e) {</span>
+<span class="nc" id="L483">            Toast.makeText(this, &quot;Failed to parse portfolio data: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L484">        }</span>
+<span class="fc" id="L485">    }</span>
+
+
+
+    private void updateIncomeVsAssetsChart(double monthlyIncome, double portfolioValue) {
+<span class="fc" id="L490">        ArrayList&lt;PieEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L491" title="1 of 2 branches missed.">        if (portfolioValue &gt; 0) {</span>
+<span class="nc" id="L492">            entries.add(new PieEntry((float) portfolioValue, &quot;Portfolio Value&quot;));</span>
+        }
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">        if (monthlyIncome &gt; 0) {</span>
+<span class="fc" id="L495">            entries.add(new PieEntry((float) monthlyIncome, &quot;Monthly Income&quot;));</span>
+        }
+
+<span class="pc bpc" id="L498" title="1 of 2 branches missed.">        if (!entries.isEmpty()) {</span>
+<span class="fc" id="L499">            PieDataSet dataSet = new PieDataSet(entries, &quot;Income vs Portfolio&quot;);</span>
+<span class="fc" id="L500">            dataSet.setColors(ColorTemplate.COLORFUL_COLORS); // Use a colorful theme</span>
+<span class="fc" id="L501">            PieData data = new PieData(dataSet);</span>
+<span class="fc" id="L502">            pieChart.setData(data);</span>
+<span class="fc" id="L503">            pieChart.invalidate(); // Refresh the chart</span>
+        }
+<span class="fc" id="L505">    }</span>
+
+
+
+    private void GetBudVals() {
+<span class="fc" id="L510">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, BudURL, null,</span>
+                response -&gt; {
+                    try {
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">                        if (response.has(&quot;Personal&quot;)) {</span>
+<span class="fc" id="L514">                            PLimit = response.getDouble(&quot;Personal&quot;);</span>
+                        } else {
+<span class="nc" id="L516">                            PLimit = 1000.0;</span>
+                        }
+
+<span class="pc bpc" id="L519" title="1 of 2 branches missed.">                        if (response.has(&quot;Home&quot;)) {</span>
+<span class="fc" id="L520">                            HLimit = response.getDouble(&quot;Home&quot;);</span>
+                        } else {
+<span class="nc" id="L522">                            HLimit = 1000.0;</span>
+                        }
+
+<span class="pc bpc" id="L525" title="1 of 2 branches missed.">                        if (response.has(&quot;Other&quot;)) {</span>
+<span class="fc" id="L526">                            OLimit = response.getDouble(&quot;Other&quot;);</span>
+                        } else {
+<span class="nc" id="L528">                            OLimit = 1000.0;</span>
+                        }
+
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">                        if (response.has(&quot;Work&quot;)) {</span>
+<span class="fc" id="L532">                            WLimit = response.getDouble(&quot;Work&quot;);</span>
+                        } else {
+<span class="nc" id="L534">                            WLimit = 1000.0;</span>
+                        }
+<span class="nc" id="L536">                    } catch (JSONException e) {</span>
+<span class="nc" id="L537">                        Toast.makeText(MainActivity.this, &quot;Error parsing JSON response: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L538">                    }</span>
+<span class="fc" id="L539">                },</span>
+                error -&gt; {
+<span class="nc bnc" id="L541" title="All 2 branches missed.">                    if (error.networkResponse != null) {</span>
+                        String responseBody;
+                        try {
+<span class="nc" id="L544">                            responseBody = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));</span>
+<span class="nc" id="L545">                        } catch (UnsupportedEncodingException e) {</span>
+<span class="nc" id="L546">                            responseBody = new String(error.networkResponse.data);</span>
+<span class="nc" id="L547">                        }</span>
+<span class="nc" id="L548">                        Log.d(&quot;Budgets&quot;, &quot;Error Status code: &quot; + error.networkResponse.statusCode);</span>
+<span class="nc" id="L549">                        Log.d(&quot;Budgets&quot;, &quot;Error Response: &quot; + responseBody);</span>
+                    }
+<span class="nc" id="L551">                    Toast.makeText(MainActivity.this, &quot;Error: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L552">                    Log.d(&quot;Budgets&quot;, &quot;Volley Error: &quot; + error.toString());</span>
+<span class="nc" id="L553">                }</span>
+        );
+
+<span class="fc" id="L556">        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);</span>
+<span class="fc" id="L557">        requestQueue.add(jsonObjectRequest);</span>
+<span class="fc" id="L558">    }</span>
+
+
+
+
+    @Override
+    protected void onResume() {
+<span class="fc" id="L565">        super.onResume();</span>
+<span class="fc" id="L566">        fetchChartData(); // Fetch the latest chart data and update the pie chart</span>
+<span class="fc" id="L567">        fetchCurrencyExchangeRates();</span>
+<span class="fc" id="L568">        handler.post(updateRunnable);</span>
+<span class="fc" id="L569">        stockUpdateHandler.postDelayed(stockUpdateRunnable, 5000);</span>
+<span class="fc" id="L570">    }</span>
+
+    private void setupPieChart() {
+<span class="fc" id="L573">        pieChart.setUsePercentValues(true);</span>
+<span class="fc" id="L574">        pieChart.getDescription().setEnabled(false);</span>
+<span class="fc" id="L575">        Legend legend = pieChart.getLegend();</span>
+<span class="fc" id="L576">        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);</span>
+<span class="fc" id="L577">        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);</span>
+<span class="fc" id="L578">        legend.setOrientation(Legend.LegendOrientation.VERTICAL);</span>
+<span class="fc" id="L579">        legend.setDrawInside(false);</span>
+<span class="fc" id="L580">        legend.setEnabled(true);</span>
+<span class="fc" id="L581">    }</span>
+
+    private void fetchChartData() {
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">        if (LoginActivity.UUID != null) {</span>
+<span class="fc" id="L585">            String url = POST_URL;</span>
+<span class="fc" id="L586">            StringRequest request = new StringRequest(Request.Method.GET, url,</span>
+<span class="fc" id="L587">                    response -&gt; updateChart(response),</span>
+<span class="nc" id="L588">                    error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching data: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show());</span>
+<span class="fc" id="L589">            Volley.newRequestQueue(this).add(request);</span>
+<span class="fc" id="L590">        } else {</span>
+<span class="nc" id="L591">            Toast.makeText(this, &quot;No user data available&quot;, Toast.LENGTH_SHORT).show();</span>
+        }
+<span class="fc" id="L593">    }</span>
+
+    private void updateChart(String jsonData) {
+        try {
+<span class="fc" id="L597">            JSONObject jsonObject = new JSONObject(jsonData);</span>
+<span class="fc" id="L598">            ArrayList&lt;PieEntry&gt; entries = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L599" title="All 2 branches covered.">            if(jsonObject.getDouble(&quot;work&quot;) &gt; 0) {</span>
+<span class="fc" id="L600">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;work&quot;), &quot;Work&quot;));</span>
+//                display_w.setText(String.valueOf(W));
+            }
+<span class="fc bfc" id="L603" title="All 2 branches covered.">            if(jsonObject.getDouble(&quot;home&quot;) &gt; 0) {</span>
+<span class="fc" id="L604">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;home&quot;), &quot;Home&quot;));</span>
+//                display_h.setText(String.valueOf(H));
+            }
+<span class="fc bfc" id="L607" title="All 2 branches covered.">            if(jsonObject.getDouble(&quot;personal&quot;) &gt; 0) {</span>
+<span class="fc" id="L608">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;personal&quot;), &quot;Personal&quot;));</span>
+//                display_p.setText(String.valueOf(P));
+            }
+<span class="fc bfc" id="L611" title="All 2 branches covered.">            if(jsonObject.getDouble(&quot;other&quot;) &gt; 0) {</span>
+<span class="fc" id="L612">                entries.add(new PieEntry((float) jsonObject.getDouble(&quot;other&quot;), &quot;Other&quot;));</span>
+//                display_o.setText(String.valueOf(O));
+            }
+
+<span class="fc" id="L616">            PieDataSet dataSet = new PieDataSet(entries, &quot;Expense Categories&quot;);</span>
+<span class="fc" id="L617">            dataSet.setColors(ColorTemplate.MATERIAL_COLORS); // You can choose a different color template if you prefer</span>
+<span class="fc" id="L618">            PieData data = new PieData(dataSet);</span>
+<span class="fc" id="L619">            pieChart.setData(data);</span>
+<span class="fc" id="L620">            pieChart.invalidate();</span>
+<span class="nc" id="L621">        } catch (JSONException e) {</span>
+<span class="nc" id="L622">            Toast.makeText(this, &quot;Failed to parse data: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L623">        }</span>
+<span class="fc" id="L624">    }</span>
+
+
+    private void showPopupMenu(View anchor) {
+<span class="fc" id="L628">        View popupView = LayoutInflater.from(this).inflate(layout.popup_menu, null);</span>
+<span class="fc" id="L629">        final PopupWindow popupWindow = new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, true);</span>
+
+<span class="fc" id="L631">        Button btnPrimeUser = popupView.findViewById(id.btn_prime_user);</span>
+<span class="fc" id="L632">        btnPrimeUser.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L633" title="1 of 2 branches missed.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L634">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L635">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L636">                startActivity(intent);</span>
+<span class="nc" id="L637">                popupWindow.dismiss();</span>
+<span class="nc" id="L638">            } else {</span>
+<span class="fc" id="L639">                startActivity(new Intent(MainActivity.this, CardListActivity.class));</span>
+<span class="fc" id="L640">                popupWindow.dismiss();</span>
+            }
+
+<span class="fc" id="L643">        });</span>
+
+<span class="fc" id="L645">        Button btnSettings = popupView.findViewById(id.btn_settings);</span>
+<span class="fc" id="L646">        btnSettings.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L647">            startActivity(new Intent(MainActivity.this, SettingsActivity.class));</span>
+<span class="fc" id="L648">            popupWindow.dismiss();</span>
+
+<span class="fc" id="L650">        });</span>
+
+<span class="fc" id="L652">        Button btnStockMarket = popupView.findViewById(R.id.btn_stock_market);</span>
+<span class="fc" id="L653">        btnStockMarket.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L654" title="All 2 branches missed.">            if (!&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L655">                startActivity(new Intent(MainActivity.this, StockMarketActivity.class));</span>
+<span class="nc" id="L656">                popupWindow.dismiss();</span>
+            } else {
+<span class="nc" id="L658">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L659">                startActivity(new Intent(MainActivity.this, SignupActivity.class));</span>
+<span class="nc" id="L660">                popupWindow.dismiss();</span>
+            }
+<span class="nc" id="L662">        });</span>
+
+<span class="fc" id="L664">        Button btnRecommend = popupView.findViewById(id.btn_recommend);</span>
+<span class="fc" id="L665">        btnRecommend.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L666" title="1 of 2 branches missed.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L667">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L668">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L669">                startActivity(intent);</span>
+<span class="nc" id="L670">                popupWindow.dismiss();</span>
+<span class="pc bpc" id="L671" title="1 of 2 branches missed.">            } else if (userType.equals(&quot;regular&quot;)) {</span>
+<span class="nc" id="L672">                Intent intent = new Intent(MainActivity.this, CardListActivity.class);</span>
+<span class="nc" id="L673">                Toast.makeText(getApplicationContext(), &quot;You must upgrade to premium to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L674">                startActivity(intent);</span>
+<span class="nc" id="L675">            } else {</span>
+<span class="fc" id="L676">                startActivity(new Intent(MainActivity.this, RecommendationActivity.class));</span>
+<span class="fc" id="L677">                popupWindow.dismiss();</span>
+            }
+
+<span class="fc" id="L680">        });</span>
+
+<span class="fc" id="L682">        Button btnFamily = popupView.findViewById(id.btn_Family_Plan);</span>
+<span class="fc" id="L683">        btnFamily.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L684" title="1 of 2 branches missed.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L685">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L686">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L687">                startActivity(intent);</span>
+<span class="nc" id="L688">                popupWindow.dismiss();</span>
+<span class="nc" id="L689">            } else {</span>
+<span class="fc" id="L690">                startActivity(new Intent(MainActivity.this, FamilyPlanActivity.class));</span>
+<span class="fc" id="L691">                popupWindow.dismiss();</span>
+            }
+
+<span class="fc" id="L694">        });</span>
+
+<span class="fc" id="L696">        Button btnGoal = popupView.findViewById(id.btn_Goals);</span>
+<span class="fc" id="L697">        btnGoal.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L699">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L700">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L701">                startActivity(intent);</span>
+<span class="nc" id="L702">                popupWindow.dismiss();</span>
+<span class="nc" id="L703">            } else {</span>
+<span class="fc" id="L704">                startActivity(new Intent(MainActivity.this, GoalListActivity.class));</span>
+<span class="fc" id="L705">                popupWindow.dismiss();</span>
+            }
+<span class="fc" id="L707">        });</span>
+<span class="fc" id="L708">        Button btnBudget = popupView.findViewById(id.btn_Budget);</span>
+<span class="fc" id="L709">        btnBudget.setOnClickListener(v -&gt; {</span>
+<span class="pc bpc" id="L710" title="1 of 2 branches missed.">            if (&quot;guest&quot;.equals(userType)) {</span>
+<span class="nc" id="L711">                Intent intent = new Intent(MainActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L712">                Toast.makeText(getApplicationContext(), &quot;You must sign up to access this feature!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L713">                startActivity(intent);</span>
+<span class="nc" id="L714">                popupWindow.dismiss();</span>
+<span class="nc" id="L715">            }</span>
+            else{
+<span class="fc" id="L717">                startActivity(new Intent(MainActivity.this, BudgetingActivity.class));</span>
+<span class="fc" id="L718">                popupWindow.dismiss();</span>
+            }
+<span class="fc" id="L720">        });</span>
+
+
+<span class="fc" id="L723">        popupWindow.showAsDropDown(anchor, 0, 0, Gravity.END);</span>
+<span class="fc" id="L724">    }</span>
+
+    private void sendExpenseToBackend(String category, double amount) {
+<span class="pc bpc" id="L727" title="2 of 4 branches missed.">        if (LoginActivity.UUID == null || LoginActivity.UUID.trim().isEmpty()) {</span>
+<span class="nc" id="L728">            Toast.makeText(MainActivity.this, &quot;User is not logged in or UUID is not available&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L729">            return;</span>
+        }
+
+<span class="fc" id="L732">        JSONObject putData = new JSONObject();</span>
+        try {
+<span class="fc" id="L734">            putData.put(category, amount);</span>
+<span class="fc" id="L735">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + selectedMemberId, putData,</span>
+                    response -&gt; {
+<span class="fc" id="L737">                        Toast.makeText(MainActivity.this, &quot;Expense updated successfully!&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L738">                        fetchChartData(); // Update the pie chart after a successful update</span>
+<span class="fc" id="L739">                    },</span>
+<span class="nc" id="L740">                    error -&gt; Toast.makeText(MainActivity.this, &quot;Error updating expense: &quot; + error.toString(), Toast.LENGTH_SHORT).show());</span>
+<span class="fc" id="L741">            Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L742">        } catch (JSONException e) {</span>
+<span class="nc" id="L743">            e.printStackTrace();</span>
+<span class="nc" id="L744">            Toast.makeText(this, &quot;Failed to create JSON for PUT request&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L745">        }</span>
+<span class="fc" id="L746">    }</span>
+
+
+    private void fetchFamilyMembers() {
+<span class="fc" id="L750">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/family/ofUser/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L751">        StringRequest request = new StringRequest(Request.Method.GET, url,</span>
+                response -&gt; {
+                    try {
+<span class="fc" id="L754">                        JSONObject jsonObject = new JSONObject(response);</span>
+<span class="fc" id="L755">                        JSONArray membersArray = jsonObject.getJSONArray(&quot;users&quot;);</span>
+<span class="fc" id="L756">                        ArrayList&lt;JSONObject&gt; membersList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L757" title="All 2 branches covered.">                        for (int i = 0; i &lt; membersArray.length(); i++) {</span>
+<span class="fc" id="L758">                            JSONObject memberObject = membersArray.getJSONObject(i);</span>
+<span class="fc" id="L759">                            membersList.add(memberObject);</span>
+                        }
+<span class="fc" id="L761">                        ArrayAdapter&lt;JSONObject&gt; adapter = new ArrayAdapter&lt;JSONObject&gt;(MainActivity.this, android.R.layout.simple_spinner_item, membersList) {</span>
+                            @Override
+                            public View getView(int position, View convertView, ViewGroup parent) {
+<span class="fc" id="L764">                                View view = super.getView(position, convertView, parent);</span>
+<span class="fc" id="L765">                                TextView textView = (TextView) view.findViewById(android.R.id.text1);</span>
+                                try {
+<span class="fc" id="L767">                                    textView.setText(getItem(position).getString(&quot;firstName&quot;) + &quot; &quot; + getItem(position).getString(&quot;lastName&quot;));</span>
+<span class="nc" id="L768">                                } catch (JSONException e) {</span>
+<span class="nc" id="L769">                                    e.printStackTrace();</span>
+<span class="fc" id="L770">                                }</span>
+<span class="fc" id="L771">                                return view;</span>
+                            }
+
+                            @Override
+                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+<span class="fc" id="L776">                                View view = super.getDropDownView(position, convertView, parent);</span>
+<span class="fc" id="L777">                                TextView textView = (TextView) view.findViewById(android.R.id.text1);</span>
+                                try {
+<span class="fc" id="L779">                                    textView.setText(getItem(position).getString(&quot;firstName&quot;) + &quot; &quot; + getItem(position).getString(&quot;lastName&quot;));</span>
+<span class="nc" id="L780">                                } catch (JSONException e) {</span>
+<span class="nc" id="L781">                                    e.printStackTrace();</span>
+<span class="fc" id="L782">                                }</span>
+<span class="fc" id="L783">                                return view;</span>
+                            }
+                        };
+<span class="fc" id="L786">                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);</span>
+<span class="fc" id="L787">                        spinnerFamilyMembers.setAdapter(adapter);</span>
+<span class="fc" id="L788">                    } catch (JSONException e) {</span>
+<span class="fc" id="L789">                        e.printStackTrace();</span>
+<span class="fc" id="L790">                    }</span>
+<span class="fc" id="L791">                },</span>
+<span class="nc" id="L792">                error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching family members: &quot; + error.getMessage(), Toast.LENGTH_SHORT).show());</span>
+<span class="fc" id="L793">        Volley.newRequestQueue(this).add(request);</span>
+<span class="fc" id="L794">    }</span>
+
+
+
+    private void fetchCurrencyExchangeRates() {
+<span class="pc bpc" id="L799" title="1 of 2 branches missed.">        if (LoginActivity.UUID != null) {</span>
+<span class="fc" id="L800">            String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/getCurrency&quot;;</span>
+
+<span class="fc" id="L802">            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,</span>
+                    response -&gt; {
+<span class="fc" id="L804">                        Log.d(&quot;CurrencyResponse&quot;, &quot;Response from backend: &quot; + response); // Log the response</span>
+<span class="fc" id="L805">                        updateCurrencyDisplay(response);</span>
+<span class="fc" id="L806">                    },</span>
+                    error -&gt; {
+<span class="nc" id="L808">                        Log.e(&quot;CurrencyError&quot;, &quot;Error fetching currency settings: &quot; + error.toString()); // Log any errors</span>
+<span class="nc" id="L809">                        Toast.makeText(MainActivity.this, &quot;Error fetching currency settings: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L810">                    });</span>
+
+<span class="fc" id="L812">            Volley.newRequestQueue(this).add(stringRequest);</span>
+        }
+<span class="fc" id="L814">    }</span>
+
+    private void updateCurrencyDisplay(String settings) {
+<span class="fc" id="L817">        String[] currencies = settings.split(&quot;,&quot;);</span>
+<span class="pc bpc" id="L818" title="1 of 2 branches missed.">        if (currencies.length &gt; 0) {</span>
+<span class="fc" id="L819">            getExchangeRate(currencies[0], selectedCurrency1);</span>
+        }
+<span class="fc bfc" id="L821" title="All 2 branches covered.">        if (currencies.length &gt; 1) {</span>
+<span class="fc" id="L822">            getExchangeRate(currencies[1], selectedCurrency2);</span>
+        }
+<span class="fc" id="L824">    }</span>
+
+    private void getExchangeRate(String currencyCode, TextView textViewToUpdate) {
+
+<span class="fc" id="L828">        String url = &quot;https://v6.exchangerate-api.com/v6/00db35a8a637ac23306484f0/latest/USD&quot;;</span>
+
+<span class="fc" id="L830">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+                response -&gt; {
+<span class="nc" id="L832">                    Log.d(&quot;ExchangeRateResponse&quot;, response.toString());</span>
+                    try {
+<span class="nc" id="L834">                        JSONObject conversionRates = response.getJSONObject(&quot;conversion_rates&quot;);</span>
+<span class="nc" id="L835">                        double rate = conversionRates.getDouble(currencyCode);</span>
+
+<span class="nc" id="L837">                        String rateText = String.format(&quot;%s/USD: %.3f&quot;, currencyCode, rate);</span>
+<span class="nc" id="L838">                        runOnUiThread(() -&gt; textViewToUpdate.setText(rateText));</span>
+<span class="nc" id="L839">                    } catch (JSONException e) {</span>
+<span class="nc" id="L840">                        e.printStackTrace();</span>
+<span class="nc bnc" id="L841" title="All 2 branches missed.">                        if (!(&quot;guest&quot;.equals(userType))) {</span>
+<span class="nc" id="L842">                            Toast.makeText(MainActivity.this, &quot;Failed to parse currency exchange rates&quot;, Toast.LENGTH_SHORT).show();</span>
+                        }
+<span class="nc" id="L844">                    }</span>
+<span class="nc" id="L845">                },</span>
+<span class="fc" id="L846">                error -&gt; Toast.makeText(MainActivity.this, &quot;Error fetching currency exchange rates: &quot; + error.toString(), Toast.LENGTH_SHORT).show());</span>
+
+<span class="fc" id="L848">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L849">    }</span>
+
+
+
+    @Override
+    protected void onDestroy() {
+<span class="fc" id="L855">        super.onDestroy();</span>
+<span class="fc" id="L856">        exchangeRateHandler.removeCallbacks(exchangeRateRunnable);</span>
+<span class="fc" id="L857">        stockUpdateHandler.removeCallbacks(stockUpdateRunnable);</span>
+
+<span class="fc" id="L859">    }</span>
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+<span class="nc" id="L864">        super.onActivityResult(requestCode, resultCode, data);</span>
+<span class="nc bnc" id="L865" title="All 6 branches missed.">        if (requestCode == PICK_PDF_FILE &amp;&amp; resultCode == RESULT_OK &amp;&amp; data != null) {</span>
+<span class="nc" id="L866">            Uri pdfUri = data.getData();</span>
+<span class="nc" id="L867">            uploadFileToGroupDocs(pdfUri);</span>
+        }
+<span class="nc" id="L869">    }</span>
+
+    private void uploadFileToGroupDocs(Uri fileUri) {
+<span class="nc" id="L872">        executor.execute(() -&gt; {</span>
+            try {
+<span class="nc" id="L874">                InputStream iStream = getContentResolver().openInputStream(fileUri);</span>
+<span class="nc" id="L875">                byte[] inputData = getBytesFromInputStream(iStream);</span>
+<span class="nc" id="L876">                File file = new File(getCacheDir(), &quot;upload.pdf&quot;);</span>
+
+<span class="nc" id="L878">                try (FileOutputStream fos = new FileOutputStream(file)) {</span>
+<span class="nc" id="L879">                    fos.write(inputData);</span>
+                }
+
+<span class="nc bnc" id="L882" title="All 6 branches missed.">                if (file.exists() &amp;&amp; file.canRead() &amp;&amp; file.length() &gt; 0) {</span>
+<span class="nc" id="L883">                    UploadFileRequest request = new UploadFileRequest(&quot;folder/upload.pdf&quot;, file, &quot;319money&quot;);</span>
+<span class="nc" id="L884">                    FilesUploadResult response = fileApi.uploadFile(request);</span>
+<span class="nc bnc" id="L885" title="All 2 branches missed.">                    if (!response.getUploaded().isEmpty()) {</span>
+<span class="nc" id="L886">                        convertFile(&quot;folder/upload.pdf&quot;);</span>
+                    }
+<span class="nc" id="L888">                } else {</span>
+<span class="nc" id="L889">                    Log.e(&quot;UploadFile&quot;, &quot;File does not exist or cannot be read.&quot;);</span>
+                }
+<span class="nc" id="L891">            } catch (Exception e) {</span>
+<span class="nc" id="L892">                Log.e(&quot;UploadFile&quot;, &quot;Unexpected exception: &quot; + e.getMessage(), e);</span>
+<span class="nc" id="L893">                runOnUiThread(() -&gt; Toast.makeText(MainActivity.this, &quot;Upload failed: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show());</span>
+<span class="nc" id="L894">            }</span>
+<span class="nc" id="L895">        });</span>
+<span class="nc" id="L896">    }</span>
+
+
+    private void convertFile(String uploadedFilePath) {
+        try {
+<span class="nc" id="L901">            ConvertSettings settings = new ConvertSettings();</span>
+<span class="nc" id="L902">            settings.setFilePath(uploadedFilePath);</span>
+<span class="nc" id="L903">            settings.setFormat(&quot;xlsx&quot;);</span>
+<span class="nc" id="L904">            settings.setOutputPath(&quot;folder/output.xlsx&quot;);</span>
+
+<span class="nc" id="L906">            ConvertDocumentRequest request = new ConvertDocumentRequest(settings);</span>
+<span class="nc" id="L907">            List&lt;StoredConvertedResult&gt; response = convertApi.convertDocument(request);</span>
+<span class="nc bnc" id="L908" title="All 2 branches missed.">            if (!response.isEmpty()) {</span>
+<span class="nc" id="L909">                downloadConvertedFile(&quot;folder/output.xlsx&quot;);</span>
+            }
+<span class="nc" id="L911">        } catch (ApiException e) {</span>
+<span class="nc" id="L912">            Toast.makeText(this, &quot;Conversion failed: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L913">        }</span>
+<span class="nc" id="L914">    }</span>
+
+    private void downloadConvertedFile(String outputPath) {
+        try {
+<span class="nc" id="L918">            DownloadFileRequest request = new DownloadFileRequest(outputPath, &quot;319money&quot;, null);</span>
+<span class="nc" id="L919">            File result = fileApi.downloadFile(request);</span>
+<span class="nc bnc" id="L920" title="All 2 branches missed.">            if (result != null) {</span>
+<span class="nc" id="L921">                runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L922">                    Toast.makeText(MainActivity.this, &quot;File downloaded successfully.&quot;, Toast.LENGTH_SHORT).show();</span>
+                    // Now upload the file
+<span class="nc" id="L924">                    uploadXlsxFile(result);</span>
+<span class="nc" id="L925">                });</span>
+            }
+<span class="nc" id="L927">        } catch (ApiException e) {</span>
+<span class="nc" id="L928">            Toast.makeText(this, &quot;Download failed: &quot; + e.getMessage(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L929">        }</span>
+<span class="nc" id="L930">    }</span>
+
+
+    private byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
+<span class="nc" id="L934">        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();</span>
+<span class="nc" id="L935">        byte[] buffer = new byte[1024];</span>
+        int length;
+<span class="nc bnc" id="L937" title="All 2 branches missed.">        while ((length = inputStream.read(buffer)) != -1) {</span>
+<span class="nc" id="L938">            byteArrayOutputStream.write(buffer, 0, length);</span>
+        }
+<span class="nc" id="L940">        return byteArrayOutputStream.toByteArray();</span>
+    }
+
+    private void GetRequest() {
+<span class="fc" id="L944">          String BASE_URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot;+selectedMemberId;</span>
+<span class="fc" id="L945">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, BASE_URL, null, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+<span class="fc" id="L949">                    P = response.getDouble(&quot;personal&quot;);</span>
+<span class="fc" id="L950">                    W = response.getDouble(&quot;work&quot;);</span>
+<span class="fc" id="L951">                    O = response.getDouble(&quot;other&quot;);</span>
+<span class="fc" id="L952">                    H = response.getDouble(&quot;home&quot;);</span>
+<span class="fc" id="L953">                    Log.d(&quot;Personal&quot;, String.valueOf(P));</span>
+<span class="fc" id="L954">                    Log.d(&quot;Work&quot;, String.valueOf(W));</span>
+<span class="fc" id="L955">                    Log.d(&quot;Other&quot;, String.valueOf(O));</span>
+<span class="fc" id="L956">                    Log.d(&quot;Home&quot;, String.valueOf(H));</span>
+
+
+
+<span class="nc" id="L960">                } catch (JSONException e) {</span>
+<span class="nc" id="L961">                    throw new RuntimeException(e);</span>
+<span class="fc" id="L962">                }</span>
+
+<span class="fc" id="L964">            }</span>
+<span class="fc" id="L965">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L968">                Toast.makeText(MainActivity.this, &quot;Get Error: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L969">            }</span>
+        });
+
+<span class="fc" id="L972">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="fc" id="L973">        requestQueue.add(jsonObjectRequest);</span>
+
+
+<span class="fc" id="L976">    }</span>
+
+    public void uploadXlsxFile(File xlsxFile) {
+<span class="nc" id="L979">        String userId = selectedMemberId;</span>
+<span class="nc" id="L980">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/statement/userId/&quot; + userId;</span>
+
+<span class="nc" id="L982">        Log.d(&quot;UploadXlsxFile&quot;, &quot;Preparing to upload file: &quot; + xlsxFile.getAbsolutePath());</span>
+<span class="nc" id="L983">        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,</span>
+                response -&gt; {
+                    // Handle the successful response (you can also parse response here)
+<span class="nc" id="L986">                    Toast.makeText(this, &quot;File uploaded successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+                    // Update chart data for this user
+<span class="nc" id="L988">                    fetchAndDisplayData(&quot;http://coms-309-056.class.las.iastate.edu:8080/expenses/&quot; + userId);</span>
+<span class="nc" id="L989">                },</span>
+                error -&gt; {
+                    // Handle the error
+<span class="nc" id="L992">                    Toast.makeText(this, &quot;Error uploading file: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L993">                }) {</span>
+
+            @Override
+            protected Map&lt;String, DataPart&gt; getByteData() {
+<span class="nc" id="L997">                Map&lt;String, DataPart&gt; params = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L998">                byte[] byteArray = convertFileToByteArray(xlsxFile);</span>
+<span class="nc" id="L999">                Log.d(&quot;UploadXlsxFile&quot;, &quot;Byte array length for file: &quot; + byteArray.length);</span>
+<span class="nc bnc" id="L1000" title="All 2 branches missed.">                if (byteArray.length == 0) {</span>
+<span class="nc" id="L1001">                    Log.e(&quot;UploadXlsxFile&quot;, &quot;File data is empty.&quot;);</span>
+                }
+<span class="nc" id="L1003">                params.put(&quot;file&quot;, new DataPart(xlsxFile.getName(), byteArray, &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;));</span>
+<span class="nc" id="L1004">                return params;</span>
+            }
+        };
+
+<span class="nc" id="L1008">        Log.d(&quot;UploadXlsxFile&quot;, &quot;Adding multipart request to queue&quot;);</span>
+<span class="nc" id="L1009">        Volley.newRequestQueue(this).add(multipartRequest);</span>
+<span class="nc" id="L1010">    }</span>
+
+
+    private byte[] convertFileToByteArray(File file) {
+<span class="nc" id="L1014">        ByteArrayOutputStream bos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L1015">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="nc" id="L1016">            byte[] buffer = new byte[1024];</span>
+            int read;
+<span class="nc bnc" id="L1018" title="All 2 branches missed.">            while ((read = fis.read(buffer)) != -1) {</span>
+<span class="nc" id="L1019">                bos.write(buffer, 0, read);</span>
+            }
+<span class="nc" id="L1021">        } catch (IOException e) {</span>
+<span class="nc" id="L1022">            Log.e(&quot;UploadXlsxFile&quot;, &quot;Error reading file to byte array&quot;, e);</span>
+<span class="nc" id="L1023">            return null; // Make sure to handle this case in your calling code.</span>
+<span class="nc" id="L1024">        }</span>
+<span class="nc" id="L1025">        return bos.toByteArray();</span>
+    }
+
+    public void checkAndRequestPermissions() {
+<span class="nc bnc" id="L1029" title="All 2 branches missed.">        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)</span>
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted. Request for permission.
+<span class="nc" id="L1032">            ActivityCompat.requestPermissions(this,</span>
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PICK_PDF_FILE);
+        } else {
+            // Permission has already been granted. You can perform your file operation here.
+        }
+<span class="nc" id="L1038">    }</span>
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+<span class="fc" id="L1043">        super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Call super method first</span>
+<span class="pc bpc" id="L1044" title="1 of 2 branches missed.">        switch (requestCode) {</span>
+            case PICK_PDF_FILE: {
+<span class="nc bnc" id="L1046" title="All 4 branches missed.">                if (grantResults.length &gt; 0 &amp;&amp; grantResults[0] == PackageManager.PERMISSION_GRANTED) {</span>
+                } else {
+                }
+<span class="nc" id="L1049">                return;</span>
+            }
+        }
+<span class="fc" id="L1052">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BudgetingAddActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">BudgetingAddActivity.java</span></div><h1>BudgetingAddActivity.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="fc" id="L24">public class BudgetingAddActivity extends AppCompatActivity {</span>
+    private Spinner spinnerCat;
+    private Button CreateBudget;
+
+    private EditText Pin, Win, Oin, Hin;
+
+    private double P, W, O, H;
+
+    private String SelectedCat;
+
+<span class="fc" id="L34">    private final String URL = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot;+ MainActivity.selectedMemberId;</span>
+
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L41">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L42">        setContentView(R.layout.activity_budgeting_add);</span>
+<span class="fc" id="L43">        GetRequest();</span>
+<span class="fc" id="L44">        CreateBudget = (Button) findViewById(R.id.budg_create_btn);</span>
+<span class="fc" id="L45">        Hin = (EditText) findViewById(R.id.Home_Lim);</span>
+<span class="fc" id="L46">        Pin = (EditText)findViewById(R.id.personal_lim);</span>
+<span class="fc" id="L47">        Win = (EditText) findViewById(R.id.Work_Lim);</span>
+<span class="fc" id="L48">        Oin = (EditText) findViewById(R.id.Other_Lim);</span>
+
+
+
+
+
+
+
+<span class="fc" id="L56">        CreateBudget.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L59">                sendPostRequest();</span>
+<span class="fc" id="L60">            }</span>
+        });
+<span class="fc" id="L62">    }</span>
+
+    private void sendPostRequest() {
+
+<span class="fc" id="L66">        JSONObject json = new JSONObject();</span>
+        try {
+<span class="fc" id="L68">                    json.put(&quot;personalLimit&quot;, Double.parseDouble(Pin.getText().toString()));</span>
+<span class="fc" id="L69">                    json.put(&quot;workLimit&quot;, Double.parseDouble(Win.getText().toString()));</span>
+<span class="fc" id="L70">                    json.put(&quot;homeLimit&quot;, Double.parseDouble(Hin.getText().toString()));</span>
+<span class="fc" id="L71">                    json.put(&quot;otherLimit&quot;, Double.parseDouble(Oin.getText().toString()));</span>
+
+<span class="fc" id="L73">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, json,</span>
+                    response -&gt; {
+<span class="fc" id="L75">                        Toast.makeText(BudgetingAddActivity.this, &quot;Budget Set!&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L76">                        startActivity(new Intent(BudgetingAddActivity.this, BudgetingActivity.class));</span>
+<span class="fc" id="L77">                    },</span>
+                    error -&gt; {
+<span class="nc" id="L79">                        Toast.makeText(BudgetingAddActivity.this, &quot;Failed: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L80">                        error.printStackTrace(); // Print error details for debugging</span>
+<span class="pc" id="L81">                    }) {</span>
+                @Override
+                public Map&lt;String, String&gt; getHeaders() throws AuthFailureError {
+<span class="fc" id="L84">                    Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L85">                    headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="fc" id="L86">                    return headers;</span>
+                }
+            };
+            // Add the request to the RequestQueue
+<span class="fc" id="L90">            Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="nc" id="L91">        } catch (JSONException e) {</span>
+<span class="nc" id="L92">            throw new RuntimeException(e);</span>
+<span class="fc" id="L93">        }</span>
+
+<span class="fc" id="L95">    }</span>
+
+    private void GetRequest() {
+<span class="fc" id="L98">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/budget/&quot; + MainActivity.selectedMemberId;</span>
+
+<span class="fc" id="L100">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="fc" id="L102">                P = response.getDouble(&quot;personalLimit&quot;);</span>
+<span class="fc" id="L103">                W = response.getDouble(&quot;workLimit&quot;);</span>
+<span class="fc" id="L104">                H = response.getDouble(&quot;homeLimit&quot;);</span>
+<span class="fc" id="L105">                O = response.getDouble(&quot;otherLimit&quot;);</span>
+
+                // Update EditText fields after fetching values
+<span class="fc" id="L108">                Pin.setText(Double.toString(P));</span>
+<span class="fc" id="L109">                Hin.setText(Double.toString(H));</span>
+<span class="fc" id="L110">                Win.setText(Double.toString(W));</span>
+<span class="fc" id="L111">                Oin.setText(Double.toString(O));</span>
+<span class="nc" id="L112">            } catch (JSONException e) {</span>
+<span class="nc" id="L113">                e.printStackTrace(); // Instead of throwing a runtime exception, just print the error</span>
+<span class="fc" id="L114">            }</span>
+<span class="fc" id="L115">        }, error -&gt; {</span>
+<span class="nc" id="L116">            Toast.makeText(BudgetingAddActivity.this, &quot;Failed: &quot; + error.toString(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L117">            error.printStackTrace(); // Print error details for debugging</span>
+<span class="nc" id="L118">        });</span>
+
+<span class="fc" id="L120">        Volley.newRequestQueue(this).add(jsonObjectRequest);</span>
+<span class="fc" id="L121">    }</span>
+
+
+
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CardAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.androidexample</a> &gt; <span class="el_source">CardAdapter.java</span></div><h1>CardAdapter.java</h1><pre class="source lang-java linenums">package com.example.androidexample;
+
+import android.content.Intent;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.util.List;
+
+
+public class CardAdapter extends RecyclerView.Adapter&lt;CardAdapter.CardViewHolder&gt; {
+
+    private List&lt;Card&gt; cardList;
+    private CardListActivity activity;
+
+<span class="fc" id="L26">    public CardAdapter(List&lt;Card&gt; cardList, CardListActivity activity) {</span>
+<span class="fc" id="L27">        this.cardList = cardList;</span>
+<span class="fc" id="L28">        this.activity = activity;</span>
+<span class="fc" id="L29">    }</span>
+
+    @Override
+    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+<span class="fc" id="L33">        View itemView = LayoutInflater.from(parent.getContext())</span>
+<span class="fc" id="L34">                .inflate(R.layout.card_item, parent, false);</span>
+<span class="fc" id="L35">        return new CardViewHolder(itemView);</span>
+    }
+
+    @Override
+    public void onBindViewHolder(CardViewHolder holder, int position) {
+<span class="fc" id="L40">        Card card = cardList.get(position);</span>
+<span class="fc" id="L41">        holder.cardNumberTextView.setText(card.getMaskedNumber()); // Assume Card class has getMaskedNumber method</span>
+
+<span class="fc" id="L43">        holder.editButton.setOnClickListener(view -&gt; {</span>
+            // Intent to start EditCardActivity, passing the card info for editing
+<span class="fc" id="L45">            Intent intent = new Intent(activity, EditCardActivity.class);</span>
+<span class="fc" id="L46">            String cardDataJson = card.toJson().toString();</span>
+<span class="fc" id="L47">            Log.d(&quot;CardAdapter&quot;, &quot;Card data being sent: &quot; + cardDataJson);</span>
+<span class="fc" id="L48">            intent.putExtra(&quot;card_data&quot;, cardDataJson);</span>
+<span class="fc" id="L49">            intent.putExtra(&quot;card_id&quot;, card.getId()); // Pass the card ID as an extra</span>
+<span class="fc" id="L50">            activity.startActivity(intent);</span>
+<span class="fc" id="L51">        });</span>
+
+<span class="fc" id="L53">        holder.useButton.setOnClickListener(view -&gt; {</span>
+            // Get the user ID
+<span class="fc" id="L55">            String userId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+            // Call the useCard method
+<span class="fc" id="L57">            useCard(userId);</span>
+<span class="fc" id="L58">        });</span>
+
+<span class="fc" id="L60">        holder.deleteButton.setOnClickListener(view -&gt; {</span>
+            // Logic to delete the card
+<span class="fc" id="L62">            deleteCard(card, position);</span>
+<span class="fc" id="L63">        });</span>
+<span class="fc" id="L64">        holder.defaultButton.setOnClickListener(view -&gt; {</span>
+            // Get the user ID and card ID
+<span class="fc" id="L66">            String userId = LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L67">            String cardId = card.getId();</span>
+            // Call the setDefaultCard method
+<span class="fc" id="L69">            setDefaultCard(userId, cardId);</span>
+<span class="fc" id="L70">        });</span>
+<span class="fc" id="L71">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L75">        return cardList.size();</span>
+    }
+
+    public class CardViewHolder extends RecyclerView.ViewHolder {
+        public TextView cardNumberTextView;
+        public Button editButton, useButton, defaultButton, deleteButton;
+
+<span class="fc" id="L82">        public CardViewHolder(View view) {</span>
+<span class="fc" id="L83">            super(view);</span>
+<span class="fc" id="L84">            cardNumberTextView = view.findViewById(R.id.cardNumberTextView);</span>
+<span class="fc" id="L85">            editButton = view.findViewById(R.id.addProg);</span>
+<span class="fc" id="L86">            useButton = view.findViewById(R.id.CompleteAct);</span>
+<span class="fc" id="L87">            deleteButton = view.findViewById(R.id.deleteButton);</span>
+<span class="fc" id="L88">            defaultButton = view.findViewById(R.id.defaultButton);</span>
+<span class="fc" id="L89">        }</span>
+    }
+
+    // Helper method to remove a card from the RecyclerView
+    public void removeAt(int position) {
+<span class="nc" id="L94">        cardList.remove(position);</span>
+<span class="nc" id="L95">        notifyItemRemoved(position);</span>
+<span class="nc" id="L96">        notifyItemRangeChanged(position, cardList.size());</span>
+<span class="nc" id="L97">    }</span>
+    public void deleteCard(Card card, int position) {
+<span class="fc" id="L99">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/cards/id/&quot; + LoginActivity.UUID.replace(&quot;\&quot;&quot;, &quot;&quot;) + &quot;/&quot; + card.getId();</span>
+
+<span class="fc" id="L101">        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, url,</span>
+                response -&gt; {
+                    // Response handling code
+<span class="fc" id="L104">                    cardList.remove(position);</span>
+<span class="fc" id="L105">                    notifyItemRemoved(position);</span>
+<span class="fc" id="L106">                    notifyItemRangeChanged(position, cardList.size());</span>
+<span class="fc" id="L107">                    Toast.makeText(activity, &quot;Card deleted successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L108">                },</span>
+                error -&gt; {
+                    // Error handling code
+<span class="nc" id="L111">                    Toast.makeText(activity, &quot;Error deleting card: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L112">                });</span>
+
+<span class="fc" id="L114">        Volley.newRequestQueue(activity).add(stringRequest);</span>
+<span class="fc" id="L115">    }</span>
+    public void useCard(String userId) {
+<span class="fc" id="L117">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/upgradeType/&quot; + userId;</span>
+
+<span class="fc" id="L119">        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,</span>
+                response -&gt; {
+                    // Handle the response
+<span class="fc" id="L122">                    Toast.makeText(activity, &quot;Card used successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L123">                    MainActivity.userType = &quot;premium&quot;;</span>
+
+<span class="fc" id="L125">                },</span>
+                error -&gt; {
+                    // Handle the error
+<span class="nc" id="L128">                    Toast.makeText(activity, &quot;Error using card: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L129">                });</span>
+
+<span class="fc" id="L131">        Volley.newRequestQueue(activity).add(stringRequest);</span>
+<span class="fc" id="L132">    }</span>
+
+    public void setDefaultCard(String userId, String cardId) {
+<span class="fc" id="L135">        String url = &quot;http://coms-309-056.class.las.iastate.edu:8080/cards/id/&quot; + userId + &quot;/&quot; + cardId + &quot;/setDefault&quot;;</span>
+
+<span class="fc" id="L137">        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url,</span>
+                response -&gt; {
+                    // Handle the response
+<span class="fc" id="L140">                    Toast.makeText(activity, &quot;Card set as default successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L141">                },</span>
+                error -&gt; {
+                    // Handle the error
+<span class="nc" id="L144">                    Toast.makeText(activity, &quot;Error setting card as default: &quot; + error.toString(), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L145">                });</span>
+
+<span class="fc" id="L147">        Volley.newRequestQueue(activity).add(stringRequest);</span>
+<span class="fc" id="L148">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.2.1</div></body></html>

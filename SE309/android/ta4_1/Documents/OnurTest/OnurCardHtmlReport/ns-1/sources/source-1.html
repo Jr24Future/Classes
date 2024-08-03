@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Card</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Cards</a>
+</div>
+
+<h1>Coverage Summary for Class: Card (ta4_1.MoneyFlow_Backend.Cards)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Card</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.5%
+  </span>
+  <span class="absValue">
+    (19/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Cards;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import ta4_1.MoneyFlow_Backend.Users.User;
+&nbsp;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;/**
+&nbsp; * Entity representing a credit/debit card.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;cards&quot;)
+&nbsp;public class Card {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(generator = &quot;UUID&quot;)
+&nbsp;    private UUID id;    // Unique identifier for the card
+&nbsp;
+&nbsp;    @Column(name = &quot;name&quot;, nullable = false)
+&nbsp;    private String name;    // Name of the card
+&nbsp;
+&nbsp;    @Column(name = &quot;card_number&quot;, unique = true, nullable = false)
+&nbsp;    private String cardNumber;  // Card number, must be unique
+&nbsp;
+&nbsp;    @Column(name = &quot;expiration_date&quot;, nullable = false)
+&nbsp;    private String expirationDate;  // Expiration date of the card
+&nbsp;
+&nbsp;    @Column(name = &quot;cvv&quot;, nullable = false)
+&nbsp;    private String cvv; // CVV number of the card
+&nbsp;
+&nbsp;    @Column(name = &quot;is_default&quot;, nullable = false)
+&nbsp;    private boolean isDefault; // If the card is the user&#39;s default card.
+&nbsp;
+&nbsp;    @JsonIgnore
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;)
+&nbsp;    private User user;  // The user associated with this card
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor
+&nbsp;     */
+<b class="fc">&nbsp;    public Card() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor with parameters.
+&nbsp;     *
+&nbsp;     * @param name           Name associated with the card.
+&nbsp;     * @param cardNumber     Card number.
+&nbsp;     * @param expirationDate Expiration date of the card.
+&nbsp;     * @param cvv            CVV of the card.
+&nbsp;     */
+<b class="fc">&nbsp;    public Card(String name, String cardNumber, String expirationDate, String cvv) {</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.cardNumber = cardNumber;</b>
+<b class="fc">&nbsp;        this.expirationDate = expirationDate;</b>
+<b class="fc">&nbsp;        this.cvv = cvv;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Getters and setters
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return this.name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCardNumber() {
+<b class="fc">&nbsp;        return this.cardNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCardNumber(String cardNumber) {
+<b class="fc">&nbsp;        this.cardNumber = cardNumber;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getExpirationDate() {
+<b class="fc">&nbsp;        return this.expirationDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setExpirationDate(String expirationDate) {
+<b class="fc">&nbsp;        this.expirationDate = expirationDate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UUID getId() {
+<b class="fc">&nbsp;        return this.id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(UUID uuid) {
+<b class="fc">&nbsp;        this.id = uuid;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public String getCvv() { return this.cvv; }</b>
+&nbsp;
+&nbsp;    public void setCvv(String cvv) {
+<b class="fc">&nbsp;        this.cvv = cvv;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getUser() {
+<b class="nc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser(User user) {
+<b class="fc">&nbsp;        this.user = user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean getIsDefault() {
+<b class="fc">&nbsp;        return this.isDefault;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIsDefault(boolean isDefault) {
+<b class="fc">&nbsp;        this.isDefault = isDefault;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return id + &quot; &quot;</b>
+&nbsp;                + name + &quot; &quot;
+&nbsp;                + cardNumber + &quot; &quot;
+&nbsp;                + expirationDate + &quot; &quot;
+&nbsp;                + cvv + &quot; &quot;
+&nbsp;                + isDefault;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:49</div>
+</div>
+</body>
+</html>

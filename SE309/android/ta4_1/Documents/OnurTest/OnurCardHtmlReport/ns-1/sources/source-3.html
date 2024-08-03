@@ -1,0 +1,108 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CardRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Cards</a>
+</div>
+
+<h1>Coverage Summary for Class: CardRepository (ta4_1.MoneyFlow_Backend.Cards)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">CardRepository$MockitoMock$KNp6Dd2O</td>
+  </tr>
+  <tr>
+    <td class="name">CardRepository$MockitoMock$KNp6Dd2O$auxiliary$5GInp8SI</td>
+  </tr>
+  <tr>
+    <td class="name">CardRepository$MockitoMock$KNp6Dd2O$auxiliary$fFdXfais</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Cards;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository interface for Card entities.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; */
+&nbsp;public interface CardRepository extends JpaRepository&lt;Card, UUID&gt; {
+&nbsp;    /**
+&nbsp;     * Finds a card by its ID.
+&nbsp;     *
+&nbsp;     * @param id The UUID of the card.
+&nbsp;     * @return An Optional containing the found card, if any.
+&nbsp;     */
+&nbsp;    Optional&lt;Card&gt; findById(UUID id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes a card by its ID.
+&nbsp;     *
+&nbsp;     * @param id The UUID of the card to be deleted.
+&nbsp;     */
+&nbsp;    @Transactional
+&nbsp;    void deleteById(UUID id);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:49</div>
+</div>
+</body>
+</html>

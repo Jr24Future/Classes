@@ -1,0 +1,136 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PortfolioService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Portfolio</a>
+</div>
+
+<h1>Coverage Summary for Class: PortfolioService (ta4_1.MoneyFlow_Backend.Portfolio)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PortfolioService</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Portfolio;
+&nbsp;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Service
+<b class="nc">&nbsp;public class PortfolioService {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the user&#39;s total portfolio value based on shares held and stock prices.
+&nbsp;     *
+&nbsp;     * @param userPortfolio The user&#39;s portfolio.
+&nbsp;     * @return The updated portfolio value.
+&nbsp;     */
+&nbsp;    public double updatePortfolioValue(Portfolio userPortfolio) {
+<b class="nc">&nbsp;        return (userPortfolio.getAppleShares() * userPortfolio.getApplePrice()) +</b>
+<b class="nc">&nbsp;               (userPortfolio.getAmazonShares() * userPortfolio.getAmazonPrice()) +</b>
+<b class="nc">&nbsp;               (userPortfolio.getBitcoin() * userPortfolio.getBitcoinPrice()) +</b>
+<b class="nc">&nbsp;               (userPortfolio.getDogecoin() * userPortfolio.getDogecoinPrice());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, Double&gt; mapPortfolioValues(Portfolio userPortfolio) {
+<b class="nc">&nbsp;        Map&lt;String, Double&gt; values = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        values.put(&quot;Apple&quot;, userPortfolio.getValueOfAppleStock());</b>
+<b class="nc">&nbsp;        values.put(&quot;Amazon&quot;, userPortfolio.getValueOfAmazonStock());</b>
+<b class="nc">&nbsp;        values.put(&quot;Bitcoin&quot;, userPortfolio.getValueOfBitcoin());</b>
+<b class="nc">&nbsp;        values.put(&quot;Dogecoin&quot;, userPortfolio.getValueOfDogecoin());</b>
+<b class="nc">&nbsp;        return values;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:52</div>
+</div>
+</body>
+</html>

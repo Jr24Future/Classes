@@ -1,0 +1,432 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > User</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ta4_1.MoneyFlow_Backend.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: User (ta4_1.MoneyFlow_Backend.Users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69%
+  </span>
+  <span class="absValue">
+    (29/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    49.3%
+  </span>
+  <span class="absValue">
+    (34/69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ta4_1.MoneyFlow_Backend.Users;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonBackReference;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import ta4_1.MoneyFlow_Backend.Budget.Budget;
+&nbsp;import ta4_1.MoneyFlow_Backend.Cards.Card;
+&nbsp;import ta4_1.MoneyFlow_Backend.Expenses.Expenses;
+&nbsp;import ta4_1.MoneyFlow_Backend.Family.Family;
+&nbsp;import ta4_1.MoneyFlow_Backend.Goals.Goal;
+&nbsp;import ta4_1.MoneyFlow_Backend.Portfolio.Portfolio;
+&nbsp;import ta4_1.MoneyFlow_Backend.Recommendations.Recommendation;
+&nbsp;import ta4_1.MoneyFlow_Backend.Statements.Statement;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Provides the Definition/Structure for the user table
+&nbsp; * Represents a User in the MoneyFlow application.
+&nbsp; * Each user has a unique ID, personal information, an income, associated expenses, and a list of cards.
+&nbsp; *
+&nbsp; * @author Onur Onal
+&nbsp; * @author Kemal Yavuz
+&nbsp; */
+&nbsp;@Entity // Indicates that this class is an entity in the database.
+&nbsp;@Table(name = &quot;users&quot;)  // Specifies the table name in the database.
+&nbsp;public class User {
+&nbsp;
+&nbsp;    @Id // Indicates that this field is the primary key.
+&nbsp;    @GeneratedValue(generator = &quot;UUID&quot;) // Specifies that the ID should be generated automatically as a UUID.
+&nbsp;    private UUID id; // Unique identifier for the user.
+&nbsp;
+&nbsp;    @Column(name = &quot;first_name&quot;, nullable = false)  // Maps this field to the &quot;first_name&quot; column in the database.
+&nbsp;    private String firstName;   // The user&#39;s first name.
+&nbsp;
+&nbsp;    @Column(name = &quot;last_name&quot;, nullable = false)   // Maps this field to the &quot;last_name&quot; column in the database.
+&nbsp;    private String lastName;    // The user&#39;s last name.
+&nbsp;
+&nbsp;    @Column(name = &quot;password&quot;, nullable = false)    // Maps this field to the &quot;password&quot; column in the database.
+&nbsp;    private String password;    // The user&#39;s password.
+&nbsp;
+&nbsp;    @Column(name = &quot;email&quot;, unique = true, nullable = false)
+&nbsp;    // Maps this field to the &quot;email&quot; column in the database.
+&nbsp;    private String email;   // The user&#39;s email.
+&nbsp;
+&nbsp;    @Column(name = &quot;type&quot;)  // Maps this field to the &quot;type&quot; column in the database.
+&nbsp;    private String type;    // The user&#39;s type (e.g., regular, premium).
+&nbsp;
+&nbsp;    @Column(name = &quot;monthly_income&quot;)    // Maps this field to the &quot;monthly_income&quot; column in the database.
+&nbsp;    private double monthlyIncome;  // The user&#39;s monthly income.
+&nbsp;
+&nbsp;    @Column(name = &quot;annual_income&quot;)    // Maps this field to the &quot;annual_income&quot; column in the database.
+&nbsp;    private double annualIncome;  // The user&#39;s annual income.
+&nbsp;
+&nbsp;    @Column(name = &quot;currency_exchange_setting&quot;)
+&nbsp;    private String currencyExchangeSetting;
+&nbsp;
+&nbsp;    @Column(name = &quot;family_status&quot;)
+&nbsp;    private String familyStatus; // &quot;headOfHousehold&quot;, &quot;familyMember&quot;, or &quot;independent&quot;
+&nbsp;
+&nbsp;    @OneToOne(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    // Establishes a one-to-one relationship with the Expenses entity.
+&nbsp;    private Expenses expenses;  // The user&#39;s associated expenses.
+&nbsp;
+&nbsp;    @OneToOne(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    // Establishes a one-to-one relationship with the Expenses entity.
+&nbsp;    private Budget budget;  // The user&#39;s associated expenses.
+&nbsp;
+&nbsp;    @OneToOne(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    // Establishes a one-to-one relationship with the Portfolio entity.
+&nbsp;    private Portfolio portfolio;  // The user&#39;s associated portfolio.
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    // Establishes a one-to-many relationship with the Card entity.
+&nbsp;    private List&lt;Card&gt; cards = new ArrayList&lt;&gt;();   // The user&#39;s associated cards.
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;family_id&quot;)
+&nbsp;    @JsonBackReference
+&nbsp;    private Family family;
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    private List&lt;Goal&gt; goals = new ArrayList&lt;&gt;();
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    // Establishes a one-to-many relationship with the Recommendation entity.
+&nbsp;    @MapKey(name = &quot;date&quot;) // Designating the map key
+&nbsp;    private Map&lt;String, Recommendation&gt; recommendations = new HashMap&lt;&gt;();    // The user&#39;s associated recommendations.
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;user&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</b>
+&nbsp;    // Establishes a one-to-many relationship with the Statement entity.
+&nbsp;    @MapKey(name = &quot;date&quot;)
+&nbsp;    private Map&lt;String, Statement&gt; statements = new HashMap&lt;&gt;();    // The user&#39;s associated statements.
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor for JPA.
+&nbsp;     */
+<b class="fc">&nbsp;    public User() {</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new User with the specified personal information and income.
+&nbsp;     *
+&nbsp;     * @param firstName     - the first name of the user
+&nbsp;     * @param lastName      - the last name of the user
+&nbsp;     * @param password      - the password of the user
+&nbsp;     * @param email         - the email of the user
+&nbsp;     * @param monthlyIncome - the monthly income of the user
+&nbsp;     * @param annualIncome  - the annual income of the user
+&nbsp;     */
+<b class="nc">&nbsp;    public User(String firstName, String lastName, String password, String email, double monthlyIncome, double annualIncome) {</b>
+<b class="nc">&nbsp;        this.firstName = firstName;</b>
+<b class="nc">&nbsp;        this.lastName = lastName;</b>
+<b class="nc">&nbsp;        this.password = password;</b>
+<b class="nc">&nbsp;        this.email = email;</b>
+<b class="nc">&nbsp;        this.monthlyIncome = monthlyIncome;</b>
+<b class="nc">&nbsp;        this.annualIncome = annualIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Getters and setters for each field
+&nbsp;
+&nbsp;    public String getFirstName() {
+<b class="fc">&nbsp;        return this.firstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFirstName(String firstName) {
+<b class="fc">&nbsp;        this.firstName = firstName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getLastName() {
+<b class="fc">&nbsp;        return this.lastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLastName(String lastName) {
+<b class="fc">&nbsp;        this.lastName = lastName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return this.password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPassword(String password) {
+<b class="fc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmail() {
+<b class="fc">&nbsp;        return this.email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmail(String email) {
+<b class="fc">&nbsp;        this.email = email;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public UUID getId() {
+<b class="fc">&nbsp;        return this.id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(UUID uuid) {
+<b class="fc">&nbsp;        this.id = UUID.randomUUID();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getType() {
+<b class="fc">&nbsp;        return this.type;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setType(String type) {
+<b class="fc">&nbsp;        this.type = type;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getMonthlyIncome() {
+<b class="fc">&nbsp;        return monthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMonthlyIncome(double monthlyIncome) {
+<b class="fc">&nbsp;        this.monthlyIncome = monthlyIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getAnnualIncome() {
+<b class="fc">&nbsp;        return annualIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAnnualIncome(double annualIncome) {
+<b class="fc">&nbsp;        this.annualIncome = annualIncome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Card&gt; getCards() {
+<b class="fc">&nbsp;        return this.cards;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addCard(Card card) {
+<b class="nc">&nbsp;        if (cards != null) {</b>
+<b class="nc">&nbsp;            this.cards.add(card);</b>
+<b class="nc">&nbsp;            card.setUser(this);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCards(List&lt;Card&gt; cards) {
+<b class="nc">&nbsp;        this.cards = cards;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Expenses getExpenses() {
+<b class="fc">&nbsp;        return expenses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setExpenses(Expenses expenses) {
+<b class="nc">&nbsp;        this.expenses = expenses;</b>
+<b class="nc">&nbsp;        if (expenses != null) {</b>
+<b class="nc">&nbsp;            expenses.setUser(this); // Set the user in the Expenses entity</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Portfolio getPortfolio() {
+<b class="fc">&nbsp;        return portfolio;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPortfolio(Portfolio portfolio) {
+<b class="nc">&nbsp;        this.portfolio = portfolio;</b>
+<b class="nc">&nbsp;        if (portfolio != null) {</b>
+<b class="nc">&nbsp;            portfolio.setUser(this); // Set the user in the Portfolio entity</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCurrencyExchangeSetting() {
+<b class="fc">&nbsp;        return currencyExchangeSetting;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCurrencyExchangeSetting(String currencyExchangeSetting) {
+<b class="fc">&nbsp;        this.currencyExchangeSetting = currencyExchangeSetting;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, Recommendation&gt; getRecommendations() {
+<b class="fc">&nbsp;        return this.recommendations;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Recommendation addRecommendation(String recommendationText) {
+<b class="nc">&nbsp;        LocalDate date = LocalDate.now();</b>
+<b class="nc">&nbsp;        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</b>
+<b class="nc">&nbsp;        String formattedDate = date.format(formatter);</b>
+&nbsp;
+<b class="nc">&nbsp;        Recommendation recommendation = new Recommendation();</b>
+<b class="nc">&nbsp;        recommendation.setRecommendation(recommendationText);</b>
+<b class="nc">&nbsp;        recommendation.setDate(formattedDate);</b>
+<b class="nc">&nbsp;        recommendation.setUser(this);</b>
+&nbsp;
+<b class="nc">&nbsp;        this.recommendations.put(formattedDate, recommendation);</b>
+<b class="nc">&nbsp;        return recommendation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, Statement&gt; getStatements() {
+<b class="fc">&nbsp;        return this.statements;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Family getFamily() {
+<b class="nc">&nbsp;        return family;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFamily(Family family) {
+<b class="nc">&nbsp;        this.family = family;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getFamilyStatus() {
+<b class="fc">&nbsp;        return familyStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setFamilyStatus(String familyStatus) {
+<b class="fc">&nbsp;        this.familyStatus = familyStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a financial report for the user, summarizing their income, expenses, and remaining budget.
+&nbsp;     *
+&nbsp;     * @return Budget = Income - Expenses
+&nbsp;     */
+&nbsp;    public double generateBudget() {
+<b class="fc">&nbsp;        double totalExpenses = expenses != null ? expenses.getTotalExpenses() : 0;</b>
+<b class="fc">&nbsp;        return monthlyIncome - totalExpenses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Getter and setter for goals
+&nbsp;    public List&lt;Goal&gt; getGoals() {
+<b class="fc">&nbsp;        return goals;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGoals(List&lt;Goal&gt; goals) {
+<b class="nc">&nbsp;        this.goals = goals;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method to add a goal to the user&#39;s list of goals
+&nbsp;    public void addGoal(Goal goal) {
+<b class="nc">&nbsp;        this.goals.add(goal);</b>
+<b class="nc">&nbsp;        goal.setUser(this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method to remove a goal from the user&#39;s list of goals
+&nbsp;    public void removeGoal(Goal goal) {
+<b class="nc">&nbsp;        this.goals.remove(goal);</b>
+<b class="nc">&nbsp;        goal.setUser(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBudget(Budget savedBudget) {
+<b class="nc">&nbsp;        budget = savedBudget;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Budget getBudget() {
+<b class="fc">&nbsp;        return budget;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Represents the user as a string containing their ID, personal information, and income.
+&nbsp;     *
+&nbsp;     * @return a string representation of the user
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return id + &quot; &quot;</b>
+&nbsp;                + firstName + &quot; &quot;
+&nbsp;                + lastName + &quot; &quot;
+&nbsp;                + password + &quot; &quot;
+&nbsp;                + email + &quot; &quot;
+&nbsp;                + monthlyIncome + &quot; &quot;
+&nbsp;                + annualIncome + &quot; &quot;
+&nbsp;                + type + &quot; &quot;
+&nbsp;                + currencyExchangeSetting + &quot; &quot;
+&nbsp;                + familyStatus;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-02 13:54</div>
+</div>
+</body>
+</html>
