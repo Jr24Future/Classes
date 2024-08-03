@@ -1,0 +1,25 @@
+{
+  "name": "node_activity14",
+  "version": "1.0.0",
+  "description": "NodeJS and Express application to serve robot data from MongoDB",
+  "main": "errollb_activity14_backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon errollb_activity14_backend.js"
+  },
+  "keywords": [
+    "Nodejs",
+    "express",
+    "mongodb",
+    "robots"
+  ],
+  "author": "Erroll Barker",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^5.9.2"
+  }
+}

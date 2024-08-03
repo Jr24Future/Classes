@@ -1,0 +1,23 @@
+[
+    {
+       "id": 1,
+       "name": "Robot 1",
+          "price":24.50,
+       "description": "This is a description of Robot 1",
+       "imageUrl": "https://robohash.org/robot1"
+    },
+    {
+       "id": 2,
+       "name": "Robot 2",
+          "price":32.90,
+       "description": "This is a description of Robot 2",
+       "imageUrl": "https://robohash.org/robot2"
+    },
+    {
+       "id": 3,
+       "name": "Robot 3",
+          "price":20.50,
+       "description": "This is a description of Robot 3",
+       "imageUrl": "https://robohash.org/robot3"
+    }
+]

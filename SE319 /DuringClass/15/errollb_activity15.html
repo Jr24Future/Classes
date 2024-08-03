@@ -1,0 +1,75 @@
+<!-- errollb_activity15.html -->
+<!-- Author: Erroll Barker -->
+<!-- ISU Netid: errollb@iastate.edu -->
+<!-- Date: 4/18/2024 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Catalog</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Robot Operations</h1>
+
+    <!-- Form to Add New Robot -->
+    <form onsubmit="event.preventDefault(); addRobot();" class="mb-4">
+      <div class="form-group">
+        <label for="robotName">Robot Name</label>
+        <input type="text" class="form-control" id="robotName" placeholder="Enter Robot Name" required />
+      </div>
+      <div class="form-group">
+        <label for="robotDescription">Description</label>
+        <input type="text" class="form-control" id="robotDescription" placeholder="Enter Robot Description" required />
+      </div>
+      <div class="form-group">
+        <label for="robotImageUrl">Image URL</label>
+        <input type="text" class="form-control" id="robotImageUrl" placeholder="Enter Image URL" required />
+      </div>
+      <div class="form-group">
+        <label for="robotPrice">Price</label>
+        <input type="number" class="form-control" id="robotPrice" step="0.01" placeholder="Enter Price" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Add Robot</button>
+    </form>
+
+    <!-- Form to Update Existing Robot -->
+    <h2>Update Robot</h2>
+<form id="updateRobotForm" onsubmit="event.preventDefault(); updateRobot(currentRobotId);">
+      <div class="form-group">
+        <label for="updateRobotName">Robot Name</label>
+        <input type="text" class="form-control" id="updateRobotName" placeholder="Enter Robot Name" required />
+      </div>
+      <div class="form-group">
+        <label for="updateRobotDescription">Description</label>
+        <input type="text" class="form-control" id="updateRobotDescription" placeholder="Enter Robot Description" required />
+      </div>
+      <div class="form-group">
+        <label for="updateRobotImageUrl">Image URL</label>
+        <input type="text" class="form-control" id="updateRobotImageUrl" placeholder="Enter Image URL" required />
+      </div>
+      <div class="form-group">
+        <label for="updateRobotPrice">Price</label>
+        <input type="number" class="form-control" id="updateRobotPrice" step="0.01" placeholder="Enter Price" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Update Robot</button>
+    </form>
+
+    <!-- Display area for listing robots -->
+    <div id="robots"></div>
+  </div>
+
+  <!-- Script to handle frontend operations -->
+  <script src="errollb_activity15_frontend.js"></script>
+
+  <h2>Get Robot by ID:</h2>
+  <input type="text" id="robotId" placeholder="Enter robot ID" />
+  <button onclick="getRobot()">Get Robot</button>
+  <div id="robotDetails"></div>
+  
+  
+</body>
+</html>

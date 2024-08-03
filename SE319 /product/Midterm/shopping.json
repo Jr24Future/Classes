@@ -1,0 +1,148 @@
+[
+    
+    {
+        "id": "5",
+        "category": "computer",
+        "title": "Notepad++",
+        "description": "Notepad++ is a lightweight code editor with syntax highlighting and other basic features for editing text and code.",
+        "image": "./images/++.png",
+        "price": "19.99",
+        "available": "out of stock"
+    },
+    {
+        "id": "2",
+        "category": "software",
+        "title": "VS Code IDE",
+        "description": "VS Code is a versatile code editor used for writing and editing code in various programming languages.",
+        "image": "./images/vs.jpg",
+        "price": "29.99",
+        "available": "7 left"
+    },
+    {
+        "id": "3",
+        "category": "software",
+        "title": "Eclipse IDE",
+        "description": "Eclipse IDE is a powerful integrated development environment for coding, debugging, and testing software.",
+        "image": "./images/eclipse.jpg",
+        "price": "39.99",
+        "available": "out of stock"
+    },
+    {
+        "id": "4",
+        "category": "computer",
+        "title": "Code Climate",
+        "description": "Code Climate is a platform that provides automated code review and analytics to improve code quality and maintainability.",
+        "image": "./images/cc.png",
+        "price": "19.99",
+        "available": "available now"
+    },
+    {
+        "id": "6",
+        "category": "computer",
+        "title": "Adobe Dreamweaver",
+        "description": "Adobe Dreamweaver is a comprehensive web development tool used for designing, coding, and managing websites and mobile content.",
+        "image": "./images/DW.png",
+        "price": "19.99",
+        "available": "5 left"
+    },
+    {
+        "id": "7",
+        "category": "electrical",
+        "title": "Digital Multimeter",
+        "description": "A digital multimeter is a tool used to measure electrical properties like voltage, current, and resistance in electronic circuits.",
+        "image": "./images/mm.png",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "1",
+        "category": "software",
+        "title": "Git",
+        "description": "Git is used for version control, allowing multiple developers to collaborate on projects by tracking changes to files.",
+        "image": "./images/git.png",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "9",
+        "category": "electrical",
+        "title": "Screwdrivers",
+        "description": "Screwdrivers are tools used for tightening or loosening screws by turning them with a rotating blade or tip.",
+        "image": "./images/s.png",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "15",
+        "category": "electrical",
+        "title": "Soldering Iron",
+        "description": "A soldering iron is a tool used to melt solder, which is a metal alloy, to join two or more metal surfaces together.",
+        "image": "./images/si.jpg",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "13",
+        "category": "electrical",
+        "title": "Voltage Tester",
+        "description": "Voltage testers are tools used to check the presence or absence of electrical voltage in a circuit or electrical device.",
+        "image": "./images/vt.jpg",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "14",
+        "category": "electrical",
+        "title": "Oscilloscope",
+        "description": "An oscilloscope is a device used to graphically display and analyze the waveform of electronic signals, typically voltage, over time.",
+        "image": "./images/o.png",
+        "price": "19.99",
+        "available": "available"
+    },
+    {
+        "id": "8",
+        "category": "electrical",
+        "title": "Wire Strippers",
+        "description": "Wire strippers are tools used to remove the insulation from the ends of electrical wires to expose the metal conductor for connections.",
+        "image": "./images/Ws.png",
+        "price": "19.99",
+        "available": "out of stock"
+    },
+    {
+        "id": "12",
+        "category": "cyber",
+        "title": "John the Ripper",
+        "description": "John the Ripper is a widely used password cracking tool that can help identify weak passwords in a system by attempting various password combinations.",
+        "image": "./images/jtr.jpg",
+        "price": "19.99",
+        "available": "1 left"
+    },
+    {
+        "id": "11",
+        "category": "cyber",
+        "title": "Nmap",
+        "description": "Nmap is a powerful network scanning tool used to discover hosts and services on a computer network, thus creating a map of the network.",
+        "image": "./images/nmap.jpg",
+        "price": "19.99",
+        "available": "available now"
+    },
+    {
+        "id": "16",
+        "category": "cyber",
+        "title": "Firewalls",
+        "description": "Firewalls are security systems that monitor and control incoming and outgoing network traffic based on predetermined security rules.",
+        "image": "./images/f.png",
+        "price": "19.99",
+        "available": "available now"
+    },
+    {
+        "id": "10",
+        "category": "cyber",
+        "title": "Kali Linux",
+        "description": "Kali Linux is a Debian-based Linux distribution designed for digital forensics and penetration testing.",
+        "image": "./images/k.jpg",
+        "price": "19.99",
+        "available": "available now"
+    }
+
+]
