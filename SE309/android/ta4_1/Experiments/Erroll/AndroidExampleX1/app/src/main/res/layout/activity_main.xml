@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#022785"
+    android:backgroundTint="#126A85"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/main_msg_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="50dp"
+        android:textColor="#938508"
+        android:textSize="50sp"
+        android:textStyle="bold"></TextView>
+
+    <TextView
+        android:id="@+id/main_2msg_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Welcome"
+        android:textColor="#938508"
+        android:textSize="34sp"
+        android:textStyle="normal|italic" />
+
+    <TextView
+        android:id="@+id/main_3msg_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="400dp"
+        android:text="Designed by TA-401"
+        android:textColor="#5A0404"
+        android:textStyle="bold" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

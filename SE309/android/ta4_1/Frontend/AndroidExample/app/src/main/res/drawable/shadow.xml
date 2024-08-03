@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Drop Shadow Layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#80000000" /> <!-- Semi-transparent black for shadow -->
+            <corners android:radius="4dp" /> <!-- Adjust corner radius for rounded corners -->
+            <padding
+                android:bottom="2dp"
+                android:left="2dp"
+                android:right="2dp"
+                android:top="2dp" />
+        </shape>
+    </item>
+    <!-- Background Layer -->
+    <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#BDBDBD" /> <!-- Background color -->
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+</layer-list>

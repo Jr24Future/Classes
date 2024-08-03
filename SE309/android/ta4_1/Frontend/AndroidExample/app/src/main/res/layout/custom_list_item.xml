@@ -1,0 +1,48 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/cardNumberTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="TEST"
+        android:textSize="24sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#0019971E"
+        android:foregroundTint="#00D33E3E"
+        android:indeterminateOnly="false"
+        android:progress="50"
+        android:progressDrawable="@android:drawable/progress_horizontal"
+        android:progressTint="#35D80C"
+        android:rotationY="0" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/addProg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#1A2561"
+            android:text="Add Progress" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
+
+

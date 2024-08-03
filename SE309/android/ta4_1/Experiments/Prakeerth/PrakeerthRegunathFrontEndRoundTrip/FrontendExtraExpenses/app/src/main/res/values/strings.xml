@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FrontEndExtraExpenses</string>
+
+    <string-array name="extra_expenses_array">
+        <item>personal</item>
+        <item>work</item>
+        <item>home</item>
+        <item>other</item>
+    </string-array>
+
+</resources>

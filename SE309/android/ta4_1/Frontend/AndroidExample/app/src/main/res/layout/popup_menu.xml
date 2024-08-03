@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:drawable/dialog_holo_dark_frame"
+    android:backgroundTint="#1A2561"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <Button
+        android:id="@+id/btn_prime_user"
+        android:layout_width="171dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Prime User"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btn_settings"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Settings" />
+
+    <Button
+        android:id="@+id/btn_recommend"
+        android:layout_width="179dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Recommendations" />
+
+    <Button
+        android:id="@+id/btn_Family_Plan"
+        android:layout_width="177dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Family Plan" />
+
+    <Button
+        android:id="@+id/btn_Goals"
+        android:layout_width="178dp"
+        android:layout_height="62dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Goals" />
+
+    <Button
+        android:id="@+id/btn_Budget"
+        android:layout_width="177dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Budgeting" />
+
+    <Button
+        android:id="@+id/btn_stock_market"
+        android:layout_width="177dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Stock" />
+
+</LinearLayout>

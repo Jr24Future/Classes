@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="#1D6BA6"
+        android:padding="8dp"
+        android:layout_marginEnd="80dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:text="This message tries to display a Recommendation message because its very useful towards ChatGPT"/>
+
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

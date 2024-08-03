@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:backgroundTint="#000000"
+    android:foregroundTint="#00E8DFDF"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:background="#B53030"
+        android:backgroundTint="#000000"
+        android:drawableTint="#00000000"
+        android:foregroundTint="#00000000"
+        android:shadowColor="#00000000"
+        android:text="0"
+        android:textColor="#E91E63"
+        android:textSize="150sp"></TextView>
+
+    <Button
+        android:id="@+id/counter_increase_btn"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="#47A822"
+        android:text="+5"></Button>
+
+    <Button
+        android:id="@+id/counter_decrease_btn"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#47A822"
+        android:text="-2"></Button>
+
+    <Button
+        android:id="@+id/counter_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#47A822"
+        android:text="Check Results">
+
+    </Button>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

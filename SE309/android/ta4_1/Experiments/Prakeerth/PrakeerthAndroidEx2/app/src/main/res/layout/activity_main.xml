@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:backgroundTint="#000000"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/main_msg_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="200dp"
+        android:background="#00000000"
+        android:backgroundTint="#000000"
+        android:drawableTint="#00000000"
+        android:rotationX="0"
+        android:text="Intent Example"
+        android:textColor="#3F51B5"
+        android:textSize="30dp"></TextView>
+
+    <Button
+        android:id="@+id/main_counter_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="#47A822"
+        android:text="To the Counter Activity"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

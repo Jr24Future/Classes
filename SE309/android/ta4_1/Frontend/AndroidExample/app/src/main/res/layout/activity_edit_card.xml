@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_form="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btn_save_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="31dp"
+        android:backgroundTint="@color/deep_blue"
+    android:text="Save Card"
+    android:textColor="@android:color/white" />
+
+    <com.braintreepayments.cardform.view.CardForm
+        android:id="@+id/card_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_save_card" />
+
+</RelativeLayout>

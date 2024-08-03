@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1A2561"
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <TextView
+                android:id="@+id/selectedCurrency1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toolbar"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Currency 1: --"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/selectedCurrency2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/selectedCurrency1"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Currency 2: --"
+                android:textColor="#FFFFFF" />
+        </androidx.appcompat.widget.Toolbar>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FFFFFF"
+            android:touchscreenBlocksFocus="true">
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/p_display"-->
+            <!--                android:layout_width="58dp"-->
+            <!--                android:layout_height="22dp"-->
+            <!--                android:text="0"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.249"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.961" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/h_display"-->
+            <!--                android:layout_width="58dp"-->
+            <!--                android:layout_height="22dp"-->
+            <!--                android:text="0"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.201"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.918" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/o_display"-->
+            <!--                android:layout_width="58dp"-->
+            <!--                android:layout_height="22dp"-->
+            <!--                android:text="0"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.201"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.873" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/textView26"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Work:"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.045"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.831" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/textView25"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Personal :"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.044"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.957" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/textView24"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Home: "-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.044"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.914" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/w_display"-->
+            <!--                android:layout_width="58dp"-->
+            <!--                android:layout_height="22dp"-->
+            <!--                android:text="0"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.218"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.834" />-->
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/textView22"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="Other:"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.044"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                app:layout_constraintVertical_bias="0.869" />-->
+
+            <Button
+                android:id="@+id/btn_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="307dp"
+                android:layout_marginTop="94dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="75dp"
+                android:backgroundTint="#1A2561"
+                android:text="Chat"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_submit" />
+
+            <Spinner
+                android:id="@+id/spinner_family_members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="26dp"
+                android:layout_marginTop="90dp"
+                app:layout_constraintBottom_toTopOf="@+id/pieChart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_show_popup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="307dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="403dp"
+                android:autoSizeTextType="none"
+                android:backgroundTint="#1A2561"
+                android:text="≡"
+                android:textSize="30dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="468dp"
+                android:layout_marginEnd="73dp"
+                android:backgroundTint="#1A2561"
+                android:text="Submit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editText_amount"
+                app:layout_constraintTop_toBottomOf="@+id/btn_show_popup" />
+
+            <EditText
+                android:id="@+id/editText_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="220dp"
+                android:hint="Amount"
+                android:inputType="numberDecimal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/spinner_categories" />
+
+            <Spinner
+                android:id="@+id/spinner_categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70dp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintEnd_toStartOf="@+id/editText_amount"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_financial_details" />
+
+            <Spinner
+                android:id="@+id/spinner_financial_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintEnd_toStartOf="@+id/btn_upload"
+                app:layout_constraintTop_toBottomOf="@+id/pieChart" />
+
+            <Button
+                android:id="@+id/btn_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="162dp"
+                android:layout_marginBottom="42dp"
+                android:backgroundTint="#1A2561"
+                android:text="Upload"
+                app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:rotation="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_family_members" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </RelativeLayout>
+</ScrollView>

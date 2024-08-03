@@ -1,0 +1,17 @@
+<!-- custom_progress_bar_completed.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background track -->
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="#CCCCCC"/> <!-- Default background color -->
+        </shape>
+    </item>
+    <!-- Progress bar -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="#00FF00"/> <!-- Green color indicating completion -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>

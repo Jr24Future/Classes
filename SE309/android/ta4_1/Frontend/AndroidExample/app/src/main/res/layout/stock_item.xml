@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shadow"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+<TextView
+android:id="@+id/textViewStockSymbolPrice"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginBottom="8dp"
+android:textSize="18sp" />
+
+<EditText
+android:id="@+id/editTextNumberShares"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:hint="Enter number of shares"
+android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/buttonBuy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#1A2561"
+        android:text="Buy" />
+</LinearLayout>

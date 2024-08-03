@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">AndroidExample</string>
+    <string name="upload_file">Upload File</string>
+    <string name="menu">Menu</string>
+    <string name="enter_monthly_income">Enter Monthly Income</string>
+    <string name="submit">Submit</string>
+    <string name="buy_now">Buy now</string>
+    <string name="currency_rate">Currency Rate</string>
+    <string-array name="categories_array">
+        <item>personal</item>
+        <item>work</item>
+        <item>home</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="categories_dates">
+    </string-array>
+    <string-array name="categories_goal">
+        <item>savings</item>
+        <item>investment</item>
+        <item>vacation</item>
+        <item>education</item>
+        <item>charity</item>
+        <item>lifestyle</item>
+    </string-array>
+    <string-array name="chart_types_array">
+        <item>Expenses</item>
+        <item>Portfolio</item>
+        <item>Assets</item>
+    </string-array>
+
+
+</resources>

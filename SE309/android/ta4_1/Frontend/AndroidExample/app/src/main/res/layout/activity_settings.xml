@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <CheckBox android:id="@+id/checkBoxEUR" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EUR" />
+    <CheckBox android:id="@+id/checkBoxUSD" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="USD" />
+    <CheckBox android:id="@+id/checkBoxJPY" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="JPY" />
+    <CheckBox android:id="@+id/checkBoxGBP" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GBP" />
+    <CheckBox android:id="@+id/checkBoxAUD" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="AUD" />
+    <CheckBox android:id="@+id/checkBoxCAD" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CAD" />
+    <CheckBox android:id="@+id/checkBoxCHF" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CHF" />
+    <CheckBox android:id="@+id/checkBoxCNY" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CNY" />
+    <CheckBox android:id="@+id/checkBoxSEK" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEK" />
+    <CheckBox android:id="@+id/checkBoxNZD" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NZD" />
+
+    <Button
+        android:id="@+id/btnApplyChanges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#1A2561"
+        android:text="Apply Changes" />
+</LinearLayout>
