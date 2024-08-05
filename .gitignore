@@ -1,0 +1,72 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS Finder files
+Icon?
+._*
+
+# macOS resource fork files
+*.rsrc
+
+# macOS metadata files
+.Spotlight-V100
+.Trashes
+.Trash-*
+.VolumeIcon.icns
+.fseventsd
+
+# macOS local storage
+*.swp
+*.swo
+*.swn
+
+# macOS temporary files
+*.lock
+*.DS_Store?
+.Spotlight-V100?
+.Trashes?
+__MACOSX/
+
+# macOS symlink metadata
+.DS_Store
+*.ds_store
+
+# macOS backup files
+*~
+*.bak
+*.orig
+
+# Xcode
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+
+# Xcode iOS
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+# Application Support Files
+*.xcuserdatad/
+*.xcscmblueprint
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/xcode/package.xcworkspace/
+*.swiftpm/xcode/package.pins
+*.swiftpm/xcode/package.resolved
