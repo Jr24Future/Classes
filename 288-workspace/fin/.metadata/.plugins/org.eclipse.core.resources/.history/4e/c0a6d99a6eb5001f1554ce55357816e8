@@ -1,0 +1,24 @@
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
+
+#include "open_interface.h"
+#include "open_interface.h"
+#include "bno055.h"
+// Declare global position tracking variables if they are shared across files
+
+// Function prototypes
+void move_forward(oi_t *sensor, int centimeters);
+void move_backwards(oi_t *sensor, int centimeters);
+void turn_clockwise(oi_t *sensor, int angle);
+void turn_counter_clockwise(oi_t *sensor, int angle);
+void move_forward_with_bump(oi_t *sensor, int centimeters);
+void handle_bump(oi_t *sensor, char bump_direction);
+void handle_uart_command(char command, oi_t *sensor_data);
+void turn_to_angle(oi_t *sensor, int target_angle);
+
+// Function declarations
+void align_to_heading(oi_t *oi, bno_t *bno, float target_heading);
+void navigate_to_target(oi_t *oi, bno_t *bno, int target_x, int target_y);
+
+
+#endif // MOVEMENT_H

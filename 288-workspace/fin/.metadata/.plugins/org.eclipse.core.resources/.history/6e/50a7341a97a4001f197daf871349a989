@@ -1,0 +1,114 @@
+#include <inc/tm4c123gh6pm.h>
+#include <stdint.h>
+#include "imu.h"
+#include "bno055.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+
+int main(void) {
+    // Initialize all hardware and modules
+    lcd_init();        // Initialize LCD for displaying instructions
+    uart_init(115200);       // Initialize UART for debug information
+    imu_init();        // Initialize IMU (BNO055)
+    timer_init();      // Initialize timer for delays
+    bno_init();        // Initialize BNO055 sensor
+
+    // Display initialization message on LCD
+    lcd_printf("BNO055 Calibration\nPlease Wait...");
+    uart_sendStr("Initializing BNO055 Calibration...\r\n");
+
+    // Start the calibration process
+    bool calibrated = bno_calibrate();
+    if (calibrated) {
+        lcd_printf("Calibration Complete\nReady to use.");
+        uart_sendStr("Calibration Complete\r\n");
+    } else {
+        lcd_printf("Calibration Failed\nTry again.");
+        uart_sendStr("Calibration Failed\r\n");
+        while (1);  // Stop further execution if calibration fails
+    }
+
+    // Set IMU to NDOF mode for full fusion, including the magnetometer
+    imu_setMode(NDOF);
+    uart_sendStr("IMU set to NDOF mode\r\n");
+
+    // Print calibration status periodically
+    uint8_t calibration_status;
+    float previous_heading = 0.0;
+    int stuck_count = 0;
+    int calibration_attempts = 0;
+
+    while (1) {
+        // Check calibration status
+        calibration_status = imu_getStatus();
+        char cal_status_buffer[50];
+        sprintf(cal_status_buffer, "Calibration Status: System=%d Gyro=%d Accel=%d Mag=%d\r\n",
+                (calibration_status >> 6) & 0x03,
+                (calibration_status >> 4) & 0x03,
+                (calibration_status >> 2) & 0x03,
+                calibration_status & 0x03);
+        uart_sendStr(cal_status_buffer);
+
+        // If calibration is not complete, retry calibration
+        if (((calibration_status >> 6) & 0x03) < 3 || ((calibration_status & 0x03) < 3)) {
+            calibration_attempts++;
+            if (calibration_attempts > 10) {
+                uart_sendStr("Calibration incomplete. Retrying IMU calibration...\r\n");
+                imu_reset();
+                imu_setMode(NDOF);
+                calibration_attempts = 0;
+                timer_waitMillis(1000);  // Wait a bit to allow calibration to restart
+                continue;
+            }
+        } else {
+            calibration_attempts = 0;  // Reset calibration attempts if fully calibrated
+        }
+
+        // Get magnetometer data from the IMU
+        mag_t* mag = imu_getMag();
+
+        // Display heading information on the LCD
+        lcd_printf("Heading: %.2f°", mag->heading);
+
+        // Send heading information over UART
+        char uart_buffer[50];
+        sprintf(uart_buffer, "Heading: %.2f degrees\r\n", mag->heading);
+        uart_sendStr(uart_buffer);
+
+        // Print raw magnetometer values
+        sprintf(uart_buffer, "Magnetometer - X: %d, Y: %d, Z: %d\r\n", mag->x, mag->y, mag->z);
+        uart_sendStr(uart_buffer);
+
+        // Check if the heading value is stuck within a certain threshold
+        if (fabs(mag->heading - previous_heading) < 0.1) {
+            stuck_count++;
+        } else {
+            stuck_count = 0;  // Reset the stuck count if the heading changes
+        }
+
+        // If the heading has been stuck for too long, reset the IMU
+        if (stuck_count > 20) {  // Example threshold: stuck for 10 seconds (20 * 500ms)
+            uart_sendStr("Heading stuck, resetting IMU...\r\n");
+            imu_reset();
+            imu_setMode(NDOF);
+            stuck_count = 0;  // Reset the stuck count after resetting
+            timer_waitMillis(1000);  // Wait a bit before continuing to ensure proper reset
+            continue;
+        }
+
+        // Update the previous heading value
+        previous_heading = mag->heading;
+
+        // Free allocated memory for mag data
+        free(mag);
+
+        // Add debug message
+        uart_sendStr("Magnetometer data retrieved and displayed\r\n");
+
+        // Delay before updating the next reading
+        timer_waitMillis(500);
+    }
+
+    return 0;
+}

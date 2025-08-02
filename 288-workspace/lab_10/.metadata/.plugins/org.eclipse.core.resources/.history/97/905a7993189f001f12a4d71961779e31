@@ -1,0 +1,194 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include "servo.h"
+#include "ping.h"
+#include "lcd.h"
+#include "Timer.h"
+#include "button.h"
+#include "uart.h"
+#include "movement.h"
+#include "open_interface.h"
+#include "adc.h"
+
+// Calibration data for IR distance and angles
+float distances[] = {9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 50};
+int ir_values[] = {1499, 1277, 1147, 1087, 987, 955, 919, 877, 842, 833, 803, 795, 779, 751, 731};
+
+// Structure to hold detected object information
+typedef struct {
+    int start_angle;
+    int end_angle;
+    int distance;
+} ObjectInfo;
+
+ObjectInfo detected_objects[10];
+int object_count = 0;
+
+volatile char uart_data;
+volatile char flag = 0;
+
+// Function to get distance from IR sensor reading
+int adc_distance() {
+    int i;
+    int raw_ir = adc_read();  // Read the ADC value
+    if (raw_ir >= ir_values[0]) {
+        return distances[0];
+    }
+    if (raw_ir <= ir_values[14]) {
+        return distances[14];
+    }
+    for (i = 0; i < 14; i++) {
+        if (raw_ir <= ir_values[i] && raw_ir > ir_values[i + 1]) {
+            float slope = (distances[i + 1] - distances[i]) / (float)(ir_values[i + 1] - ir_values[i]);
+            return distances[i] + slope * (raw_ir - ir_values[i]);
+        }
+    }
+    return -1;  // Return -1 if out of range
+}
+
+void setup() {
+    timer_init();
+    lcd_init();
+    uart_init(115200);
+    uart_interrupt_init();
+    servo_init();
+    ping_init();
+    adc_init();
+    button_init();
+
+    uart_sendStr("System Initialized. Ready for commands.\n");
+}
+
+// Function to move the robot based on UART commands
+void control_movement(oi_t *sensor_data, char command) {
+    switch (command) {
+        case 'w':
+            move_forward_with_bump(sensor_data, 5); // Move forward by 5 cm, with bump handling
+            break;
+        case 's':
+            move_backwards(sensor_data, 10); // Move backward by 10 cm
+            break;
+        case 'a':
+            turn_counter_clockwise(sensor_data, 15); // Turn left by 15 degrees
+            break;
+        case 'd':
+            turn_clockwise(sensor_data, 15); // Turn right by 15 degrees
+            break;
+        default:
+            uart_sendStr("Invalid movement command.\n");
+            break;
+    }
+}
+
+// Perform a 180° IR scan with servo and detect objects
+void perform_180_ir_scan() {
+    int angle;
+    int i;
+    int in_object = 0;
+    int start_angle = -1;
+    object_count = 0;  // Reset object count
+
+    for (angle = 0; angle <= 180; angle += 2) {
+        servo_move(angle);
+        timer_waitMillis(100); // Allow servo to stabilize
+
+        int ir_distance = adc_distance();  // Get IR distance
+        int pulse_width = ping_read();
+        float ping_distance = calculate_distance(pulse_width);
+
+        // Send angle and distances to UART for logging
+        char message[50];
+        snprintf(message, sizeof(message), "%d,%.2f;%d\n", angle, ping_distance, ir_distance);
+        uart_sendStr(message);
+
+        // Detect objects based on IR distance
+        if (ir_distance < IR_THRESHOLD && !in_object) {
+            in_object = 1;
+            start_angle = angle;
+        } else if (ir_distance >= IR_THRESHOLD && in_object) {
+            in_object = 0;
+            detected_objects[object_count].start_angle = start_angle;
+            detected_objects[object_count].end_angle = angle;
+            detected_objects[object_count].distance = ir_distance;
+            object_count++;
+        }
+    }
+
+    // Display detected objects on UART
+    uart_sendStr("\nDetected Objects:\n");
+    uart_sendStr("Start Angle\tEnd Angle\tDistance (cm)\n");
+    for (i = 0; i < object_count; i++) {
+        snprintf(message, sizeof(message), "%d\t\t%d\t\t%d\n",
+                 detected_objects[i].start_angle, detected_objects[i].end_angle, detected_objects[i].distance);
+        uart_sendStr(message);
+    }
+}
+
+// Navigate the robot towards the smallest detected object
+void navigate_to_smallest_object(oi_t *sensor_data) {
+    if (object_count == 0) {
+        uart_sendStr("No objects detected.\n");
+        return;
+    }
+
+    int i;
+    int smallest_index = 0;
+    float smallest_width = detected_objects[0].end_angle - detected_objects[0].start_angle;
+
+    for (i = 1; i < object_count; i++) {
+        float width = detected_objects[i].end_angle - detected_objects[i].start_angle;
+        if (width < smallest_width) {
+            smallest_width = width;
+            smallest_index = i;
+        }
+    }
+
+    int target_angle = (detected_objects[smallest_index].start_angle + detected_objects[smallest_index].end_angle) / 2;
+
+    // Ensure the target angle is valid
+    char message[80];
+    snprintf(message, sizeof(message), "Navigating to %d degrees\n", target_angle);
+    uart_sendStr(message);
+
+    // Turn the robot towards the target
+    if (target_angle < 90) {
+        turn_clockwise(sensor_data, 90 - target_angle);
+    } else {
+        turn_counter_clockwise(sensor_data, target_angle - 90);
+    }
+
+    move_forward_with_bump(sensor_data, detected_objects[smallest_index].distance - TARGET_DISTANCE_CM);
+}
+
+void handle_uart_data(char command, oi_t *sensor_data) {
+    switch (command) {
+        case 'w': case 'a': case 's': case 'd':
+            control_movement(sensor_data, command);
+            break;
+        case 'h':
+            perform_180_ir_scan();
+            navigate_to_smallest_object(sensor_data);
+            break;
+        default:
+            uart_sendStr("Invalid command received.\n");
+            break;
+    }
+}
+
+int main(void) {
+    setup();
+    oi_t *sensor_data = oi_alloc();
+    oi_init(sensor_data);
+
+    uart_sendStr("System ready.\n");
+
+    while (1) {
+        if (flag) {
+            flag = 0; // Reset flag after reading data
+            handle_uart_data(uart_data, sensor_data);
+        }
+    }
+
+    oi_free(sensor_data);
+    return 0;
+}

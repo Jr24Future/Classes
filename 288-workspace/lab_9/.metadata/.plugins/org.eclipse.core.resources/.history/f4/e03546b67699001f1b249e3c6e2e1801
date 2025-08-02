@@ -1,0 +1,27 @@
+#include <stdint.h>
+#include "Timer.h"
+#include "ping.h"
+#include "lcd.h"
+
+int main(void) {
+    // Initialize components
+    lcd_init();      // Initialize the LCD
+    ping_init();     // Initialize the PING))) sensor and Timer 3B
+
+    while (1) {
+        // Trigger the PING))) sensor and measure the pulse width
+        int pulse = ping_read();
+
+        // Display the pulse width or an error message if no pulse is detected
+        lcd_clear();
+        if (pulse > 0) {
+            lcd_printf("Pulse Width: %d", pulse);
+        } else {
+            lcd_printf("No Pulse Detected");
+        }
+
+        timer_waitMillis(500);  // Delay before the next reading
+    }
+
+    return 0;
+}

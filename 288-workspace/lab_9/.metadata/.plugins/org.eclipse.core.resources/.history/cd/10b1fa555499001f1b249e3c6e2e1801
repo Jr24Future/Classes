@@ -1,0 +1,123 @@
+#include "ping.h"
+#include "Timer.h"
+#include "math.h"
+
+volatile unsigned long START_TIME = 0;  // rising time of the pulse
+volatile unsigned long END_TIME = 0;    // falling time of the pulse
+volatile int overflow;
+volatile enum{LOW, HIGH, DONE} STATE = LOW; // State of ping echo pulse
+
+
+void ping_init(void){
+
+    // initializes PORTB PB3:
+    SYSCTL_RCGCGPIO_R |= 0x2;   // enable PORTB clock
+    GPIO_PORTB_AFSEL_R |= 0x8;   // turn alt function on
+    GPIO_PORTB_DEN_R |= 0x8; // enable PB3 as digital
+    GPIO_PORTB_PCTL_R |= 0x7000;    // enable T2CCP on PB3
+
+    //initializes TimerB:
+    SYSCTL_RCGCTIMER_R |= 0x8; // enable clock for timer 3 (page 338)
+    TIMER3_CTL_R &= ~0x100; // set TBEN to 0, disable the TimerB for configuration (page 737)
+    TIMER3_CTL_R |= 0xC00;    // set TBEvent to 11
+    TIMER3_CFG_R |= 0x4;    // select 16-bit timer configuration (page 727)
+    TIMER3_TBMR_R |= 0b0111; // select TimerB mode: input capture mode, Edge-Time mode, Count up (page 733)
+    TIMER3_TBILR_R |= 0xFFFF;  // set upper bound for timer (page 761)
+    TIMER3_TBPR_R |= 0xF;   // load initial max value  (page 757)
+
+    //clear TIMER3B interrupt flags
+    TIMER3_ICR_R |= 0xF00; // clear interrupt on bits 11,10,9,8 which are TBMC,CBEC,CBMC,TBTO interrupts (page 754)
+    TIMER3_IMR_R |= 0x400; // enable TimerB capture mode event interrupt mask (page 745)
+
+    //initialize local interrupts
+    NVIC_EN1_R |= 0x10; // enable NVIC on EN1 bit 5, this should enable NVIC for Timer3B
+
+    IntRegister(INT_TIMER3B, TIMER3B_Handler);  // register TIMER3B interrupt handler
+
+    IntMasterEnable();  // initialize global interrupts
+
+    // configure and enables timer3B
+    TIMER3_CTL_R |= 0x100;
+}
+
+void send_pulse(void){
+
+    GPIO_PORTB_AFSEL_R &= ~0b00001000;  //turning alt function off for PB3
+    GPIO_PORTB_PCTL_R &= 0b0;   //set PB3 to GPIO mode
+    GPIO_PORTB_DIR_R |= 0b00001000; // set PB3 as output
+    GPIO_PORTB_DATA_R |= 0b00001000;    // set PB3 to high
+    timer_waitMicros(10);   // wait at least 5 microseconds based on data sheet
+
+    GPIO_PORTB_DATA_R &= ~0b00001000;   // set PB3 to low
+    GPIO_PORTB_DIR_R &= ~0b00001000;    // set PB3 as input
+    GPIO_PORTB_AFSEL_R |= 0b00001000;   //turning alt function on
+    GPIO_PORTB_PCTL_R |= 0x7000;    //set PB3 to T2CCP1
+
+//    STATE = LOW;
+//
+//    // Disable timer and disable timer interrupt
+//    TIMER3_CTL_R &= 0x000;
+//    TIMER3_IMR_R &= 0xF00;
+//
+//    // Disable alternate function (disconnect timer from port pin)
+//    GPIO_PORTB_AFSEL_R &= ~0b00001000;
+//
+//    // Ping trigger/start pulse
+//    GPIO_PORTB_PCTL_R &= 0b0;   //set PB3 to GPIO mode
+//    GPIO_PORTB_DIR_R |= 0b00001000; // set PB3 as output
+//    GPIO_PORTB_DATA_R |= 0b00001000;    // set PB3 to high
+//
+//    timer_waitMicros(10);   // wait at least 5 microseconds based on data sheet
+//
+//    GPIO_PORTB_DATA_R &= ~0b00001000;   // set PB3 to low
+//    GPIO_PORTB_DIR_R &= ~0b00001000;    // set PB3 as input
+//
+//    // Clear an interrupt that may have been erroneously triggered
+//    TIMER3_ICR_R |= 0xF00;
+//
+//    // Re-enable alternate function, timer interrupt, and timer
+//    GPIO_PORTB_AFSEL_R |= 0b00001000;
+//    TIMER3_IMR_R |= 0x400;
+//    TIMER3_CTL_R |= 0x100;
+}
+
+void TIMER3B_Handler(void){
+
+    // set timer reading on the rising edge
+    if (STATE == LOW) {
+        START_TIME = TIMER3_TBR_R;
+        STATE = HIGH;
+    }
+
+    // set timer reading on the falling edge
+    else if (STATE == HIGH) {
+        END_TIME = TIMER3_TBR_R;
+        STATE = DONE;
+    }
+
+    TIMER3_ICR_R = 0x400;
+}
+
+int ping_read(void){
+
+    send_pulse(); //send a pulse to activate ping sensor
+    while(STATE != DONE){}  //wait for data collection
+
+    int clk = 0;
+
+    // count the number of clocks between edges
+    if(START_TIME < END_TIME) {
+        clk = (START_TIME + 0xFFFFF) - END_TIME;
+        overflow = 1;
+    }
+
+    else {
+        clk = START_TIME - END_TIME;
+        overflow = 0;
+    }
+
+    //reset state for next read
+    STATE = LOW;
+
+    return clk;
+}

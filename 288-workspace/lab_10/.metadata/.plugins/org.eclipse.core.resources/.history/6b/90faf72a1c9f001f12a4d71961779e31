@@ -1,0 +1,48 @@
+#include <stdint.h>
+#include "ping.h"
+#include "servo.h"
+#include "lcd.h"
+#include "uart.h"
+#include "Timer.h"
+#include "adc.h"
+#include "button.h"
+#include "movement.h"
+#include "open_interface.h"
+
+int main(void) {
+    // Initialize peripherals
+    lcd_init();
+    servo_init();
+    ping_init();
+    uart_init(115200);
+    button_init();
+
+    float position = 0.0;
+    int step = 15; // Step size for moving the servo (e.g., 15 degrees at a time)
+
+    while (1) {
+        for (position = 0; position <= 180; position += step) {
+            // Move servo to the current position
+            int match_value = servo_move(position);
+
+            // Read distance using the PING sensor
+            int pulse_width = ping_read();
+            float distance = calculate_distance(pulse_width);
+
+            // Display information on the LCD
+            lcd_clear();
+            lcd_printf("Pos: %.1f\nDist: %.2f cm\nMatch: %u", position, distance, match_value);
+
+            // Optionally, send data via UART
+            uart_sendStr("Servo Position: ");
+            uart_sendFloat(position);
+            uart_sendStr(" degrees, Distance: ");
+            uart_sendFloat(distance);
+            uart_sendStr(" cm\n");
+
+            timer_waitMillis(500); // Delay to allow servo to stabilize and display to update
+        }
+    }
+
+    return 0;
+}

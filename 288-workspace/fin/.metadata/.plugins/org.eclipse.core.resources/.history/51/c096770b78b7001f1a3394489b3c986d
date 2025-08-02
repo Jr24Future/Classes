@@ -1,0 +1,14 @@
+
+#include "Timer.h"
+#include <inc/tm4c123gh6pm.h>
+
+
+void scan_180();
+void scan_small();
+void scan_small_back();
+void scan_90to125();
+void scan_125to90();
+void scan_55to90();
+void scan_90to55();
+void scan_left();
+void scan_right();

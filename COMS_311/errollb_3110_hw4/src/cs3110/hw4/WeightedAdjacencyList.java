@@ -1,0 +1,159 @@
+package cs3110.hw4;
+
+import java.util.*;
+
+public class WeightedAdjacencyList<T> implements WeightedGraph<T> {
+	private final Map<T, Map<T, Integer>> adjList;    
+	
+	//Constructs the graph from a list of vertices.
+	public WeightedAdjacencyList(List<T> vertices) {
+        this.adjList = new HashMap<>();
+        for (T vertex : vertices) {
+            this.adjList.put(vertex, new HashMap<>());
+        }
+    }
+
+    /**
+     * Adds the directed edge (u,v) to the graph. If the edge is already present, it should not be modified.
+     * @param u The source vertex.
+     * @param v The target vertex.
+     * @param weight The weight of the edge (u,v).
+     * @return True if the edge was added to the graph, false if 1) either u or v are not in the graph 2) the edge was already present.
+     */
+
+	@Override
+	public boolean addEdge(T u, T v, int weight) {
+	    if (u == null || v == null || weight < 0) return false;
+	    if (!adjList.containsKey(u) || !adjList.containsKey(v)) return false;
+	    if (adjList.get(u).containsKey(v)) return false;
+
+	    adjList.get(u).put(v, weight);
+	    return true;
+	}
+
+    /**
+     * @param vertex A vertex to add to the graph.
+     * @return False vertex was already in the graph, true otherwise.
+     */
+    @Override
+    public boolean addVertex(T vertex) {
+        if (vertex == null || adjList.containsKey(vertex)) return false;
+        adjList.put(vertex, new HashMap<>());
+        return true;
+    }
+
+    /**
+     * @return |V|
+     */
+    @Override
+    public int getVertexCount() {
+        return adjList.size();
+    }
+
+    /**
+     * @param v The name of a vertex.
+     * @return True if v is in the graph, false otherwise.
+     */
+    @Override
+    public boolean hasVertex(T v) {
+        return adjList.containsKey(v);
+    }
+
+    /**
+     * @return An Iterable of V.
+     */
+
+    @Override
+    public Iterable<T> getVertices() {
+        return adjList.keySet();
+    }
+
+    /**
+     * @return |E|
+     */
+
+    @Override
+    public int getEdgeCount() {
+        int count = 0;
+        for (Map<T, Integer> neighbors : adjList.values()) {
+            count += neighbors.size();
+        }
+        return count;
+    }
+
+    /**
+     * @param u The source of the edge.
+     * @param v The target of the edge.
+     * @return True if (u,v) is in the graph, false otherwise.
+     */
+    @Override
+    public boolean hasEdge(T u, T v) {
+        return adjList.containsKey(u) && adjList.get(u).containsKey(v);
+    }
+
+    /**
+     * @param u A vertex.
+     * @return The neighbors of u in the weighted graph.
+     */
+    @Override
+    public Iterable<T> getNeighbors(T u) {
+        if (!adjList.containsKey(u)) return new ArrayList<>();
+        return adjList.get(u).keySet();
+    }
+
+    /**
+     * @param u
+     * @param v
+     * @return
+     */
+    @Override
+    public boolean areNeighbors(T u, T v) {
+        return hasEdge(u,v);
+    }
+
+    /**
+     * Uses Dijkstra's algorithm to find the (length of the) shortest path from s to all other reachable vertices in the graph.
+     * If the graph contains negative edge weights, the algorithm should terminate, but the return value is undefined.
+     * @param s The source vertex.
+     * @return A Mapping from all reachable vertices to their distance from s. Unreachable vertices should NOT be included in the Map.
+     */
+
+    @Override
+    public Map<T, Long> getShortestPaths(T s) {
+        Map<T, Long> dist = new HashMap<>();
+        Set<T> visited = new HashSet<>();
+        PriorityQueue<Pair<Long, T>> queue = new PriorityQueue<>(Comparator.comparingLong(Pair::getFirst));
+
+        for (T v : adjList.keySet()) {
+            dist.put(v, Long.MAX_VALUE);
+        }
+        dist.put(s, 0L);
+        queue.add(new Pair<>(0L, s));
+
+        while (!queue.isEmpty()) {
+            Pair<Long, T> current = queue.poll();
+            T u = current.getSecond();
+
+            if (visited.contains(u)) continue;
+            visited.add(u);
+
+            for (Map.Entry<T, Integer> neighborEntry : adjList.get(u).entrySet()) {
+                T v = neighborEntry.getKey();
+                long alt = dist.get(u) + neighborEntry.getValue();
+
+                if (alt < dist.get(v)) {
+                    dist.put(v, alt);
+                    queue.add(new Pair<>(alt, v));
+                }
+            }
+        }
+        // Only return reachable nodes
+        Map<T, Long> reachable = new HashMap<>();
+        for (Map.Entry<T, Long> entry : dist.entrySet()) {
+            if (entry.getValue() < Long.MAX_VALUE) {
+                reachable.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return reachable;
+    }
+}

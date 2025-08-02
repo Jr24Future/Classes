@@ -1,0 +1,34 @@
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+#include "Timer.h"
+
+void ping_init(void) {
+    // Enable the clock for GPIO Port B
+    SYSCTL_RCGCGPIO_R |= 0x02;
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}  // Wait for the clock to be ready
+
+    // Set PB3 as output
+    GPIO_PORTB_DIR_R |= 0x08;  // Set PB3 (bit 3) as output
+    GPIO_PORTB_DEN_R |= 0x08;  // Enable digital functionality on PB3
+}
+
+void ping_trigger(void) {
+    // Send a low-high-low pulse on PB3
+    GPIO_PORTB_DATA_R &= ~0x08;  // Set PB3 low
+    timer_waitMicros(2);         // Wait for 2 microseconds
+    GPIO_PORTB_DATA_R |= 0x08;   // Set PB3 high
+    timer_waitMicros(5);         // Wait for 5 microseconds
+    GPIO_PORTB_DATA_R &= ~0x08;  // Set PB3 low
+}
+
+int main(void) {
+    // Initialize the PING))) sensor
+    ping_init();
+
+    while (1) {
+        ping_trigger();         // Trigger the PING))) sensor
+        timer_waitMillis(100);  // Wait 100 milliseconds before the next trigger
+    }
+
+    return 0;
+}

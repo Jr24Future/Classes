@@ -1,0 +1,20 @@
+package coms3110.hw4;
+
+import java.util.List;
+
+public class TestRunner {
+    public static void main(String[] args) {
+        String path = "file:///Users/jr/Documents/COMS_311/errollb_3110_hw4/test.bmp"; // make sure this matches your image filename
+
+        Pair<List<Integer>, List<Integer>> result = CharacterSeparator.findSeparationWeighted(path);
+        if (result != null) {
+            List<Integer> rows = result.getFirst();
+            List<Integer> cols = result.getSecond();
+
+            System.out.println("Detected Whitespace Rows: " + rows);
+            System.out.println("Detected Whitespace Columns: " + cols);
+        } else {
+            System.out.println("Failed to process the image.");
+        }
+    }
+}

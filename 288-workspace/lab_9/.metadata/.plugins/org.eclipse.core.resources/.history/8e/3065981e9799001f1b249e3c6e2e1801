@@ -1,0 +1,45 @@
+#include <stdint.h>
+#include "ping.h"
+#include "Timer.h"
+#include "lcd.h"
+#include "uart.h"
+
+int main(void) {
+    // Initialize peripherals
+    lcd_init();
+    uart_init(9600);
+    ping_init();
+
+    char command;
+    while (1) {
+        if (uart_data_available()) {
+            command = uart_receive();
+            if (command == 'S'){
+            // Trigger the sensor and read the pulse width
+            int pulse_width = ping_read();
+            float distance = calculate_distance(pulse_width) - 1.0;
+            float time_ms = calculate_time_in_ms(pulse_width);
+            lcd_clear();
+
+            // Check for valid pulse width
+            if (pulse_width > 0) {
+                // Calculate the distance based on the pulse width
+                // Display the pulse width and distance on the LCD
+                lcd_clear();
+                lcd_printf("Width: %u\nTime: %.2f ms\nDist: %.2f cm\nOverflows: %d", pulse_width, time_ms, distance, overflow_count);
+            }
+            else if (distance < 0) {
+                lcd_clear();
+                lcd_printf("No Pulse Detected");
+            }else {
+                // Handle cases where no valid pulse is detected
+                lcd_clear();
+                lcd_printf("No Pulse Detected");
+            }
+            }
+        }
+        timer_waitMillis(500); // Delay before the next measurement
+    }
+
+    return 0;
+}

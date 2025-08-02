@@ -1,0 +1,134 @@
+#include "cyBot_Scan.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+#include "movement.h"
+#include "open_interface.h"
+#include "button.h"
+#include <stdio.h>
+
+#define IR_THRESHOLD 150   // Distance threshold for object detection in cm
+#define NUM_SAMPLES 3      // Number of samples for averaging
+#define BUMP_BACK_DISTANCE 10 // Distance to move back if bump sensor is hit
+#define FORWARD_DISTANCE_AUTONOMOUS 15 // Distance to move forward if no object is near
+
+typedef struct {
+    int start_angle;
+    int end_angle;
+    float ping_distance;
+} ObjectInfo;
+
+ObjectInfo detected_objects[10];
+int object_count = 0;
+
+volatile char uart_data;  // UART received data
+volatile char flag = 0;   // Flag to indicate UART data is available
+
+oi_t *sensor_data; // Sensor data object
+int autonomous_mode = 1; // 1 means autonomous mode is enabled
+
+// Calibration data (global variables)
+float distances[] = {9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 50};
+int ir_values[] = {1499, 1277, 1147, 1087, 987, 955, 919, 877, 842, 833, 803, 795, 779, 751, 731};
+
+// Function to convert raw IR values to distances using linear interpolation
+float calculate_distance_linear(int raw_ir) {
+    int i;
+    if (raw_ir >= ir_values[0]) {
+        return distances[0];
+    }
+    if (raw_ir <= ir_values[14]) {
+        return distances[14];
+    }
+    for (i = 0; i < 14; i++) {
+        if (raw_ir <= ir_values[i] && raw_ir > ir_values[i + 1]) {
+            float slope = (distances[i + 1] - distances[i]) / (float)(ir_values[i + 1] - ir_values[i]);
+            return distances[i] + slope * (raw_ir - ir_values[i]);
+        }
+    }
+    return -1;  // If the value does not match any valid range
+}
+
+// Setup function to initialize the CyBot
+void setup() {
+    uart_init(115200);
+    lcd_init();
+    timer_init();
+    uart_interrupt_init();
+    cyBOT_init_Scan(0b0111);       // Enable servo, IR, and PING sensors
+
+    sensor_data = oi_alloc();
+    oi_init(sensor_data);
+
+    // Set calibration values for your specific CyBot
+    right_calibration_value = 343000; // Calibrated for 0 degrees
+    left_calibration_value = 1340500; // Calibrated for 180 degrees
+}
+
+// Function to perform an IR and PING scan
+void perform_180_ir_scan(cyBOT_Scan_t *scanData) {
+    int angle, i, raw_ir_sum, in_object = 0, start_angle = -1;
+    float ir_average;
+
+    uart_sendStr("\nIR Scan Results:\n");
+    uart_sendStr("Angle\tIR Distance (cm)\n");
+    uart_sendStr("--------------------------\n");
+
+    object_count = 0;
+
+    for (angle = 0; angle <= 180; angle += 2) {
+        raw_ir_sum = 0;
+
+        // Take multiple IR measurements and sum them for averaging
+        for (i = 0; i < NUM_SAMPLES; i++) {
+            cyBOT_Scan(angle, scanData);
+            raw_ir_sum += scanData->IR_raw_val;
+            timer_waitMillis(50);
+        }
+
+        ir_average = raw_ir_sum / (float)NUM_SAMPLES;
+        float ir_distance = calculate_distance_linear(ir_average);
+
+        char message[50];
+        snprintf(message, sizeof(message), "Angle: %d\tIR Distance: %.2f cm\n", angle, ir_distance);
+        uart_sendStr(message);
+
+        // Detect objects based on IR distance
+        if (ir_distance < IR_THRESHOLD && !in_object) {
+            in_object = 1;
+            start_angle = angle;
+        } else if (ir_distance >= IR_THRESHOLD && in_object) {
+            in_object = 0;
+            detected_objects[object_count].start_angle = start_angle;
+            detected_objects[object_count].end_angle = angle;
+            detected_objects[object_count].ping_distance = -1; // Initialize PING distance
+            object_count++;
+        }
+    }
+}
+
+// Function to navigate to the smallest object
+void navigate_to_smallest_object(cyBOT_Scan_t *scanData) {
+    int i;
+    int smallest_object_index = 0;
+    float smallest_width = detected_objects[0].end_angle - detected_objects[0].start_angle;
+
+    // Find the smallest object
+    for (i = 1; i < object_count; i++) {
+        float width = detected_objects[i].end_angle - detected_objects[i].start_angle;
+        if (width < smallest_width) {
+            smallest_width = width;
+            smallest_object_index = i;
+        }
+    }
+
+    // Get the mid-angle of the smallest object
+    int target_angle = (detected_objects[smallest_object_index].start_angle + detected_objects[smallest_object_index].end_angle) / 2;
+    snprintf(message, sizeof(message), "Turning to Mid Angle: %d degrees\n", target_angle);
+    uart_sendStr(message);
+
+    // Rotate bot to face the object
+    if (target_angle > 90) {
+        turn_counter_clockwise(sensor_data, target_angle - 90);
+    } else if (target_angle < 90) {
+        turn_clockwise

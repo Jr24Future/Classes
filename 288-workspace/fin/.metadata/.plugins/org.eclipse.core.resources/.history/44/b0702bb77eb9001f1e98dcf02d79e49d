@@ -1,0 +1,456 @@
+
+#include "movement.h"
+#include "open_interface.h"
+#include "uart.h"
+#include "Timer.h"
+#include <math.h>
+#include "Final_scan.h"
+
+// MAKE SURE TO CALIBRATE EACH TIME YOU USE A DIFFERENT BOT HERE
+//short cc_RWP = 50;            //Cybot 13
+//short c_LWP = 42;
+//short forward_RWP = 93;
+
+//short cc_RWP = 67;            //Cybot 03
+//short c_LWP = 40;
+//short forward_RWP = 95;
+
+//short cc_RWP = 66;            //Cybot 01
+//short c_LWP = 40;
+//short forward_RWP = 95;
+
+short cc_RWP = 68;            //Cybot 07
+short c_LWP = 39;
+short forward_RWP = 95;
+
+
+
+short current_status;  // combination of all different OI sensor checks - functions as a 16 bit status register
+short previous_status; // status at time of previous oi_update
+
+int obstacleFlag = 0; // Indicates if an obstacle was encountered
+
+
+double toRadians(double degrees) {
+    return (M_PI / 180.0) * degrees;
+}
+
+/*
+ * Call everytime you use a different bot, and get those 3 values, put it in movement.c
+ */
+void calibrate_wheels(oi_t *sensor) // can run perfectly on treadmill, does not need to be on the ground
+{
+    move_forward(sensor, 150, 0);   // moves forward so bot can settle into consistent values
+    turn_clockwise(sensor, 180); // turns 360 degrees, input is a char so 360 is out of bounds
+    turn_clockwise(sensor, 180);
+    turn_counter_clockwise(sensor, 180); // turns 360 degrees, input is a char so 360 is out of bounds
+    turn_counter_clockwise(sensor, 180);
+
+    lcd_printf("f_RWP= %d  c_LWP= %dcc_RWP= %d", forward_RWP, c_LWP, cc_RWP); // prints cleanly to LCD
+}
+
+float move_forward(oi_t *sensor, float input_centimeters, float adjustment_cm) {
+    float mm_traveled = 0;
+    float angle_deviated = 0;
+
+
+    // Add the adjustment to the target distance
+    float target_distance_mm = (input_centimeters + adjustment_cm) * 10;
+
+    while (mm_traveled < target_distance_mm) { // Loop until target distance is reached
+        oi_update(sensor);
+        obstacle_check(sensor); // Handle obstacles dynamically
+
+        if (obstacleFlag == 1){
+            obstacleFlag = 0;
+            move_forward(sensor, 20, 0);
+
+
+        }
+        float distance_this_step = sensor->distance; // Get the distance traveled in this step
+        mm_traveled += distance_this_step;          // Increment total distance traveled
+        angle_deviated += sensor->angle;            // Track deviation
+
+        update_live_position(distance_this_step);   // Update live position
+
+        // Dynamic wheel adjustments to maintain straight line
+        if (angle_deviated > degree_accuracy) { // Correct for veering left
+            forward_RWP -= 1; // Reduce right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        } else if (angle_deviated < -degree_accuracy) { // Correct for veering right
+            forward_RWP += 1; // Increase right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        }
+
+        oi_setWheels(forward_RWP, forward_LWP); // Set wheel speeds
+        timer_waitMillis(50); // Small delay for stability
+    }
+
+    oi_setWheels(0, 0); // Stop the robot
+    return mm_traveled / 10; // Return total distance traveled in cm
+}
+
+void move_forward_with_border(oi_t *sensor, float input_centimeters) {
+    float mm_traveled = 0;
+    float angle_deviated = 0;
+
+    while ((mm_traveled) < (input_centimeters * 10)) { // Loop until target distance is reached
+        oi_update(sensor);
+
+        mm_traveled += sensor->distance; // Increment distance traveled
+        angle_deviated += sensor->angle; // Track deviation
+        // Dynamic wheel adjustments to maintain straight line
+        if (angle_deviated > degree_accuracy) { // Correct for veering left
+            forward_RWP -= 1; // Increase right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        } else if (angle_deviated < -degree_accuracy) { // Correct for veering right
+            forward_RWP += 1; // Decrease right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        }
+
+        oi_setWheels(forward_RWP, forward_LWP); // Set wheel speeds for reverse
+        timer_waitMillis(50); // Small delay for stability
+    }
+
+    oi_setWheels(0, 0); // Stop the robot
+}
+
+
+
+
+
+void update_live_position(float distance_mm) {
+    static float accumulated_distance = 0; // Keeps track of accumulated distance
+    accumulated_distance += distance_mm;   // Add distance increment to the accumulator
+
+    // Update position only when accumulated distance is significant
+    if (fabs(accumulated_distance) >= 10.0) { // Threshold = 10 mm = 1 cm
+        int delta = (int)(accumulated_distance / 10); // Convert mm to cm
+        accumulated_distance -= delta * 10;          // Subtract the processed distance
+
+        if ((current_orientation >= 330 || current_orientation <= 30)) { // North
+            current_x -= delta;
+        } else if (current_orientation >= 150 && current_orientation <= 210) { // South
+            current_x += delta;
+        } else if (current_orientation >= 60 && current_orientation <= 120) { // East
+            current_y -= delta;
+        } else if (current_orientation >= 240 && current_orientation <= 300) { // West
+            current_y += delta;
+        }
+
+        // Debugging: Print updated position
+        char debug_msg[100];
+        sprintf(debug_msg, "Updated Position: (%d, %d), Heading: %d\n", current_x, current_y, current_orientation);
+        uart_sendStr(debug_msg);
+
+
+        // Display on LCD
+        lcd_printf("Loc: (%d, %d)\nHeading: %d�", current_x, current_y, current_orientation);
+    }
+}
+
+
+
+float move_backwards(oi_t *sensor, float input_centimeters) {
+    float mm_traveled = 0;
+    float angle_deviated = 0;
+
+    while (fabs(mm_traveled) < (input_centimeters * 10)) { // Loop until target distance is reached
+        oi_update(sensor);
+        // obstacle_check(sensor); // Uncomment if necessary
+
+        mm_traveled += sensor->distance; // Increment distance traveled
+        angle_deviated += sensor->angle; // Track deviation
+        update_live_position(-fabs(sensor->distance)); // Use negative to indicate backward movement
+
+        // Dynamic wheel adjustments to maintain straight line
+        if (angle_deviated > degree_accuracy) { // Correct for veering left
+            forward_RWP += 1; // Increase right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        } else if (angle_deviated < -degree_accuracy) { // Correct for veering right
+            forward_RWP -= 1; // Decrease right wheel power
+            angle_deviated = 0; // Reset angle deviation
+        }
+
+        oi_setWheels(-forward_RWP, -forward_LWP); // Set wheel speeds for reverse
+        timer_waitMillis(50); // Small delay for stability
+    }
+
+    oi_setWheels(0, 0); // Stop the robot
+    return mm_traveled / 10; // Return total distance traveled in cm
+}
+
+
+
+int turn_clockwise(oi_t *sensor, int input_angle)  //input positive angle, near perfect pivot due to due dynamic correction
+{
+    float mm_deviated = 0;
+    float angle_deviated = 0;
+
+    while(abs(angle_deviated) < (input_angle - 0.5)) //0.5 degree correction to account for bot's tendency to overshoot
+    {
+        if(flag && (uart_data == ' '))          //brakes for manual mode
+        {
+            flag = 0;
+            break;
+        }
+
+        oi_update(sensor);
+
+        mm_deviated += sensor->distance; //if the wheels have traveled an equal distance, mm_deviated will be 0
+        angle_deviated += sensor->angle;
+
+        if(mm_deviated > mm_accuracy)    //if distance is positive, left wheel needs powered down
+        {
+            c_LWP -= 1;
+            mm_deviated = 0;
+        }
+
+        if(mm_deviated < -(mm_accuracy)) //if distance is negative, left wheel needs powered up
+        {
+            c_LWP += 1;
+            mm_deviated = 0;
+        }
+
+        oi_setWheels(c_RWP , c_LWP);
+    }
+
+    oi_setWheels(0,0);
+    flag = 0;         //clears flag to ensure unwanted inputs aren't counted
+    return angle_deviated; //returns angle deviated on same axis as scanner
+}
+
+int turn_counter_clockwise(oi_t *sensor, int input_angle) //input positive angle, near perfect pivot due to due dynamic correction
+{
+    float mm_deviated = 0;
+    float angle_deviated = 0;
+
+    while(angle_deviated < (input_angle - 0.5)) //0.5 degree correction to account for bot's tendency to overshoot
+    {
+        if(flag && (uart_data == ' '))     //brakes for manual mode
+        {
+            flag = 0;
+            break;
+        }
+
+        oi_update(sensor);
+
+        mm_deviated += sensor->distance;
+        angle_deviated += sensor->angle;
+
+        if(mm_deviated > mm_accuracy)
+        {
+            cc_RWP -= 1;
+            mm_deviated = 0;
+        }
+
+        else if(mm_deviated < -(mm_accuracy))
+        {
+            cc_RWP += 1;
+            mm_deviated = 0;
+        }
+
+        oi_setWheels(cc_RWP, cc_LWP);
+    }
+
+    oi_setWheels(0,0);
+    flag = 0;         //clears flag to ensure unwanted inputs aren't counted
+    return angle_deviated; //returns angle deviated on same axis as scanner
+}
+
+int turn(oi_t *sensor, int input_angle) {
+    int angle_deviated = 0;
+
+    // Normalize angle to [-180, 180]
+    if (input_angle > 180) input_angle -= 360;
+    if (input_angle < -180) input_angle += 360;
+
+
+
+    if (input_angle > 0) { // Counterclockwise turn
+        angle_deviated = turn_counter_clockwise(sensor, input_angle);
+    } else if (input_angle < 0) { // Clockwise turn
+        angle_deviated = turn_clockwise(sensor, -input_angle);
+    } else {
+        oi_setWheels(0, 0); // No turn required
+    }
+
+    // Update current orientation
+    current_orientation = (current_orientation + angle_deviated + 360) % 360;
+
+    // Debugging
+    char debug_msg[100];
+    sprintf(debug_msg, "Turn Input: %d, Angle Deviated: %d, New Orientation: %d\n",
+            input_angle, angle_deviated, current_orientation);
+    uart_sendStr(debug_msg);
+
+    return angle_deviated;
+}
+
+
+void obstacle_check(oi_t *sensor) {
+    if (sensor->bumpRight)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, 90);          // Turn left
+        move_forward(sensor, 20, 0); // Move forward to bypass obstacle
+        turn(sensor, -90);         // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    else if (sensor->bumpLeft)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, -90);         // Turn right
+        move_forward(sensor, 20, 0); // Move forward to bypass obstacle
+        turn(sensor, 90);          // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    else if (sensor->cliffLeft || sensor->cliffLeftSignal < 100)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, -90);         // Turn right
+        move_forward(sensor, 30, 0); // Move forward to bypass obstacle
+        turn(sensor, 90);          // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    else if (sensor->cliffFrontLeft || sensor->cliffFrontLeftSignal < 100)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, -90);         // Turn right
+        move_forward(sensor, 30, 0); // Move forward to bypass obstacle
+        turn(sensor, 90);          // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    else if (sensor->cliffRight || sensor->cliffRightSignal < 100)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, 90);          // Turn left
+        move_forward(sensor, 30, 0); // Move forward to bypass obstacle
+        turn(sensor, -90);         // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    else if (sensor->cliffFrontRight || sensor->cliffFrontRightSignal < 100)
+    {
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, 90);          // Turn left
+        move_forward(sensor, 30, 0); // Move forward to bypass obstacle
+        turn(sensor, -90);         // Turn back to original orientation
+        obstacleFlag = 1;
+    }
+    // Border -- White Cliff
+    else if (sensor->cliffLeftSignal > 2700)
+    {
+        uart_sendStr("Border: Left");
+        move_backwards(sensor, 15); // Automatically updates live position
+        turn(sensor, -90);         // Turn right
+
+    }
+
+    else if (sensor->cliffFrontLeftSignal > 2700)
+    {
+        uart_sendStr("Border: front left");
+        move_backwards(sensor, 15);
+        turn(sensor, -90);         // Turn right
+    }
+
+    else if (sensor->cliffRightSignal > 2700)
+    {
+        uart_sendStr("Border: right");
+        move_backwards(sensor, 15);
+        turn(sensor, 90);          // Turn left
+    }
+
+    else if (sensor->cliffFrontRightSignal > 2700)
+    {
+        uart_sendStr("Border: front right");
+        move_backwards(sensor, 15);
+        turn(sensor, 90);          // Turn left
+    }
+}
+
+// Enter the field by crossing two white lines
+void enter_border(oi_t *sensor) {
+    int white_line_count = 0; // Count of white lines crossed
+    uart_sendStr("Entering border: looking for white lines...\r\n");
+
+    while (white_line_count < 2) {
+        oi_update(sensor);
+
+        // Check if on a white line based on cliff signal readings
+        if (sensor->cliffFrontLeftSignal > 2700 || sensor->cliffFrontRightSignal > 2700) {
+            uart_sendStr("Detected white line.\r\n");
+
+            // Wait until we move past the white line
+            while (sensor->cliffFrontLeftSignal > 2700 || sensor->cliffFrontRightSignal > 2700) {
+                move_forward_with_border(sensor, 3.5); // Move forward incrementally
+                oi_update(sensor);
+            }
+
+            white_line_count++;
+
+
+
+        } else {
+            // If no white line detected, move forward incrementally
+            move_forward_with_border(sensor, 3.5);
+        }
+    }
+
+    // Fully enter the border area
+    move_forward_with_border(sensor, 15);
+    uart_sendStr("Successfully crossed two white lines.\r\n");
+    lcd_printf("Have entered zone");
+
+    oi_setWheels(0, 0);
+}
+
+// Exit the field by reversing the entry process
+void exit_border(oi_t *sensor) {
+    int white_line_count = 0; // Count of white lines crossed
+    uart_sendStr("Exiting border: looking for white lines...\r\n");
+    // Fully enter the border area
+    move_forward_with_border(sensor, 25);
+    oi_play_song(0);
+    uart_sendStr("Successfully exited the field.\r\n");
+    oi_setWheels(0, 0);
+}
+
+
+void check_border_and_correct(oi_t *sensor, int target_x, int target_y) {
+    char buffer[50];
+    int correction_x = current_x;
+    int correction_y = current_y;
+
+    // Check X borders
+    if (current_x <= 5) { // Too close to the left border
+        uart_sendStr("Too close to left border. Moving to middle X (120)...\r\n");
+        correction_x = 120; // Move to middle
+    } else if (current_x >= 235) { // Too close to the right border
+        uart_sendStr("Too close to right border. Moving to middle X (120)...\r\n");
+        correction_x = 120; // Move to middle
+    }
+
+    // Check Y borders
+    if (current_y <= 5) { // Too close to the bottom border
+        uart_sendStr("Too close to bottom border. Moving to middle Y (210)...\r\n");
+        correction_y = 210; // Move to middle
+    } else if (current_y >= 415) { // Too close to the top border
+        uart_sendStr("Too close to top border. Moving to middle Y (210)...\r\n");
+        correction_y = 210; // Move to middle
+    }
+
+    // Correct position if needed
+    if (correction_x != current_x || correction_y != current_y) {
+        sprintf(buffer, "Correcting position to (%d, %d)\r\n", correction_x, correction_y);
+        uart_sendStr(buffer);
+
+        navigate_to_target(sensor, correction_x, correction_y); // Move to safe position
+        navigate_to_target(sensor, target_x, target_y);         // Retry reaching the target
+    }
+}
+
+
+
+
+
+

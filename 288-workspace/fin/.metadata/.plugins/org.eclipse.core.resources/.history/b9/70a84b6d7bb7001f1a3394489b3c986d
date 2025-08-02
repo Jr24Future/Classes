@@ -1,0 +1,29 @@
+#include "Timer.h"
+#include <inc/tm4c123gh6pm.h>
+
+
+typedef struct{
+     short objnum;
+     short angle;
+     short fangle;
+     int midangle;
+     short width;
+     float linwidth;
+     float IRdist;
+     float Ping;
+     float clearance;
+     float offset_angle;
+   } sensor_info;
+
+
+void scan_180();
+void scan_small();
+void scan_small_back();
+void scan_90to130();
+void scan_130to90();
+void scan_50to90();
+void scan_90to50();
+void scan_left();
+void scan_right();
+void print_scan();
+int find_objs();

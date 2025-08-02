@@ -1,0 +1,248 @@
+//I tried labeling as best as I can hope it's understandable. 
+//I label each line and section of code along side each register tried to make it as easy as possible for understanding
+
+// ------------------------------------
+// Main Program
+// ------------------------------------
+main:
+    SUBI SP, SP, #16         // stack space for registers
+    STUR X30, [SP, #8]       // Return address
+    STUR X19, [SP, #0]       // Save X19
+
+    // I am use a fixed address in main memory for the array so that it wont get messy.
+    ADDI X0, XZR, #0         // X0 = base address
+    ADDI X1, XZR, #512       // X1 = number of elements (512)
+    BL fill                  // initialize the array
+
+    ADDI X0, XZR, #0         // X0 = base address of the array
+    ADDI X1, XZR, #512       // X1 = size
+    BL heapsort              // Call heapsort
+
+    // Print sorted array
+    ADDI X0, XZR, #0         // X0 = base address of the array
+    ADDI X1, XZR, #512       // X1 = number of elements
+    BL print_array           // Print the sorted array
+
+    // This will end and restore the program.
+    LDUR X19, [SP, #0]
+    LDUR X30, [SP, #8]
+    ADDI SP, SP, #16
+    
+    // Thanks dude I totally forgot to add something that will end the code no wonder it was never ending 
+    HALT                     // end program
+
+// ------------------------------------
+// Fill Function
+// ------------------------------------
+// divide the array into two halves (odd, even)
+fill:
+    SUBI SP, SP, #16          // stack space
+    STUR X30, [SP, #8]        // Save return address
+    STUR X19, [SP, #0]        // Save X19
+
+    ADD X9, X0, XZR           // X9 = base address of array
+    ADD X10, X1, XZR          // X10 = s (elements)
+    ADDI X11, XZR, #0         // X11 = i = 0
+
+    // Check if s >= 2
+    SUBI XZR, X10, #2         // Set flags X10 - 2
+    B.LT fill_odd_check       // skip the loop if s < 2
+
+fill_loop:
+    // even numbers (left side)
+    ADDI X12, X10, #1         // X12 = s + 1
+    LSR X12, X12, #1          // X12 = (s + 1) / 2
+    SUBI X12, X12, #1         // X12 = ((s + 1) / 2) - 1
+    SUB X12, X12, X11         // X12 = ((s + 1) / 2) - (i + 1)
+    LSL X13, X11, #1          // X13 = i * 2
+
+    // Calculate address for even numbers
+    LSL X14, X12, #3          // X14 = X12 * 8 (offset)
+    ADD X14, X9, X14          // X14 = base address + offset
+
+    STUR X13, [X14, #0]       // Store even number at calculated index
+
+    // odd numbers (right side)
+    ADDI X12, X10, #1         // X12 = s + 1
+    LSR X12, X12, #1          // X12 = (s + 1) / 2
+    ADD X12, X12, X11         // X12 = ((s + 1) / 2) + i
+    LSL X13, X11, #1          // X13 = i * 2
+    ADDI X13, X13, #1         // X13 = i * 2 + 1
+
+    // Calculate address for odd numbers
+    LSL X14, X12, #3          // X14 = X12 * 8
+    ADD X14, X9, X14          // X14 = base address + offset
+
+    STUR X13, [X14, #0]       // Store odd number at calculated index
+
+    ADDI X11, X11, #1         // i++
+    LSR X12, X10, #1          // X12 = s / 2
+    SUBS XZR, X11, X12        // Set flags: X11 - X12
+    B.LT fill_loop            // If i < s/2, repeat loop
+
+fill_odd_check:
+    ANDI X12, X10, #1         // sees if s is odd
+    B.EQ fill_end             // If s is even jumps
+
+    SUBI X12, X10, #1         // X12 = s - 1
+    STUR X12, [X9, #0]        // store s - 1 at index 0
+
+fill_end:
+    LDUR X19, [SP, #0]        // Restore X19
+    LDUR X30, [SP, #8]        // Restore return address
+    ADDI SP, SP, #16          // Deallocate stack space
+    BR X30                    // Return
+
+// ------------------------------------
+// Swap Function
+// ------------------------------------
+swap:
+    LDUR X2, [X0, #0]         // Load *a
+    LDUR X3, [X1, #0]         // Load *b
+    STUR X3, [X0, #0]         // Store b into *a
+    STUR X2, [X1, #0]         // Store a into *b
+    BR LR
+
+// ------------------------------------
+// Percolate Down
+// ------------------------------------
+percolate_down:
+    SUBI SP, SP, #16          // Allocate stack space
+    STUR X30, [SP, #8]        // Save return address
+    STUR X19, [SP, #0]        // Save X19
+
+    ADD X3, X0, XZR           // X3 = base address of array
+    ADD X4, X1, XZR           // X4 = heap size
+    ADD X5, X2, XZR           // X5 = current index i
+
+percolate_loop:
+    LSL X6, X5, #1            // X6 = 2 * i (shift left by 1)
+    ADDI X6, X6, #1           // X6 = 2 * i + 1 (left child)
+    SUBS XZR, X6, X4          // Set flags: X6 - heap size
+    B.GE percolate_done       // If no left child, done
+
+    // Check if right child exists and is greater than left child
+    ADDI X7, X6, #1           // X7 = 2 * i + 2 (right child)
+    SUBS XZR, X7, X4          // Set flags: X7 - heap size
+    B.GE check_swap           // If no right child, skip comparison
+
+    // Load left and right child values
+    LSL X8, X6, #3            // X8 = left child index * 8
+    ADD X8, X3, X8            // X8 = address of left child
+    LDUR X9, [X8, #0]         // X9 = value at left child
+
+    LSL X10, X7, #3           // X10 = right child index * 8
+    ADD X10, X3, X10          // X10 = address of right child
+    LDUR X11, [X10, #0]       // X11 = value at right child
+
+    SUBS XZR, X9, X11         // Compare left and right child values
+    B.GE check_swap           // If left >= right, use left child
+    ADD X6, X7, XZR           // Otherwise, select right child
+
+check_swap:
+    // Load parent and child values
+    LSL X8, X5, #3            // X8 = parent index * 8
+    ADD X8, X3, X8            // X8 = address of parent
+    LDUR X9, [X8, #0]         // X9 = value at parent
+
+    LSL X10, X6, #3           // X10 = child index * 8
+    ADD X10, X3, X10          // X10 = address of child
+    LDUR X11, [X10, #0]       // X11 = value at child
+
+    SUBS XZR, X9, X11         // Compare parent and child values
+    B.GE percolate_done       // If parent >= child, heap property satisfied
+
+    // Swap parent and child
+    ADD X0, X8, XZR           // X0 = address of parent
+    ADD X1, X10, XZR          // X1 = address of child
+    BL swap                   // Call swap function
+
+    ADD X5, X6, XZR           // Set i = child index
+    B percolate_loop          // Repeat loop
+
+percolate_done:
+    LDUR X19, [SP, #0]        // Restore X19
+    LDUR X30, [SP, #8]        // Restore return address
+    ADDI SP, SP, #16          // Deallocate stack space
+    BR X30                    // Return
+
+// ------------------------------------
+// Heapify 
+// ------------------------------------
+heapify:
+    SUBI SP, SP, #16          // Allocate stack space
+    STUR X30, [SP, #8]        // Save return address
+    STUR X19, [SP, #0]        // Save X19
+
+    ADDI X2, X1, #1           // X2 = s + 1
+    LSR X2, X2, #1            // X2 = (s + 1) / 2
+    SUBI X2, X2, #1           // X2 = ((s + 1) / 2) - 1
+
+heapify_loop:
+    SUBS XZR, X2, XZR         // Set flags: X2 - 0
+    B.LT heapify_done         // If X2 < 0, done
+    ADD X19, X2, XZR          // Save loop counter in X19
+    BL percolate_down         // Call percolate_down(array, s, i)
+    SUBI X2, X2, #1           // Decrement loop counter
+    B heapify_loop            // Repeat loop
+
+heapify_done:
+    LDUR X19, [SP, #0]        // Restore X19
+    LDUR X30, [SP, #8]        // Restore return address
+    ADDI SP, SP, #16          // Deallocate stack space
+    BR X30                    // Return
+
+// ------------------------------------
+// Heapsort 
+// ------------------------------------
+heapsort:
+    SUBI SP, SP, #16          // Allocate stack space
+    STUR X30, [SP, #8]        // Save return address
+    STUR X19, [SP, #0]        // Save X19
+
+    BL heapify                // goes to heapify (Build the max heap)
+
+    ADD X4, X1, XZR           // X4 = s (array size)
+    ADDI X5, XZR, #1          // i = 1
+
+heapsort_loop:
+    SUBS XZR, X5, X4          // Set flags: X5 - s
+    B.GE heapsort_done        // If i >= s, done
+    SUB X6, X4, X5            // X6 = s - i
+    LSL X6, X6, #3            // X6 = (s - i) * 8
+    ADD X6, X0, X6            // X6 = address of a[s - i]
+    ADD X7, X0, XZR           // X7 = address of a[0]
+    BL swap                   // Swap a[0] and a[s - i]
+    SUB X1, X4, X5            // X1 = s - i (new heap size)
+    ADDI X2, XZR, #0          // X2 = 0 (root index)
+    BL percolate_down         // Restore heap property
+    ADDI X5, X5, #1           // i++
+    B heapsort_loop           // Repeat loop
+
+heapsort_done:
+    LDUR X19, [SP, #0]        // Restore X19
+    LDUR X30, [SP, #8]        // Restore return address
+    ADDI SP, SP, #16          // Deallocate stack space
+    BR X30                    // Return
+
+// ------------------------------------
+// Print_Array Function:
+// Prints each element of the array.
+// ------------------------------------
+//so a for loop that iterates through each element and prints (PRNT)
+print_array:
+    ADDI X2, XZR, #0         // i = 0
+print_loop:
+    SUBS X10, X1, X2         // X10 = count - i
+    B.EQ print_end           // Exit if count-i == 0
+    LSL X3, X2, #3           // X3 = i * 8
+    ADD X3, X0, X3           // X3 = address of a[i]
+    LDUR X4, [X3, #0]        // Load a[i] into X4
+    PRNT X4                  // Print value in X4
+    PRNL                     // Print newline
+    ADDI X2, X2, #1          // i++
+    B print_loop             // Repeat loop
+print_end:
+    BR LR                    // Return
+
+

@@ -1,0 +1,88 @@
+#ifndef bool
+#define bool int
+#define true 1
+#define false 0
+#endif
+
+#include <stdint.h>
+
+#include "inc/tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
+#include "Timer.h"
+
+volatile uint32_t rising_edge_time = 0;
+volatile uint32_t falling_edge_time = 0;
+volatile int pulse_width = 0;
+volatile int overflow_count = 0;
+
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02;
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}
+
+    GPIO_PORTB_DIR_R |= 0x08;
+    GPIO_PORTB_DEN_R |= 0x08;
+}
+
+void ping_trigger(void) {
+    GPIO_PORTB_DATA_R &= ~0x08;
+    timer_waitMicros(2);
+    GPIO_PORTB_DATA_R |= 0x08;
+    timer_waitMicros(5);
+    GPIO_PORTB_DATA_R &= ~0x08;
+}
+
+void ping_init_timer(void) {
+    SYSCTL_RCGCTIMER_R |= 0x08;
+    while ((SYSCTL_PRTIMER_R & 0x08) == 0) {}
+
+    TIMER3_CTL_R &= ~0x100;
+    TIMER3_CFG_R = 0x4;
+    TIMER3_TBMR_R = 0x07;
+    TIMER3_TBPR_R = 0xFF;
+    TIMER3_TBILR_R = 0xFFFF;
+    TIMER3_IMR_R |= 0x400;
+    TIMER3_ICR_R |= 0x400;
+
+    NVIC_EN1_R |= 0x10;
+    IntMasterEnable();
+
+    TIMER3_CTL_R |= 0x100;
+}
+
+void Timer3B_Handler(void) {
+    if (TIMER3_MIS_R & 0x400) {
+        uint32_t timer_value = TIMER3_TBR_R;
+
+        if (GPIO_PORTB_DATA_R & 0x08) {
+            rising_edge_time = timer_value;
+        } else {
+            falling_edge_time = timer_value;
+
+            if (falling_edge_time > rising_edge_time) {
+                pulse_width = (0xFFFFFF - rising_edge_time) + falling_edge_time + 1;
+                overflow_count++;
+            } else {
+                pulse_width = rising_edge_time - falling_edge_time;
+            }
+        }
+        TIMER3_ICR_R |= 0x400;
+    }
+}
+
+void configure_pb3_input(void) {
+    GPIO_PORTB_DEN_R &= ~0x08;
+    GPIO_PORTB_DIR_R &= ~0x08;
+    GPIO_PORTB_AFSEL_R |= 0x08;
+    GPIO_PORTB_PCTL_R &= ~0x0000F000;
+    GPIO_PORTB_PCTL_R |= 0x00007000;
+    GPIO_PORTB_DEN_R |= 0x08;
+}
+
+void ping_measure(void) {
+    GPIO_PORTB_AFSEL_R &= ~0x08;
+    GPIO_PORTB_DIR_R |= 0x08;
+    ping_trigger();
+
+    configure_pb3_input();
+
+}

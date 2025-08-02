@@ -1,0 +1,33 @@
+#include <stdint.h>
+#include "ping.h"
+#include "Timer.h"
+#include "lcd.h"
+
+int main(void) {
+    // Initialize peripherals
+    lcd_init();
+    ping_init();
+
+    while (1) {
+            // Trigger the sensor and read the pulse width
+            int pulse_width = ping_read();
+
+            // Check for valid pulse width
+            if (pulse_width > 0) {
+                // Calculate the distance based on the pulse width
+                float distance = calculate_distance(pulse_width);
+
+                // Display the pulse width and distance on the LCD
+                lcd_clear();
+                lcd_printf("Width: %u\nDist: %.2f cm", pulse_width, distance);
+            } else {
+                // Handle cases where no valid pulse is detected
+                lcd_clear();
+                lcd_printf("No Pulse Detected");
+            }
+
+        timer_waitMillis(500); // Delay before the next measurement
+    }
+
+    return 0;
+}

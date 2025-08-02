@@ -1,0 +1,27 @@
+#include <stdint.h>
+#include "ping.h"
+#include "Timer.h"
+#include "lcd.h"
+
+int main(void) {
+    // Initialize peripherals
+    lcd_init();
+    ping_init();
+
+    while (1) {
+            // Get the valid distance measurement with debouncing and filtering
+            float distance = get_valid_distance();
+
+            // Display the distance or an error message on the LCD
+            lcd_clear();
+            if (distance > 0) {
+                lcd_printf("Dist: %.2f cm", distance);
+            } else {
+                lcd_printf("No valid measurement");
+            }
+
+            timer_waitMillis(500); // Delay before the next measurement cycle
+        }
+
+        return 0;
+    }

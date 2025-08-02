@@ -1,0 +1,14 @@
+#ifndef PING_H
+#define PING_H
+
+#include <stdint.h>
+#include <stdbool.h>
+
+void ping_init(void);        // Initialize the PING))) sensor and Timer 3B
+void send_pulse(void);       // Send the trigger pulse to the PING))) sensor
+int ping_read(void);         // Measure the echo pulse width
+void TIMER3B_Handler(void);  // Interrupt handler for Timer 3B
+
+extern volatile int pulse_width; // Expose pulse_width as an external variable
+
+#endif // PING_H

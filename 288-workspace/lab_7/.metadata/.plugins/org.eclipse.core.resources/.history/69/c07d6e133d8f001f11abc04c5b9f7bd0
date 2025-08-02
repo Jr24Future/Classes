@@ -1,0 +1,239 @@
+#include "cyBot_Scan.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+#include "movement.h"
+#include "open_interface.h"
+#include <stdio.h>
+#include <string.h>
+
+// Struct Definition
+typedef struct {
+    int start_angle;
+    int end_angle;
+    float ping_distance;
+} ObjectBoundary;
+
+// Function Declarations (Prototypes)
+void setup();
+void perform_scan(float ir_distances[], float ping_distances[]);
+void detect_objects(float ir_distances[], ObjectBoundary objects[], int *object_count);
+void ping_measurement(ObjectBoundary objects[], int object_count, float ping_distances[]);
+void display_results(ObjectBoundary objects[], float ping_distances[], int object_count);
+void navigate_to_smallest_object(ObjectBoundary objects[], int object_count, float ping_distances[]);
+void avoid_obstacle();
+void manual_mode();
+void autonomous_mode();
+void perform_scan_and_navigate();
+void turn_to_angle(oi_t *sensor_data, int angle);
+float calculate_distance_linear(int raw_ir);
+void control_movement(oi_t *sensor_data, char command);
+
+// Define constants
+#define SCAN_ANGLE_STEP 2
+#define IR_AVERAGE_COUNT 3
+#define PING_AVERAGE_COUNT 5
+#define DETECTION_THRESHOLD 10
+#define BUMP_THRESHOLD 5 // Threshold to detect obstacles with bumpers
+
+typedef enum { MANUAL, AUTONOMOUS } Mode;
+Mode current_mode = MANUAL;
+
+volatile char uart_data;
+volatile char flag;
+
+oi_t *sensor_data; // Open interface sensor data
+
+void setup() {
+    uart_init(115200);
+    lcd_init();
+    timer_init();
+    uart_interrupt_init();
+    cyBOT_init_Scan(0b0111);
+    sensor_data = oi_alloc();
+    oi_init(sensor_data);
+
+    right_calibration_value = 343000; // Calibrated value for 0 degrees (right)
+    left_calibration_value = 1340500; // Calibrated value for 180 degrees (left)
+}
+
+void autonomous_mode() {
+    lcd_printf("Autonomous Mode");
+    while (current_mode == AUTONOMOUS) {
+        if (flag) {
+            flag = 0;
+            char command = uart_data;
+
+            if (command == 'h') {
+                perform_scan_and_navigate();
+            } else if (command == 't') {
+                current_mode = MANUAL;
+                uart_sendStr("Switching to Manual Mode.\n");
+            } else if (command == 'q') {
+                oi_free(sensor_data);
+                uart_sendStr("Quitting...\n");
+                break;
+            }
+        }
+    }
+}
+
+void manual_mode() {
+    lcd_printf("Manual Mode");
+    while (current_mode == MANUAL) {
+        if (flag) {
+            flag = 0;
+            char command = uart_data;
+
+            if (command == 'w' || command == 'a' || command == 's' || command == 'd') {
+                control_movement(sensor_data, command); // Movement function from earlier parts
+            } else if (command == 'm') {
+                // Perform scan
+                cyBOT_Scan_t scanData;
+                float ir_distances[180 / SCAN_ANGLE_STEP + 1] = {0}; // Initialize distances array
+                ObjectBoundary detected_objects[10] = {0};           // Initialize detected objects array
+                float refined_ping_distances[10] = {0};              // Refined PING distances
+                int object_count = 0;
+
+                perform_scan(ir_distances, refined_ping_distances);
+                detect_objects(ir_distances, detected_objects, &object_count);
+                ping_measurement(detected_objects, object_count, refined_ping_distances);
+                display_results(detected_objects, refined_ping_distances, object_count);
+            } else if (command == 't') {
+                current_mode = AUTONOMOUS;
+                uart_sendStr("Switching to Autonomous Mode.\n");
+            } else if (command == 'q') {
+                oi_free(sensor_data);
+                uart_sendStr("Quitting...\n");
+                break;
+            }
+        }
+    }
+}
+
+float calculate_distance_linear(int raw_ir) {
+    int i;
+    float distances[] = {9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 50};
+    int ir_values[] = {1499, 1277, 1147, 1087, 987, 955, 919, 877, 842, 833, 803, 795, 779, 751, 731};
+
+    if (raw_ir >= ir_values[0]) {
+        return distances[0];
+    }
+    if (raw_ir <= ir_values[14]) {
+        return distances[14];
+    }
+    for (i = 0; i < 14; i++) {
+        if (raw_ir <= ir_values[i] && raw_ir > ir_values[i + 1]) {
+            float slope = (distances[i + 1] - distances[i]) / (float)(ir_values[i + 1] - ir_values[i]);
+            return distances[i] + slope * (raw_ir - ir_values[i]);
+        }
+    }
+    return -1;  // If the value does not match any valid range
+}
+
+void perform_scan(float ir_distances[], float ping_distances[]) {
+    cyBOT_Scan_t scan_data;
+    int angle;
+    int i;  // Variable moved outside of the loop
+
+    // Printing header for IR and PING scan results
+    uart_sendStr("\nIR and PING Scan Results:\n");
+    uart_sendStr("Angle\tIR Distance (cm)\tPING Distance (cm)\n");
+    uart_sendStr("----------------------------------------------\n");
+
+    for (angle = 0; angle <= 180; angle += SCAN_ANGLE_STEP) {
+        float ir_sum = 0.0;
+        float ping_sum = 0.0;
+
+        // Take multiple measurements at each angle
+        for (i = 0; i < IR_AVERAGE_COUNT; i++) {
+            cyBOT_Scan(angle, &scan_data);
+            ir_sum += calculate_distance_linear(scan_data.IR_raw_val);
+            ping_sum += scan_data.sound_dist;  // Collecting PING data
+
+            // Short delay to stabilize sensor readings
+            timer_waitMillis(10);
+        }
+
+        // Average the IR and PING readings at this angle
+        ir_distances[angle / SCAN_ANGLE_STEP] = ir_sum / IR_AVERAGE_COUNT;
+        ping_distances[angle / SCAN_ANGLE_STEP] = ping_sum / IR_AVERAGE_COUNT;
+
+        // Send the angle, IR, and PING distance to PuTTY
+        char message[80];
+        snprintf(message, sizeof(message), "Angle: %d\tIR Distance: %.2f cm\tPING Distance: %.2f cm\n",
+                 angle, ir_distances[angle / SCAN_ANGLE_STEP], ping_distances[angle / SCAN_ANGLE_STEP]);
+        uart_sendStr(message);
+
+        // Short delay before moving to the next angle
+        timer_waitMillis(50);
+    }
+}
+
+void detect_objects(float ir_distances[], ObjectBoundary objects[], int *object_count) {
+    *object_count = 0;  // Reset the object count to zero before starting
+    int detecting = 0;
+    int i;  // Variable moved outside of the loop
+
+    for (i = 1; i < 180 / SCAN_ANGLE_STEP; i++) {
+        float previous = ir_distances[i - 1];
+        float current = ir_distances[i];
+
+        // Detect object start
+        if (!detecting && (previous - current) > DETECTION_THRESHOLD) {
+            objects[*object_count].start_angle = (i - 1) * SCAN_ANGLE_STEP;
+            detecting = 1;
+        } else if (detecting && (current - previous) > DETECTION_THRESHOLD) {
+            objects[*object_count].end_angle = i * SCAN_ANGLE_STEP;
+            detecting = 0;
+            (*object_count)++;
+        }
+    }
+}
+
+void ping_measurement(ObjectBoundary objects[], int object_count, float ping_distances[]) {
+    cyBOT_Scan_t scan_data;
+    int i, j;  // Variables moved outside of the loop
+
+    // Printing header for PING measurement results
+    uart_sendStr("\nRefined PING Measurement Results:\n");
+    uart_sendStr("Object\tMid Angle\tPING Distance (cm)\n");
+    uart_sendStr("--------------------------------------\n");
+
+    for (i = 0; i < object_count; i++) {
+        int mid_angle = (objects[i].start_angle + objects[i].end_angle) / 2;
+        float ping_sum = 0.0;
+
+        // Take multiple PING measurements for averaging
+        for (j = 0; j < PING_AVERAGE_COUNT; j++) {
+            cyBOT_Scan(mid_angle, &scan_data);
+            ping_sum += scan_data.sound_dist;
+
+            // Delay for sensor stabilization
+            timer_waitMillis(50);
+        }
+
+        // Calculate the average PING distance
+        ping_distances[i] = ping_sum / PING_AVERAGE_COUNT;
+
+        // Send the PING measurement to PuTTY
+        char message[100];
+        snprintf(message, sizeof(message), "Object %d\tAngle: %d\tPING Distance: %.2f cm\n", i + 1, mid_angle, ping_distances[i]);
+        uart_sendStr(message);
+    }
+}
+
+int main(void) {
+    setup();
+
+    uart_sendStr("Press 't' to toggle modes, 'q' to quit.\n");
+
+    while (1) {
+        if (current_mode == MANUAL) {
+            manual_mode();
+        } else if (current_mode == AUTONOMOUS) {
+            autonomous_mode();
+        }
+    }
+    return 0;
+}

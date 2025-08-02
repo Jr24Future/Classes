@@ -1,0 +1,27 @@
+#include <stdint.h>
+#include "Timer.h"
+#include "ping.h"
+#include "lcd.h"
+
+int main(void) {
+    ping_init();           // Initialize PB3 for output mode
+    ping_init_timer();     // Initialize Timer 3B for input capture mode
+    lcd_init();            // Initialize the LCD
+    lcd_putc('H');
+
+    while (1) {
+        ping_measure();    // Trigger the PING))) sensor
+        // Debug print to check if pulse_width is being updated
+        if (pulse_width > 0) {
+            lcd_clear();
+            lcd_printf("Pulse Width: %u", pulse_width);
+        } else {
+            lcd_clear();
+            lcd_printf("No Pulse Detected");
+        }
+
+        timer_waitMillis(500);  // Delay before the next measurement
+    }
+
+    return 0;
+}

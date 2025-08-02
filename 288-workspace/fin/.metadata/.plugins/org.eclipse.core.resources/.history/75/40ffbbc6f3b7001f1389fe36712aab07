@@ -1,0 +1,235 @@
+#include <inc/tm4c123gh6pm.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include "bno055.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+#include "open_interface.h"
+#include "movement.h"
+#include "music.h"
+#include "Final_scan.h"
+#include "servo.h"
+#include "string.h"
+#include "adc.h"
+#include "ping.h"
+
+
+// Global variables
+int current_x = 0;
+int current_y = 0;
+int current_orientation = 270; // Default orientation (East)
+int start_x = 0;
+int start_y = 0;
+
+// Function prototypes
+void navigate_to_target(oi_t *sensor, int target_x, int target_y);
+int get_user_input(const char *prompt, int max_value, int is_multiple_of_60);
+void enter_border(oi_t *sensor);
+void exit_border(oi_t *sensor);
+
+int main() {
+    // Initialize hardware
+    timer_init();
+    lcd_init();
+    uart_init(115200);
+    servo_init();
+    ping_init();
+    adc_init();
+
+    // Robot initialization
+    oi_t *sensor = oi_alloc();
+    oi_init(sensor);
+
+    // Calibrate wheels -- call only once if you change bots
+    // calibrate_wheels(sensor);
+
+    //Load songs
+    load_songs();
+
+    // Ask user for starting position
+    start_x = get_user_input("Enter starting X position (60, 120, 180): ", 240, 1);
+    start_y = 0; // Starting Y position is always 0
+    current_x = start_x;
+    current_y = start_y;
+
+    // Enter the field by crossing two white lines
+    //enter_border(sensor);
+
+    // Ask user for the number of targets
+    int num_targets = get_user_input("Enter the number of targets (1-5): ", 5, 0);
+    int *target_x = malloc(num_targets * sizeof(int));
+    int *target_y = malloc(num_targets * sizeof(int));
+
+    if (!target_x || !target_y) {
+        uart_sendStr("Memory allocation failed!\r\n");
+        if (target_x) free(target_x);
+        if (target_y) free(target_y);
+        return -1;
+    }
+//335
+    // Request target positions
+    int i;
+    for (i = 0; i < num_targets; i++) {
+        char prompt_x[50], prompt_y[50];
+        sprintf(prompt_x, "Enter X coordinate for target %d: ", i + 1);
+        sprintf(prompt_y, "Enter Y coordinate for target %d: ", i + 1);
+        target_x[i] = get_user_input(prompt_x, 240, 1);
+        target_y[i] = get_user_input(prompt_y, 420, 1);
+    }
+
+    // Navigate to each target
+    for (i = 0; i < num_targets; i++) {
+        navigate_to_target(sensor, target_x[i], target_y[i]);
+    }
+
+    // Return to starting position
+    navigate_to_target(sensor, start_x, start_y);
+
+    // Exit the field
+    //exit_border(sensor);
+
+    // Clean up
+    free(target_x);
+    free(target_y);
+    oi_free(sensor);
+
+    return 0;
+}
+
+void navigate_to_target(oi_t *sensor, int target_x, int target_y) {
+    char buffer[50];
+
+    // Perform an initial scan
+    uart_sendStr("Performing initial scan...\r\n");
+    float initial_scan_dist = scan_180();
+    short gapangle = find_gaps();
+
+    if (initial_scan_dist > 0) {
+        if (gapangle >= 90) {
+            uart_sendStr("Turning left to navigate obstacle.\n");
+            turn_counter_clockwise(sensor, gapangle - 90);
+            if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+            turn_clockwise(sensor, gapangle - 90);
+        } else {
+            uart_sendStr("Turning right to navigate obstacle.\n");
+            turn_clockwise(sensor, 90 - gapangle);
+            if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+            turn_counter_clockwise(sensor, 90 - gapangle);
+        }
+    } else {
+        uart_sendStr("No obstacle detected in initial scan, proceeding to navigation\n");
+    }
+
+    int delta_x = target_x - current_x; // Change in X direction
+    int delta_y = target_y - current_y; // Change in Y direction
+
+    // Step 1: Move along the X-axis
+    if (delta_x != 0) {
+        int target_heading = (delta_x > 0) ? 180 : 0; // South or North
+        sprintf(buffer, "Aligning to %d° for X-axis movement\r\n", target_heading);
+        uart_sendStr(buffer);
+
+        // Turn to the correct heading
+        int turn_angle = target_heading - current_orientation;
+        if (turn_angle > 180) turn_angle -= 360;
+        if (turn_angle < -180) turn_angle += 360;
+        turn(sensor, turn_angle);
+
+        // Move in increments of 30 cm, scanning at each step
+        int distance_to_move = abs(delta_x);
+        while (distance_to_move > 0) {
+            int step = (distance_to_move > 20) ? 20 : distance_to_move;
+
+            move_forward(sensor, step, 0);
+            distance_to_move -= step;
+
+            // Update the current position dynamically
+            delta_x = target_x - current_x;
+            if (abs(delta_x) <= 1) break; // Break if close enough to the target
+
+            // Perform a scan
+            initial_scan_dist = scan_180();
+            gapangle = find_gaps();
+
+            if (initial_scan_dist > 0) {
+                if (gapangle >= 90) {
+                    uart_sendStr("Turning left to navigate obstacle.\n");
+                    turn_counter_clockwise(sensor, gapangle - 90);
+                    if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+                    turn_clockwise(sensor, gapangle - 90);
+                } else {
+                    uart_sendStr("Turning right to navigate obstacle.\n");
+                    turn_clockwise(sensor, 90 - gapangle);
+                    if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+                    turn_counter_clockwise(sensor, 90 - gapangle);
+                }
+            } else {
+                uart_sendStr("No obstacle detected, proceeding to navigation\n");
+            }
+        }
+
+        // Update global orientation and position
+        current_orientation = target_heading;
+        current_x = target_x;
+    }
+
+    // Step 2: Move along the Y-axis
+    if (delta_y != 0) {
+        int target_heading = (delta_y > 0) ? 270 : 90; // West or East
+        sprintf(buffer, "Aligning to %d° for Y-axis movement\r\n", target_heading);
+        uart_sendStr(buffer);
+
+        // Turn to the correct heading
+        int turn_angle = target_heading - current_orientation;
+        if (turn_angle > 180) turn_angle -= 360;
+        if (turn_angle < -180) turn_angle += 360;
+        turn(sensor, turn_angle);
+
+        // Move in increments of 30 cm, scanning at each step
+        int distance_to_move = abs(delta_y);
+        while (distance_to_move > 0) {
+            int step = (distance_to_move > 20) ? 20 : distance_to_move;
+
+            move_forward(sensor, step, 0);
+            distance_to_move -= step;
+
+            // Update the current position dynamically
+            delta_y = target_y - current_y;
+            if (abs(delta_y) <= 1) break; // Break if close enough to the target
+
+            // Perform a scan
+            initial_scan_dist = scan_180();
+            gapangle = find_gaps();
+
+            if (initial_scan_dist > 0) {
+                if (gapangle >= 90) {
+                    uart_sendStr("Turning left to navigate obstacle.\n");
+                    turn_counter_clockwise(sensor, gapangle - 90);
+                    if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+                    turn_clockwise(sensor, gapangle - 90);
+                } else {
+                    uart_sendStr("Turning right to navigate obstacle.\n");
+                    turn_clockwise(sensor, 90 - gapangle);
+                    if (initial_scan_dist > 20) move_forward(sensor, initial_scan_dist - 20, 0); // Avoid collision
+                    turn_counter_clockwise(sensor, 90 - gapangle);
+                }
+            } else {
+                uart_sendStr("No obstacle detected, proceeding to navigation\n");
+            }
+        }
+
+        // Update global orientation and position
+        current_orientation = target_heading;
+        current_y = target_y;
+    }
+
+    // Confirm navigation completion
+    sprintf(buffer, "Reached Target: (%d, %d)\r\n", current_x, current_y);
+    uart_sendStr(buffer);
+}
+
+
+
+

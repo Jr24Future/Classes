@@ -1,0 +1,77 @@
+#include "ping.h"
+#include "Timer.h"
+#include "math.h"
+
+volatile unsigned long START_TIME = 0;  // Rising time of the pulse
+volatile unsigned long END_TIME = 0;    // Falling time of the pulse
+volatile enum { LOW, HIGH, DONE } STATE = LOW;  // State of ping echo pulse
+
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x2;   // Enable PORTB clock
+    GPIO_PORTB_AFSEL_R |= 0x8;  // Enable alternate function
+    GPIO_PORTB_DEN_R |= 0x8;    // Enable PB3 as digital
+    GPIO_PORTB_PCTL_R |= 0x7000; // Set PB3 as T3CCP1 (Timer3B capture)
+
+    SYSCTL_RCGCTIMER_R |= 0x8;  // Enable Timer 3 clock
+    TIMER3_CTL_R &= ~0x100;     // Disable Timer 3B for configuration
+    TIMER3_CFG_R = 0x4;         // 16-bit timer configuration
+    TIMER3_TBMR_R = 0x07;       // Capture mode, edge-time, count-up
+    TIMER3_TBILR_R = 0xFFFF;    // Set upper bound for timer
+    TIMER3_TBPR_R = 0xFF;       // Prescaler for 24-bit mode
+
+    TIMER3_ICR_R = 0x400;       // Clear Timer 3B capture interrupt flag
+    TIMER3_IMR_R |= 0x400;      // Enable capture mode interrupt
+
+    NVIC_EN1_R |= 0x10;         // Enable Timer3B interrupt in NVIC
+    IntMasterEnable();          // Enable global interrupts
+
+    TIMER3_CTL_R |= 0x100;      // Enable Timer 3B
+}
+
+void send_pulse(void) {
+    GPIO_PORTB_AFSEL_R &= ~0x8;  // Disable alternate function for PB3
+    GPIO_PORTB_PCTL_R &= ~0x7000; // Set PB3 as GPIO
+    GPIO_PORTB_DIR_R |= 0x8;     // Set PB3 as output
+    GPIO_PORTB_DATA_R |= 0x8;    // Set PB3 high
+
+    timer_waitMicros(10);        // Wait 10 microseconds
+
+    GPIO_PORTB_DATA_R &= ~0x8;   // Set PB3 low
+    GPIO_PORTB_DIR_R &= ~0x8;    // Set PB3 as input
+    GPIO_PORTB_AFSEL_R |= 0x8;   // Re-enable alternate function
+    GPIO_PORTB_PCTL_R |= 0x7000; // Set PB3 as T3CCP1
+}
+
+void TIMER3B_Handler(void) {
+    if (TIMER3_MIS_R & 0x400) { // Capture event occurred
+        unsigned long timer_value = TIMER3_TBR_R;
+
+        if (STATE == LOW) {
+            START_TIME = timer_value;
+            STATE = HIGH;
+        } else if (STATE == HIGH) {
+            END_TIME = timer_value;
+            STATE = DONE;
+        }
+
+        TIMER3_ICR_R = 0x400; // Clear capture event interrupt flag
+    }
+}
+
+int ping_read(void) {
+    send_pulse();
+    while (STATE != DONE) {} // Wait for echo pulse to complete
+
+    int clk_cycles = 0;
+
+    if (START_TIME < END_TIME) {
+        clk_cycles = (0xFFFFFF - START_TIME) + END_TIME + 1;
+    } else {
+        clk_cycles = START_TIME - END_TIME;
+    }
+
+    STATE = LOW; // Reset state for the next measurement
+    return clk_cycles;
+}
+
+// Add a function to convert clock cycles to time and distance if needed

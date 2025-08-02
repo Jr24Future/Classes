@@ -1,0 +1,16 @@
+#include "lcd.h"
+
+int main(void) {
+    lcd_init();         // Initialize the LCD
+    lcd_clear();        // Clear the display
+
+    lcd_putc('T');
+    timer_waitMillis(500);  // Delay to observe the character
+    lcd_putc('E');
+    timer_waitMillis(500);
+    lcd_putc('S');
+    timer_waitMillis(500);
+    lcd_putc('T');
+    while (1);
+    return 0;
+}

@@ -1,0 +1,103 @@
+#include "ping.h"
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
+#include "Timer.h"
+#include "lcd.h"
+
+
+// Variables for edge detection
+volatile uint32_t rising_edge_time = 0;
+volatile uint32_t falling_edge_time = 0;
+volatile uint32_t pulse_width = 0;
+
+// Initialize PB3 for output mode for PING))) triggering
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02;  // Enable clock for Port B
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}  // Wait for the clock to be ready
+
+    GPIO_PORTB_DIR_R |= 0x08;  // Set PB3 as output
+    GPIO_PORTB_DEN_R |= 0x08;  // Enable digital functionality on PB3
+    GPIO_PORTB_AFSEL_R &= ~0x08; // Disable alternate function for PB3
+}
+
+// Send a trigger pulse to the PING))) sensor
+void ping_trigger(void) {
+    GPIO_PORTB_DATA_R &= ~0x08;  // PB3 low
+    timer_waitMicros(2);         // 2 microseconds delay
+    GPIO_PORTB_DATA_R |= 0x08;   // PB3 high
+    timer_waitMicros(5);         // 5 microseconds delay (duration of high pulse)
+    GPIO_PORTB_DATA_R &= ~0x08;  // PB3 low
+}
+
+// Initialize Timer 3B in input capture mode for edge detection
+void ping_init_timer(void) {
+    SYSCTL_RCGCTIMER_R |= 0x08;  // Enable Timer 3 clock
+    while ((SYSCTL_PRTIMER_R & 0x08) == 0) {}
+
+    TIMER3_CTL_R &= ~0x100;       // Disable Timer 3B during configuration
+    TIMER3_CFG_R = 0x4;           // 16-bit mode
+    TIMER3_TBMR_R = 0x07;         // Capture mode, edge-time, count-down
+    TIMER3_TBPR_R = 0xFF;         // Prescaler for 24-bit range
+    TIMER3_TBILR_R = 0xFFFE;      // Set interval load register to avoid errata
+    TIMER3_IMR_R |= 0x400;        // Enable capture interrupt
+    TIMER3_ICR_R |= 0x400;        // Clear any prior interrupt
+
+    NVIC_EN1_R |= 0x10;           // Enable interrupt 36 in NVIC (IRQ 36 for Timer 3B)
+    IntMasterEnable();            // Enable global interrupts
+
+    TIMER3_CTL_R |= 0x100;        // Enable Timer 3B
+}
+
+// Interrupt handler for Timer 3B
+void Timer3B_Handler(void) {
+    static int is_rising_edge = 1; // 1 means waiting for rising, 0 for falling
+
+        if (TIMER3_MIS_R & 0x400) {  // Check if capture event occurred
+            GPIO_PORTF_DATA_R ^= 0x02;
+            uint32_t timer_value = TIMER3_TBR_R;  // Read current timer value
+
+            if (is_rising_edge) {
+                rising_edge_time = timer_value;
+                is_rising_edge = 0;  // Next, expect the falling edge
+            } else {
+                falling_edge_time = timer_value;
+
+                // Calculate pulse width
+                if (falling_edge_time > rising_edge_time) {
+                    pulse_width = (0xFFFFFF - rising_edge_time) + falling_edge_time + 1;
+                } else {
+                    pulse_width = rising_edge_time - falling_edge_time;
+                }
+
+                is_rising_edge = 1;  // Reset for the next pulse measurement
+            }
+
+            TIMER3_ICR_R |= 0x400;  // Clear the interrupt flag
+        }
+    }
+
+// Reconfigure PB3 as input for Timer 3B capture mode
+void configure_pb3_input(void) {
+    GPIO_PORTB_DEN_R &= ~0x08;  // Disable digital function on PB3
+    GPIO_PORTB_DIR_R &= ~0x08;  // Set PB3 as input
+    GPIO_PORTB_AFSEL_R |= 0x08; // Enable alternate function
+    GPIO_PORTB_PCTL_R &= ~0x0000F000;
+    GPIO_PORTB_PCTL_R |= 0x00007000;  // Set PB3 to T3CCP1 (Timer 3B capture)
+    GPIO_PORTB_DEN_R |= 0x08;         // Enable digital function
+}
+
+// Main function for measuring the PING))) sensor pulse
+void ping_measure(void) {
+    // Step 1: Set PB3 as output and send the trigger pulse
+    GPIO_PORTB_AFSEL_R &= ~0x08;  // Disable alternate function for output mode
+    GPIO_PORTB_DIR_R |= 0x08;     // Set PB3 as output
+    ping_trigger();         // Send the trigger pulse
+
+    timer_waitMicros(750);
+
+    // Step 2: Reconfigure PB3 as input for Timer 3B capture mode
+    configure_pb3_input();
+
+    // Timer 3B will now handle the rising and falling edge capture through interrupts
+}

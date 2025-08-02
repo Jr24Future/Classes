@@ -1,0 +1,22 @@
+#ifndef PING_H_
+#define PING_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+
+// Initialize the PING))) sensor on PB3 using Timer 3B.
+void ping_init(void);
+
+// Send a trigger pulse to the PING))) sensor.
+void send_pulse(void);
+
+// Measure the pulse width and return it.
+int ping_read(void);
+
+// Calculate distance based on pulse width.
+float calculate_distance(int pulse_width);
+
+// Timer 3B interrupt handler for edge detection.
+void Timer3B_Handler(void);
+
+#endif /* PING_H_ */

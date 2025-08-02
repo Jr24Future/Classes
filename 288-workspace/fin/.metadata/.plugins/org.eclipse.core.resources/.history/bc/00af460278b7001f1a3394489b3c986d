@@ -1,0 +1,243 @@
+#include "Final_scan.h"
+#include "servo.h"
+#include "Timer.h"
+#include "lcd.h"
+#include "button.h"
+#include "ping.h"
+#include "adc.h"
+#include "string.h"
+#include "uart.h"
+void scan_180() {
+    short i, j;
+    float Ping_dist, IR_dist;
+    char scan_data[30];
+    short length;
+
+    uart_sendStr("Starting 180° scan...\n");
+
+    servo_move(0); // Ensure servo starts at 0°
+
+    for (i = 0; i <= 180; i += 5) {
+        servo_move_fast(i); // Move servo to the angle
+        timer_waitMillis(50); // Small delay for stability
+
+        // Read sensors
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+
+        // Debugging: Ensure values are read
+        char debug_msg[50];
+        sprintf(debug_msg, "Angle: %d, IR: %.2f cm, Ping: %.2f cm\n", i, IR_dist / 10.0, Ping_dist / 10.0);
+        uart_sendStr(debug_msg);
+
+        // Format and send data to UART
+        sprintf(scan_data, "%d %.2f %.2f\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        length = strlen(scan_data);
+
+        for (j = 0; j < length; j++) {
+            uart_sendChar(scan_data[j]);
+        }
+    }
+    uart_sendStr("180° scan complete.\n");
+}
+
+
+void scan_small(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(55);
+
+    for(i = 55; i <= 125; i = i + 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+}
+
+void scan_small_back(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(125);
+
+    for(i = 125; i >= 55; i = i - 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+}
+
+void scan_90to125(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(90);
+
+    for(i = 90; i <= 125; i = i + 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+}
+
+void scan_125to90(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(125);
+
+    for(i = 125; i >= 90; i = i - 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+}
+
+void scan_55to90(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(55);
+
+    for(i = 55; i <= 90; i = i + 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+}
+
+void scan_90to55(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(90);
+
+    for(i = 90; i >= 55; i = i - 5){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+}
+
+void scan_left(){
+    short i;
+    for(i = 0; i <= 2; i++){
+    scan_90to125();
+    scan_125to90();
+    }
+}
+
+void scan_right(){
+    short i;
+    for(i = 0; i <= 2; i++){
+    scan_90to55();
+    scan_55to90();
+    }
+}

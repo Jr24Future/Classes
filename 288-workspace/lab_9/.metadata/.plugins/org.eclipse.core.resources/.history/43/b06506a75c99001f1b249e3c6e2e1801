@@ -1,0 +1,30 @@
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+#include "Timer.h"
+
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02;
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}
+
+    GPIO_PORTB_DIR_R |= 0x08;
+    GPIO_PORTB_DEN_R |= 0x08;
+}
+
+void ping_trigger(void) {
+    GPIO_PORTB_DATA_R &= ~0x08;
+    timer_waitMicros(2);
+    GPIO_PORTB_DATA_R |= 0x08;
+    timer_waitMicros(5);
+    GPIO_PORTB_DATA_R &= ~0x08;
+}
+
+int main(void) {
+    ping_init();
+
+    while (1) {
+        ping_trigger();
+        timer_waitMillis(100);
+    }
+
+    return 0;
+}

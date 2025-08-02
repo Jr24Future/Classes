@@ -1,0 +1,6 @@
+[submodule "SE339/OsmAnd"]
+	path = SE339/OsmAnd
+	url = https://github.com/osmandapp/OsmAnd
+[submodule "SE339/resources"]
+	path = SE339/resources
+	url = https://github.com/osmandapp/OsmAnd-resources

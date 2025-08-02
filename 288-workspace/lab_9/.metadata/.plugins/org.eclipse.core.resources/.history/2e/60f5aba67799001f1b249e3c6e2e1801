@@ -1,0 +1,76 @@
+#include "ping.h"
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
+#include "Timer.h"
+
+// State variables
+volatile uint32_t rising_edge_time = 0;
+volatile uint32_t falling_edge_time = 0;
+volatile uint32_t pulse_width = 0;
+volatile enum {LOW, HIGH, DONE} STATE = LOW;
+
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02; // Enable clock for Port B
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}
+
+    GPIO_PORTB_DEN_R |= 0x08; // Enable digital function for PB3
+    GPIO_PORTB_AFSEL_R &= ~0x08; // Disable alternate function
+    GPIO_PORTB_DIR_R |= 0x08; // Set PB3 as output
+
+    SYSCTL_RCGCTIMER_R |= 0x08; // Enable clock for Timer 3
+    while ((SYSCTL_PRTIMER_R & 0x08) == 0) {}
+
+    TIMER3_CTL_R &= ~0x100; // Disable Timer 3B during config
+    TIMER3_CFG_R = 0x4; // 16-bit timer
+    TIMER3_TBMR_R = 0x07; // Capture mode, edge-time, count-down
+    TIMER3_TBPR_R = 0xFF; // Prescaler for extended range
+    TIMER3_TBILR_R = 0xFFFE; // Load value to avoid errata issue
+    TIMER3_IMR_R |= 0x400; // Enable capture interrupt
+    TIMER3_ICR_R |= 0x400; // Clear any prior interrupt
+
+    NVIC_EN1_R |= 0x10; // Enable IRQ 36 for Timer 3B
+    IntRegister(INT_TIMER3B, Timer3B_Handler);
+    IntMasterEnable(); // Enable global interrupts
+
+    TIMER3_CTL_R |= 0x100; // Enable Timer 3B
+}
+
+void send_pulse(void) {
+    GPIO_PORTB_AFSEL_R &= ~0x08; // Set PB3 to GPIO mode
+    GPIO_PORTB_DIR_R |= 0x08; // Set PB3 as output
+    GPIO_PORTB_DATA_R |= 0x08; // PB3 high
+    timer_waitMicros(10); // Wait for 10 us
+    GPIO_PORTB_DATA_R &= ~0x08; // PB3 low
+    GPIO_PORTB_DIR_R &= ~0x08; // Set PB3 as input
+    GPIO_PORTB_AFSEL_R |= 0x08; // Enable alternate function for capture
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & ~0x0000F000) | 0x00007000; // Set PB3 to T3CCP1
+}
+
+void Timer3B_Handler(void) {
+    if (TIMER3_MIS_R & 0x400) {
+        uint32_t timer_value = TIMER3_TBR_R;
+        if (STATE == LOW) {
+            rising_edge_time = timer_value;
+            STATE = HIGH;
+        } else if (STATE == HIGH) {
+            falling_edge_time = timer_value;
+            STATE = DONE;
+            pulse_width = (rising_edge_time >= falling_edge_time)
+                ? (0xFFFFFF - rising_edge_time + falling_edge_time + 1)
+                : (rising_edge_time - falling_edge_time);
+        }
+        TIMER3_ICR_R = 0x400; // Clear interrupt flag
+    }
+}
+
+int ping_read(void) {
+    send_pulse();
+    STATE = LOW;
+    while (STATE != DONE) {} // Wait for echo response
+    int result = pulse_width;
+    STATE = LOW; // Reset for next pulse
+    return result;
+}
+
+// Add a function to convert clock cycles to time and distance if needed

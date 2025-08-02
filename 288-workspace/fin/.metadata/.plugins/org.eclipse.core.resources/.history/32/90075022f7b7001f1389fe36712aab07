@@ -1,0 +1,121 @@
+#include <inc/tm4c123gh6pm.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include "bno055.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+#include "open_interface.h"
+#include "movement.h"
+#include "music.h"
+#include "Final_scan.h"
+#include "servo.h"
+#include "string.h"
+#include "adc.h"
+#include "ping.h"
+
+// Global variables
+int current_x = 0;
+int current_y = 0;
+int current_orientation = 270; // Default orientation (East)
+
+// Function prototypes
+void setup();
+void handle_command(char command, oi_t *sensor);
+
+int main() {
+    // Setup hardware
+    setup();
+
+    // Robot initialization
+    oi_t *sensor = oi_alloc();
+    oi_init(sensor);
+
+    // Load songs
+    load_songs();
+
+    // Manual control loop
+    char command;
+    while (1) {
+        if (uart_data_available()) {
+            command = uart_receive();
+            handle_command(command, sensor);
+        }
+    }
+
+    // Clean up
+    oi_free(sensor);
+    return 0;
+}
+
+// Setup function for hardware initialization
+void setup() {
+    timer_init();
+    lcd_init();
+    uart_init(115200);
+    servo_init();
+    ping_init();
+    adc_init();
+}
+
+// Handles user commands for manual control
+void handle_command(char command, oi_t *sensor) {
+    char response[50];
+    float scan_result = 0.0;
+
+    switch (command) {
+        case 'w': // Move forward
+            uart_sendStr("Moving forward by 30 cm.\n");
+            move_forward(sensor, 30, 0);
+            sprintf(response, "Position: (%d, %d), Heading: %d°\n", current_x, current_y, current_orientation);
+            uart_sendStr(response);
+            break;
+
+        case 'a': // Turn left
+            uart_sendStr("Turning left by 90°.\n");
+            turn_counter_clockwise(sensor, 90);
+            sprintf(response, "Position: (%d, %d), Heading: %d°\n", current_x, current_y, current_orientation);
+            uart_sendStr(response);
+            break;
+
+        case 's': // Move backward
+            uart_sendStr("Moving backward by 10 cm.\n");
+            move_backwards(sensor, 10);
+            sprintf(response, "Position: (%d, %d), Heading: %d°\n", current_x, current_y, current_orientation);
+            uart_sendStr(response);
+            break;
+
+        case 'd': // Turn right
+            uart_sendStr("Turning right by 15°.\n");
+            turn_clockwise(sensor, 90);
+            sprintf(response, "Position: (%d, %d), Heading: %d°\n", current_x, current_y, current_orientation);
+            uart_sendStr(response);
+            break;
+
+        case 'h': // Perform a scan
+            uart_sendStr("Performing a 180-degree scan...\n");
+            scan_result = scan_180();
+            sprintf(response, "Scan result: %.2f cm.\n", scan_result);
+            uart_sendStr(response);
+            break;
+
+        case 'x': // Set X coordinate
+            uart_sendStr("Setting X coordinate to 60.\n");
+            current_x = 60;
+            sprintf(response, "Current Position: (%d, %d)\n", current_x, current_y);
+            uart_sendStr(response);
+            break;
+
+        case 'y': // Set Y coordinate
+            uart_sendStr("Setting Y coordinate to 0.\n");
+            current_y = 0;
+            sprintf(response, "Current Position: (%d, %d)\n", current_x, current_y);
+            uart_sendStr(response);
+            break;
+
+        default:
+            uart_sendStr("Invalid command. Use w/a/s/d for movement, h for scan, x/y to set coordinates.\n");
+            break;
+    }
+}

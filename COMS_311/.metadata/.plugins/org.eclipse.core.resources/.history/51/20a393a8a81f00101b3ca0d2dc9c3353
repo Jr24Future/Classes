@@ -1,0 +1,165 @@
+package coms3110.hw4;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class CharacterSeparator {
+    /**
+     * This method uses the WeightedAdjacencyList class to identify the space between characters in an image of text.
+     * For efficiency, it should only construct a single graph object and should only make a constant
+     * number of calls to Dijkstra's algorithm.
+     * @param path The location of the image on disk.
+     * @return Two lists of Integer. The first list indicates whitespace rows. The second list indicates whitespace columns. Returns null if some error occurred loading the image.
+     */
+    public static Pair<List<Integer>, List<Integer>> findSeparationWeighted(String path) {
+    	
+        try {
+            BitmapProcessor bp = new BitmapProcessor(path);
+            int[][] pixels = bp.getRGBMatrix();
+            
+            System.out.println("Height: " + pixels.length);
+            System.out.println("Width: " + pixels[0].length);
+
+            WeightedAdjacencyList<String> graph = createGraphFromPixels(pixels);
+
+            // Use Dijkstra to get refined whitespace line detection
+            List<Integer> whitespaceRows = findWhitespaceRows(graph, pixels);
+            List<Integer> whitespaceCols = findWhitespaceCols(graph, pixels);
+
+            return new Pair<>(whitespaceRows, whitespaceCols);
+
+
+        } catch (IOException e) {
+            System.err.println("Failed to load image: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Helper to check if a pixel is white (ARGB = 0xFFFFFFFF)
+     */
+    private static boolean isWhite(int pixel) {
+        return pixel == 0xFFFFFFFF;
+    }
+
+
+    
+    /**
+     * Converts a 2D pixel matrix into a graph of pixels.
+     */
+    private static WeightedAdjacencyList<String> createGraphFromPixels(int[][] pixels) {
+        int height = pixels.length;
+        int width = pixels[0].length;
+
+        List<String> vertices = new ArrayList<>();
+
+        // Create vertex names like "i,j"
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                vertices.add(i + "," + j);
+            }
+        }
+
+        WeightedAdjacencyList<String> graph = new WeightedAdjacencyList<>(vertices);
+
+        // Add 4-neighbor edges with weights based on target pixel brightness
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                String from = i + "," + j;
+
+                if (i > 0) addEdge(graph, from, (i - 1) + "," + j, pixels[i - 1][j]);
+                if (i < height - 1) addEdge(graph, from, (i + 1) + "," + j, pixels[i + 1][j]);
+                if (j > 0) addEdge(graph, from, i + "," + (j - 1), pixels[i][j - 1]);
+                if (j < width - 1) addEdge(graph, from, i + "," + (j + 1), pixels[i][j + 1]);
+            }
+        }
+
+        return graph;
+    }
+
+    /**
+     * Adds a weighted edge based on pixel brightness.
+     */
+    private static void addEdge(WeightedAdjacencyList<String> graph, String from, String to, int pixelValue) {
+        int weight = (pixelValue == 0xFFFFFFFF) ? 1000 : 1;
+        graph.addEdge(from, to, weight);
+    }
+    
+    private static List<Integer> findWhitespaceRows(WeightedAdjacencyList<String> graph, int[][] pixels) {
+        List<Integer> whiteRows = new ArrayList<>();
+        int height = pixels.length;
+        int width = pixels[0].length;
+
+        List<Long> allCosts = new ArrayList<>();
+
+        for (int i = 0; i < height; i++) {
+            String left = i + ",0";
+            String right = i + "," + (width - 1);
+            Map<String, Long> dist = graph.getShortestPaths(left);
+            Long cost = dist.get(right);
+            if (cost != null) {
+                allCosts.add(cost);
+            }
+        }
+
+        long average = (long) allCosts.stream().mapToLong(Long::longValue).average().orElse(0);
+        long threshold = (long)(average * 1); // 100% of the average
+
+        for (int i = 0; i < height; i++) {
+            String left = i + ",0";
+            String right = i + "," + (width - 1);
+            Map<String, Long> dist = graph.getShortestPaths(left);
+            Long cost = dist.get(right);
+            System.out.println("row " + i + " cost: " + cost);
+
+            if (cost != null && cost <= i) {
+                whiteRows.add(i);
+            }
+        }
+
+        return whiteRows;
+    }
+
+
+    private static List<Integer> findWhitespaceCols(WeightedAdjacencyList<String> graph, int[][] pixels) {
+        List<Integer> whiteCols = new ArrayList<>();
+        int height = pixels.length;
+        int width = pixels[0].length;
+
+        List<Long> allCosts = new ArrayList<>();
+
+        for (int j = 0; j < width; j++) {
+            String top = "0," + j;
+            String bottom = (height - 1) + "," + j;
+
+            Map<String, Long> dist = graph.getShortestPaths(top);
+            Long cost = dist.get(bottom);
+            if (cost != null) {
+                allCosts.add(cost);
+            }
+        }
+
+        long average = (long) allCosts.stream().mapToLong(Long::longValue).average().orElse(0);
+        long threshold = (long) (average * 1); // 100% of average cost
+
+        for (int j = 0; j < width; j++) {
+            String top = "0," + j;
+            String bottom = (height - 1) + "," + j;
+
+            Map<String, Long> dist = graph.getShortestPaths(top);
+            Long cost = dist.get(bottom);
+            System.out.println("Col " + j + " cost: " + cost);
+
+            if (cost != null && cost <= j) {
+                whiteCols.add(j);
+            }
+        }
+
+        return whiteCols;
+    }
+
+}

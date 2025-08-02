@@ -1,0 +1,30 @@
+#include "tm4c123gh6pm.h"
+#include "ping.h"
+
+// Initializes PB3 as a digital output for triggering the PING))) sensor
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02;  // Enable clock for Port B
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {};  // Wait for Port B to be ready
+    GPIO_PORTB_DIR_R |= 0x08;   // Set PB3 as output
+    GPIO_PORTB_DEN_R |= 0x08;   // Enable digital function on PB3
+}
+
+// Sends the low-high-low trigger pulse to the PING))) sensor
+void ping_trigger(void) {
+    GPIO_PORTB_DATA_R &= ~0x08; // Set PB3 to low
+    delayMicroseconds(2);       // Delay to ensure stable low signal
+
+    GPIO_PORTB_DATA_R |= 0x08;  // Set PB3 to high
+    delayMicroseconds(5);       // Hold high for the required duration
+
+    GPIO_PORTB_DATA_R &= ~0x08; // Set PB3 back to low
+}
+
+// Simple delay function to create delays in microseconds
+void delayMicroseconds(int us) {
+    // This is a simple loop for small delays (adjust as needed based on system clock)
+    int i;
+    for (i = 0; i < (us * 16); i++) {
+        // NOP (No Operation)
+    }
+}

@@ -1,0 +1,26 @@
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
+
+#include "open_interface.h"
+
+// Declare global position tracking variables if they are shared across files
+
+
+
+
+#define GRID_WIDTH 420
+#define GRID_HEIGHT 240
+
+// Function prototypes
+void move_forward(oi_t *sensor, int centimeters);
+void move_backwards(oi_t *sensor, int centimeters);
+void turn_clockwise(oi_t *sensor, int angle);
+void turn_counter_clockwise(oi_t *sensor, int angle);
+void move_forward_with_bump(oi_t *sensor, int centimeters);
+//void move_forward_with_boundary_check(oi_t *sensor_data, int distance_cm);
+void handle_bump(oi_t *sensor, char bump_direction);
+void handle_uart_command(char command, oi_t *sensor_data);
+void turn_to_angle(oi_t *sensor, int target_angle);
+
+
+#endif // MOVEMENT_H

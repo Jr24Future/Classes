@@ -1,0 +1,19 @@
+#ifndef PING_H_
+#define PING_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+
+// Function declarations
+void ping_init(void);           // Initialize PB3 as output for triggering the sensor
+void ping_trigger(void);        // Send trigger pulse to PING))) sensor
+void ping_init_timer(void);     // Initialize Timer 3B in input edge-time mode
+void ping_measure(void);        // Trigger sensor and reconfigure PB3 as input for echo
+void configure_pb3_input(void); // Reconfigure PB3 as input for Timer 3B capture mode
+
+// Global variables (volatile as they are used in interrupt)
+extern volatile uint32_t rising_edge_time;
+extern volatile uint32_t falling_edge_time;
+extern volatile int pulse_width;
+
+#endif /* PING_H_ */

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/jsr305-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/fest-util-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/fest-reflect-1.4.1.jar"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/assertj-swing-junit-3.17.1.jar"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/assertj-swing-3.17.1.jar"/>
+	<classpathentry kind="lib" path="/Users/jr/Documents/SE317/lab_7/lib/assertj-core-3.17.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,113 @@
+#include "ping.h"
+#include <stdint.h>
+#include "inc/tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
+#include "Timer.h"
+#include "lcd.h"
+
+// Variables for edge detection
+volatile uint32_t rising_edge_time = 0;
+volatile uint32_t falling_edge_time = 0;
+volatile uint32_t pulse_width = 0;
+volatile enum {LOW, HIGH, DONE} STATE = LOW; // State for edge detection
+
+uint32_t get_rising_edge_time(void) {
+    return rising_edge_time;
+}
+
+uint32_t get_falling_edge_time(void) {
+    return falling_edge_time;
+}
+
+// Initialize PB3 for PING))) sensor and Timer 3B
+void ping_init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x02; // Enable clock for Port B
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {} // Wait for the clock to be ready
+
+    GPIO_PORTB_DEN_R |= 0x08; // Enable digital function on PB3
+    GPIO_PORTB_DIR_R |= 0x08; // Set PB3 as output initially
+    GPIO_PORTB_AFSEL_R &= ~0x08; // Disable alternate function for PB3
+
+    SYSCTL_RCGCTIMER_R |= 0x08; // Enable Timer 3 clock
+    while ((SYSCTL_PRTIMER_R & 0x08) == 0) {} // Wait for the timer to be ready
+
+    TIMER3_CTL_R &= ~0x100; // Disable Timer 3B during configuration
+    TIMER3_CFG_R = 0x4; // 16-bit timer configuration
+    TIMER3_TBMR_R = 0x07; // Capture mode, edge-time, count-down
+    TIMER3_TBPR_R = 0xFF; // Prescaler for 24-bit range
+    TIMER3_TBILR_R = 0xFFFE; // Set interval load register
+    TIMER3_IMR_R |= 0x400; // Enable capture event interrupt
+    TIMER3_ICR_R |= 0x400; // Clear any prior interrupt
+
+    NVIC_EN1_R |= 0x10; // Enable Timer 3B interrupt in NVIC (IRQ 36)
+    IntRegister(INT_TIMER3B, Timer3B_Handler); // Register Timer3B handler
+    IntMasterEnable(); // Enable global interrupts
+
+    TIMER3_CTL_R |= 0x100; // Enable Timer 3B
+}
+
+// Send a trigger pulse to the PING))) sensor
+void ping_trigger(void) {
+    GPIO_PORTB_DATA_R &= ~0x08; // PB3 low
+    timer_waitMicros(2); // 2 microseconds delay
+    GPIO_PORTB_DATA_R |= 0x08; // PB3 high
+    timer_waitMicros(5); // 5 microseconds pulse
+    GPIO_PORTB_DATA_R &= ~0x08; // PB3 low
+}
+
+// Configure PB3 as input for Timer 3B capture
+void configure_pb3_input(void) {
+    GPIO_PORTB_DIR_R &= ~0x08; // Set PB3 as input
+    GPIO_PORTB_AFSEL_R |= 0x08; // Enable alternate function for PB3
+    GPIO_PORTB_PCTL_R &= ~0x0000F000;
+    GPIO_PORTB_PCTL_R |= 0x00007000; // Set PB3 as T3CCP1 (Timer 3B capture)
+    GPIO_PORTB_DEN_R |= 0x08; // Enable digital function on PB3
+}
+
+// Main function for measuring the PING))) sensor pulse
+void ping_measure(void) {
+    GPIO_PORTB_AFSEL_R &= ~0x08; // Disable alternate function for output mode
+    GPIO_PORTB_PCTL_R &= ~0x0000F000; // Set PB3 to GPIO mode
+    GPIO_PORTB_DIR_R |= 0x08; // Set PB3 as output
+
+    ping_trigger(); // Send the trigger pulse
+
+    timer_waitMicros(750); // Wait for holdoff period
+
+    configure_pb3_input(); // Reconfigure PB3 as input for timer capture mode
+}
+
+// Timer 3B interrupt handler
+void Timer3B_Handler(void) {
+    if (TIMER3_MIS_R & 0x400) {
+        uint32_t timer_value = TIMER3_TBR_R;
+
+        if (STATE == LOW) {
+            rising_edge_time = timer_value;
+            lcd_printf("Rising Edge: %u", rising_edge_time); // Debug print
+            STATE = HIGH;
+        } else if (STATE == HIGH) {
+            falling_edge_time = timer_value;
+            lcd_printf("Falling Edge: %u", falling_edge_time); // Debug print
+            STATE = DONE;
+
+            if (falling_edge_time > rising_edge_time) {
+                pulse_width = (0xFFFFFF - rising_edge_time) + falling_edge_time + 1;
+            } else {
+                pulse_width = rising_edge_time - falling_edge_time;
+            }
+
+            lcd_printf("Width: %u", pulse_width); // Debug print for pulse width
+        }
+
+        TIMER3_ICR_R |= 0x400;
+    }
+}
+
+int ping_read(void) {
+    ping_measure(); // Send pulse and prepare for capture
+    while (STATE != DONE) {} // Wait for measurement to complete
+    int pulse_result = pulse_width; // Copy the result
+    STATE = LOW; // Reset state for next measurement
+    return pulse_result;
+}

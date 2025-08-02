@@ -1,0 +1,159 @@
+#include <inc/tm4c123gh6pm.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include "bno055.h"
+#include "lcd.h"
+#include "uart.h"
+#include "timer.h"
+#include "open_interface.h"
+#include "movement.h"
+#include "music.h"
+#include "Final_scan.h"
+#include "servo.h"
+#include "string.h"
+#include "adc.h"
+#include "ping.h"
+
+
+// Global variables
+int current_x = 0;
+int current_y = 0;
+int current_orientation = 270; // Default orientation (East)
+int start_x = 0;
+int start_y = 0;
+
+// Function prototypes
+void navigate_to_target(oi_t *sensor, int target_x, int target_y);
+int get_user_input(const char *prompt, int max_value, int is_multiple_of_60);
+
+
+int main() {
+    // Initialize hardware
+    timer_init();
+    lcd_init();
+    uart_init(115200);
+    servo_init();
+    ping_init();
+    adc_init();
+
+    // Robot initialization
+    oi_t *sensor = oi_alloc();
+    oi_init(sensor);
+
+    // Calibrate wheels -- call only once if you change bots
+    // calibrate_wheels(sensor);
+
+    //Load songs
+    load_songs();
+
+    // Ask user for starting position
+    start_x = get_user_input("Enter starting X position (60, 120, 180): ", 240, 1);
+    start_y = 0; // Starting Y position is always 0
+    current_x = start_x;
+    current_y = start_y;
+
+    // Enter the field by crossing two white lines
+    enter_border(sensor);
+
+    // Ask user for the number of targets
+    int num_targets = get_user_input("Enter the number of targets (1-5): ", 5, 0);
+    int *target_x = malloc(num_targets * sizeof(int));
+    int *target_y = malloc(num_targets * sizeof(int));
+
+    if (!target_x || !target_y) {
+        uart_sendStr("Memory allocation failed!\r\n");
+        if (target_x) free(target_x);
+        if (target_y) free(target_y);
+        return -1;
+    }
+//335
+    // Request target positions
+    int i;
+    for (i = 0; i < num_targets; i++) {
+        char prompt_x[50], prompt_y[50];
+        sprintf(prompt_x, "Enter X coordinate for target %d: ", i + 1);
+        sprintf(prompt_y, "Enter Y coordinate for target %d: ", i + 1);
+        target_x[i] = get_user_input(prompt_x, 240, 1);
+        target_y[i] = get_user_input(prompt_y, 420, 1);
+    }
+
+    // Navigate to each target
+    for (i = 0; i < num_targets; i++) {
+        navigate_to_target(sensor, target_x[i], target_y[i]);
+    }
+
+    // Return to starting position
+    navigate_to_target(sensor, start_x, start_y);
+
+    // Exit the field
+    exit_border(sensor);
+
+    // Clean up
+    free(target_x);
+    free(target_y);
+    oi_free(sensor);
+
+    return 0;
+}
+
+void navigate_to_target(oi_t *sensor, int target_x, int target_y) {
+    char buffer[100];
+    int delta_x, delta_y;
+
+    uart_sendStr("Starting semi-automatic navigation...\r\n");
+    uart_sendStr("Use 'w', 'a', 's', 'd' to move and 'h' to scan.\r\n");
+
+    while (1) {
+        delta_x = target_x - current_x;
+        delta_y = target_y - current_y;
+
+        // Check if the target is reached
+        if (delta_x == 0 && delta_y == 0) {
+            sprintf(buffer, "Target reached: (%d, %d)\r\n", current_x, current_y);
+            uart_sendStr(buffer);
+            return;
+        }
+
+        // Provide feedback to the user about progress
+        sprintf(buffer, "Current Position: (%d, %d), Target: (%d, %d)\r\n", current_x, current_y, target_x, target_y);
+        uart_sendStr(buffer);
+
+        // Wait for user input
+        char command = uart_receive();
+        switch (command) {
+            case 'w':
+                uart_sendStr("Move forward command received.\r\n");
+                move_forward(sensor, 10, 0);
+                break;
+            case 'a':
+                uart_sendStr("Turn left command received.\r\n");
+                turn_counter_clockwise(sensor, 15);
+                break;
+            case 's':
+                uart_sendStr("Move backward command received.\r\n");
+                move_backwards(sensor, 10);
+                break;
+            case 'd':
+                uart_sendStr("Turn right command received.\r\n");
+                turn_clockwise(sensor, 15);
+                break;
+            case 'h':
+                uart_sendStr("Performing 180-degree scan...\r\n");
+                scan_180();
+                break;
+            default:
+                uart_sendStr("Invalid command. Use 'w', 'a', 's', 'd', or 'h'.\r\n");
+                break;
+        }
+
+        // Update position feedback after the move
+        sprintf(buffer, "Updated Position: (%d, %d)\r\n", current_x, current_y);
+        uart_sendStr(buffer);
+    }
+}
+
+
+
+
+

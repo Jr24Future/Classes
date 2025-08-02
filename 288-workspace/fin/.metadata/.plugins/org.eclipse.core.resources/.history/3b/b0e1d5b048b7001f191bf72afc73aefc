@@ -1,0 +1,84 @@
+//#ifndef MOVEMENT_H
+//#define MOVEMENT_H
+//
+//#include "open_interface.h"
+//#include "open_interface.h"
+//#include "bno055.h"
+//// Declare global position tracking variables if they are shared across files
+//extern float current_orientation;
+//// Function prototypes
+//void move_forward(oi_t *sensor, int centimeters);
+//void move_backwards(oi_t *sensor, int centimeters);
+//void turn_clockwise(oi_t *sensor, int angle);
+//void turn_counter_clockwise(oi_t *sensor, int angle);
+//void move_forward_with_bump(oi_t *sensor, int centimeters);
+//void handle_bump(oi_t *sensor, char bump_direction);
+//void handle_uart_command(char command, oi_t *sensor_data);
+//void turn_to_angle(oi_t *sensor, int target_angle);
+//
+//// Function declarations
+//
+//
+//
+//
+//#endif // MOVEMENT_H
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
+#include "open_interface.h"
+#include "uart.h"
+
+#define degree_accuracy 0.5 //this is the degree of deviation the driving forward/backward algorithim will correct for
+#define mm_accuracy 0.5       //this is the mm deviance the turning algorithim will correct for
+
+extern int current_x;
+extern int current_y;
+extern int current_orientation; // Default orientation (East)
+
+#define cc_LWP -50          //base wheel powers
+#define c_RWP -50           //other wheel speeds are variables for dynamic correction
+#define forward_LWP 80      //other wheel power variables are NOT GLOBALS becuase movement is restricted to primitive functions
+
+typedef enum // these can be used to "mask" the status registers
+{
+    clear = 0,              // used for checking "if(current_status == clear)"
+    left_bump = 1,          // bit 0 of current_status
+    right_bump = 2,         // bit 1
+    cliff_left = 4,          // bit 2
+    cliff_front_left = 8,    // bit 3
+    cliff_right = 16,        // bit 4
+    cliff_front_right = 32,  // bit 5
+    border_right = 64,        // bit 6
+    border_left = 128,        // bit 7
+    border_front_right = 256, // bit 8
+    border_front_left = 256   // bit 8
+
+} status;
+
+// Calibrates the wheels
+void calibrate_wheels(oi_t *sensor);
+
+// Moves the robot forward
+float move_forward(oi_t *sensor, float input_centimeters, float adjustment_cm);
+// Moves the robot backwards
+float move_backward(oi_t *sensor, float input_centimeters);
+
+// Turns the robot by "degree" degrees, - is clockwise, + is counter
+int turn_clockwise(oi_t *sensor, int input_angle);
+
+int turn_counter_clockwise(oi_t *sensor, int input_angle);
+
+int turn(oi_t *sensor, int input_angle);
+
+void update_live_position(float total_distance);
+
+float move_with_bumper(oi_t *sensor, float input_centimeters);
+
+
+//void move_forward_with_bump(oi_t *sensor, int centimeters);
+//
+//// Correct declaration of handle_bump function
+//void handle_bump(oi_t *sensor, char bump_direction);
+
+void obstacle_check(oi_t *sensor);
+
+#endif

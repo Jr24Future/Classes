@@ -1,0 +1,134 @@
+#include <stdint.h>
+#include <stdio.h> // Include for sprintf
+#include "servo.h"
+#include "lcd.h"
+#include "Timer.h"
+#include "button.h"
+#include "ping.h"
+#include "uart.h"
+#include "adc.h"
+#include "movement.h"
+#include "open_interface.h"
+
+// Constants for calibration
+#define MATCH_0_DEG 311822
+#define MATCH_90_DEG 298133
+#define MATCH_180_DEG 284444 // Placeholder, to be calibrated
+
+// Scan and distance thresholds
+#define SCAN_ANGLE_STEP 2
+#define IR_THRESHOLD 50
+#define TARGET_DISTANCE_CM 5
+
+typedef struct {
+    int start_angle;
+    int end_angle;
+    int distance;
+} ObjectInfo;
+
+ObjectInfo detected_objects[10];
+int object_count = 0;
+
+volatile char uart_data;
+volatile char flag = 0;
+typedef enum { MANUAL, AUTONOMOUS_SCAN, AUTONOMOUS_TURN, AUTONOMOUS_MOVE } Mode;
+Mode current_mode = MANUAL;
+
+void setup() {
+    lcd_init();
+    uart_init(115200);
+    uart_interrupt_init();
+    adc_init();
+    ping_init();
+    servo_init();
+    oi_t *sensor_data = oi_alloc();
+    oi_init(sensor_data);
+    uart_sendStr("System setup complete.\n");
+}
+
+int adc_distance() {
+    int i;
+    int raw_ir = adc_read();   // take a reading from the ADC
+    if (raw_ir >= ir_values[0]) {
+        return distances[0];
+    }
+    if (raw_ir <= ir_values[14]) {
+        return distances[14];
+    }
+    for (i = 0; i < 14; i++) {
+        if (raw_ir <= ir_values[i] && raw_ir > ir_values[i + 1]) {
+            float slope = (distances[i + 1] - distances[i]) / (float)(ir_values[i + 1] - ir_values[i]);
+            return distances[i] + slope * (raw_ir - ir_values[i]);
+        }
+    }
+    return -1;
+
+void control_movement(oi_t *sensor_data, char command) {
+    switch (command) {
+    case 'w':
+        move_forward_with_bump(sensor_data, 10); // Move forward with bump handling
+        break;
+    case 'a':
+        turn_counter_clockwise(sensor_data, 15);
+        break;
+    case 's':
+        move_backwards(sensor_data, 10);
+        break;
+    case 'd':
+        turn_clockwise(sensor_data, 15);
+        break;
+    default:
+        uart_sendStr("Invalid movement command.\n");
+        break;
+    }
+}
+
+void perform_180_ir_scan() {
+
+}
+
+void display_smallest_object() {
+
+}
+
+void navigate_to_smallest_object(cyBOT_Scan_t *scanData, oi_t *sensor_data, int smallest_index) {
+
+}
+
+void handle_uart_data(char command, oi_t *sensor_data) {
+    switch (command) {
+        case 'w': case 'a': case 's': case 'd':
+            control_movement(sensor_data, command);
+            break;
+        case 'p': // Start scan
+            perform_scan_and_detection();
+            break;
+        case 'q':
+            uart_sendStr("Exiting program.\n");
+            break;
+        default:
+            uart_sendStr("Invalid command received.\n");
+            break;
+    }
+}
+
+void handle_bump_sensor(oi_t *sensor_data) {
+
+}
+
+int main(void) {
+    setup();
+    oi_t *sensor_data = oi_alloc();
+    oi_init(sensor_data);
+    uart_sendStr("Ready for commands.\n");
+
+    while (1) {
+        if (flag) {
+            flag = 0;
+            handle_uart_data(uart_data, sensor_data);
+        }
+    }
+
+    oi_free(sensor_data);
+    return 0;
+}

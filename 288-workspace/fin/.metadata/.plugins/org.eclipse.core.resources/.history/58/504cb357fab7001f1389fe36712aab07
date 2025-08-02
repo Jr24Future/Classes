@@ -1,0 +1,662 @@
+#include "Final_scan.h"
+#include "servo.h"
+#include "Timer.h"
+#include "lcd.h"
+#include "button.h"
+#include "ping.h"
+#include "adc.h"
+#include "string.h"
+#include "uart.h"
+#include "math.h"
+#include "movement.h"
+#include "open_interface.h"
+
+float scan_distances[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+short scan_type;
+
+
+
+int scan_180(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+
+    servo_move(0);
+
+    scan_type = 1;
+
+    for(i = 0; i <= 180; i = i + 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+    print_scan();
+    short x = find_objs();
+    //find_gaps();
+    char debug_msg[50];
+    sprintf(debug_msg, "scan_180: find_objs returned x = %d\n", x);
+    uart_sendStr(debug_msg);
+    return x;
+
+}
+
+int scan_180to360(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+
+    servo_move(0);
+
+    scan_type = 1;
+
+    for(i = 0; i <= 180; i = i + 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i + 180, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i + 180, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i + 180, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+
+    print_scan();
+    short x = find_objs();
+    //find_gaps();
+    char debug_msg[50];
+    sprintf(debug_msg, "scan_180to360: find_objs returned x = %d\n", x);
+    uart_sendStr(debug_msg);
+    return x;
+
+}
+
+int scan_small(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(50);
+
+    scan_type = 2;
+
+    for(i = 50; i <= 130; i = i + 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+}
+
+int scan_small_back(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(130);
+
+    scan_type = 2;
+
+    for(i = 130; i >= 50; i = i - 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+}
+
+int scan_90to130(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(90);
+
+    scan_type = 3;
+
+    for(i = 90; i <= 130; i = i + 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+}
+
+int scan_130to90(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(130);
+
+    scan_type = 3;
+
+    for(i = 130; i >= 90; i = i - 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+
+}
+
+int scan_50to90(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(50);
+
+    scan_type = 4;
+
+    for(i = 50; i <= 90; i = i + 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+
+}
+
+int scan_90to50(){
+    short i,j;
+    float Ping_dist;
+    float IR_dist;
+    char scan_data[30];
+    short length;
+
+    servo_move(90);
+
+    scan_type = 4;
+
+    for(i = 90; i >= 50; i = i - 2){
+        servo_move_fast(i);
+        IR_dist = calculate_distance_linear(adc_read());
+        Ping_dist = ping_read();
+        scan_distances[i/2] = IR_dist;
+        if(i>=100){    //Change spacing depending on size of angle
+            sprintf(scan_data, "%d             %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else if(i<100 && i>=10){
+            sprintf(scan_data, "%d              %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        else{
+            sprintf(scan_data, "%d               %.2f            %.2f\r\n", i, Ping_dist / 100.0, IR_dist / 100.0);
+        }
+        length = strlen(scan_data);
+
+        for(j = 0; j < length; j++){  // send data to putty
+         uart_sendChar(scan_data[j]);
+        }
+    }
+    print_scan();
+    short x;
+    x = find_objs();
+    if(x == 1){
+      return 1;
+    }
+    else if(x == 2){
+       return 2;
+    }
+    else if(x == 0){
+      return 0;
+    }
+}
+
+int scan_left(){
+    short i;
+    for(i = 0; i <= 2; i++){
+    scan_90to130();
+    scan_130to90();
+    }
+}
+
+int scan_right(){
+    short i;
+    for(i = 0; i <= 2; i++){
+    scan_90to50();
+    scan_50to90();
+    }
+}
+
+int print_scan(){
+    short i,j,n,m;
+    char print[50];
+    if(scan_type == 1){
+        n = 0;
+        m = 180 / 2;
+    }
+    else if(scan_type == 2){
+        n = 50 / 2;
+        m = 130 / 2;
+    }
+    else if(scan_type == 3){
+        n = 90 / 2;
+        m = 130 / 2;
+    }
+    else if(scan_type == 4){
+        n = 50 / 2;
+        m = 90 / 2;
+    }
+    else{
+        printf("FIXME");
+    }
+
+    for(i = n; i <= m; i++){
+        if(scan_distances[i-1] == scan_distances[i+1]){
+            scan_distances[i] = scan_distances[i-1];
+        }
+        if(scan_distances[i - 1] != 50 && scan_distances[i +1] != 50 && scan_distances[i] == 50){
+            scan_distances[i] = scan_distances[i-1];
+        }
+    }
+
+    for(i = n; i <= m; i++){
+       sprintf(print, "Angle: %d IR distance: %.2f (cm)\n\r", i ,  scan_distances[i]);
+               for(j = 0; j<strlen(print); j++){
+                  uart_sendChar(print[j]);
+               }
+    }
+}
+
+float find_objs(){
+    short i,j;
+    short ob = 0;
+    sensor_info objstruct[5];
+    short min_index;
+    short clear_index;
+    short max_index;
+    short min_dist = 1000;
+    short min_clear = 1000;
+    short max_dist = 0;
+    short det = 0;
+    float min_linwidth = 1000;
+    char print[50];
+    float distances[4];
+    short x=0;
+
+    for(i = 0; i<90; i++){ //object detection
+               if(scan_distances[i] < 50 && scan_distances[i] > 0 && det == 0){
+                   objstruct[ob].objnum = ob + 1;
+                   objstruct[ob].angle = i * 2;
+                   det = 1;
+               }
+               else if(scan_distances[i] >= 50 && scan_distances[i] > 0 && det == 1){
+                   objstruct[ob].fangle = (i - 1) * 2;
+
+                   det = 0;
+                   ob++;
+               }
+
+           }
+   if(det == 1){
+       if(scan_type == 1){
+        objstruct[ob].fangle = 180;
+       }
+       else if(scan_type == 2){
+        objstruct[ob].fangle = 130;
+       }
+       else if(scan_type == 3){
+        objstruct[ob].fangle = 130;
+       }
+       else if(scan_type == 4){
+        objstruct[ob].fangle = 90;
+       }
+        ob++;
+        det = 0;
+
+           }  //object detection done
+
+
+   for(i = 0; i < ob; i++){ //calculate object measurements
+       objstruct[i].width = objstruct[i].fangle - objstruct[i].angle;
+       objstruct[i].midangle = (objstruct[i].angle + objstruct[i].fangle) / 2;
+       objstruct[i].IRdist = scan_distances[objstruct[i].fangle / 5];
+       objstruct[i].linwidth = objstruct[i].IRdist * ((float)objstruct[i].width * (M_PI/180.0));
+
+       if(objstruct[i].linwidth < min_linwidth){ //find smallest object
+           min_linwidth = objstruct[i].linwidth;
+           min_index = i;
+       }
+   }
+
+
+   for(i = 0; i < ob; i++){  // ping objects, calculate clearance
+       servo_move(objstruct[i].midangle);
+       objstruct[i].Ping = ping_read();
+       objstruct[i].offset_angle = atan(11.0 / objstruct[i].Ping) * (180.0 / M_PI);
+       timer_waitMillis(100);
+
+       if(objstruct[i].midangle <= 90){
+       objstruct[i].clearance = (objstruct[i].Ping) * cos((objstruct[i].fangle - objstruct[i].offset_angle) * (M_PI / 180.0)) - 17.0;
+       }
+       else{
+       objstruct[i].clearance = abs((objstruct[i].Ping) * sin((objstruct[i].angle - 90 + objstruct[i].offset_angle) * (M_PI / 180.0))) - 17.0;
+       }
+   }
+
+
+   if(ob > 1){ //calculate distance between objects (if multiple objects), detect if objects are same object
+       for(i = 1; i < ob; i++){
+           distances[i-1] = sqrt((objstruct[i].Ping * objstruct[i].Ping) + (objstruct[i-1].Ping * objstruct[i-1].Ping)
+           - (2 * objstruct[i].Ping * objstruct[i-1].Ping * cos((objstruct[i].angle - objstruct[i-1].fangle) * M_PI/180.0)));
+
+           sprintf(print, "\r\nDistance between object %d and object %d: %.2f (cm)\r\n",i + 1, i, distances[i - 1]);
+           for(j = 0; j<strlen(print); j++){
+               uart_sendChar(print[j]);
+           }
+           if(distances[i - 1] < 5){
+               sprintf(print, "ERROR DETECTED: treat object %d and object %d as one object\r\n",i + 1, i);
+               for(j = 0; j<strlen(print); j++){
+                   uart_sendChar(print[j]);
+               }
+
+               if(objstruct[i - 1].midangle <= 90){
+                  sprintf(print, "Take clearance of largest objnum\r\n");
+                  objstruct[i - 1].clearance = objstruct[i].clearance; // set clearance of object same(avoid weird behavior)
+
+                  for(j = 0; j<strlen(print); j++){
+                      uart_sendChar(print[j]);
+                  }
+               }
+               else{
+                  sprintf(print, "Take clearance of smallest objnum\r\n");
+                  objstruct[i].clearance = objstruct[i - 1].clearance; // set clearance of object same (avoid weird behavior)
+
+                  for(j = 0; j<strlen(print); j++){
+                      uart_sendChar(print[j]);
+                  }
+               }
+           }
+
+       }
+
+   }
+
+   for( i = 0; i < ob; i++){ // print object measurements
+       sprintf(print, "\r\nObject %d from %d to %d width of %.2f at distance %.2f (cm) clearance %.2f (cm)\r\n",
+           objstruct[i].objnum, objstruct[i].angle, objstruct[i].fangle, objstruct[i].linwidth, objstruct[i].Ping,
+           objstruct[i].clearance);
+       for(j = 0; j<strlen(print); j++){
+           uart_sendChar(print[j]);
+       }
+
+       if(objstruct[i].clearance < 4){
+           sprintf(print, "CAUTION: Not enough clearance, do not move forward\r\n");
+           for(j = 0; j<strlen(print); j++){
+               uart_sendChar(print[j]);
+           }
+       }
+   }
+
+
+   if(ob > 0){ // find closest and most obstructing object (if object detected). turn opposite direction.
+   for(i = 0; i < ob; i++){
+     if(objstruct[i].Ping < min_dist){
+         min_dist = objstruct[i].Ping;
+         min_index = i;
+     }
+     if(objstruct[i].Ping > max_dist){
+         max_dist = objstruct[i].Ping;
+         max_index = i;
+     }
+     if(objstruct[i].clearance < min_clear){
+         min_clear = objstruct[i].clearance;
+         clear_index = i;
+     }
+   }
+   sprintf(print, "\r\nClosest Object: object %d at angle %d distance %.2f\r\n"
+           "Most obstructing object: object %d at angle %d clearance %.2f\r\n"
+           , min_index + 1, objstruct[min_index].midangle, objstruct[min_index].Ping,
+           clear_index + 1, objstruct[clear_index].midangle, objstruct[clear_index].clearance);
+   for(j = 0; j<strlen(print); j++){
+       uart_sendChar(print[j]);
+          }
+
+
+   if (objstruct[clear_index].clearance <= 4.0) {
+       x = objstruct[max_index].Ping;
+   } else if(ob == 0 || objstruct[clear_index].clearance >= 4.0) {
+       x = 0; // Move forward
+   }
+
+   char debug_msg[50];
+   sprintf(debug_msg, "find_objs: Returning x = %d\n", x);
+   uart_sendStr(debug_msg);
+   }
+   return x;
+}
+
+int find_gaps(){
+    short i;
+    gap gapstruct[5];
+    short gapdet = 0;
+    short ga = 0;
+    short max_width = 0;
+    short max_index;
+
+    for(i = 0; i < 90; i++){
+    if(scan_distances[i] == 50 && gapdet == 0){
+        gapstruct[ga].gapnum = ga + 1;
+        gapstruct[ga].angle = i * 2;
+        gapdet = 1;
+    }
+    else if(scan_distances[i] < 49.99 && gapdet == 1){
+        gapstruct[ga].fangle = (i - 1) * 2;
+        gapstruct[ga].width = gapstruct[ga].fangle - gapstruct[ga].angle;
+        gapstruct[ga].midangle = (gapstruct[ga].fangle + gapstruct[ga].angle) / 2;
+        gapdet = 0;
+        ga++;
+    }
+    }
+
+    if(gapdet == 1){
+        if(scan_type == 1){
+         gapstruct[ga].fangle = 180;
+        }
+        else if(scan_type == 2){
+         gapstruct[ga].fangle = 130;
+        }
+        else if(scan_type == 3){
+         gapstruct[ga].fangle = 130;
+        }
+        else if(scan_type == 4){
+         gapstruct[ga].fangle = 90;
+        }
+        gapstruct[ga].width = gapstruct[ga].fangle - gapstruct[ga].angle;
+        gapstruct[ga].midangle = (gapstruct[ga].fangle + gapstruct[ga].angle) / 2;
+         ga++;
+         gapdet = 0;
+
+            }
+    /*
+    for( i = 0; i < ga; i++){
+        sprintf(print, "\r\nGap %d from %d to %d width of %d (degrees). Middle of gap at angle %d\r\n",
+                   gapstruct[i].gapnum, gapstruct[i].angle, gapstruct[i].fangle, gapstruct[i].width, gapstruct[i].midangle);
+               for(j = 0; j<strlen(print); j++){
+                   uart_sendChar(print[j]);
+               }
+    }
+    */
+    for(i = 0; i < ga; i++){
+      if(gapstruct[i].width > max_width){
+          max_width = gapstruct[i].width;
+          max_index = i;
+      }
+    }
+
+    return gapstruct[max_index].midangle;
+}

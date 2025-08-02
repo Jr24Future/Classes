@@ -1,0 +1,54 @@
+/*
+ * servo.c
+ *
+ *  Created on: Nov 4, 2024
+ *      Author: ryanchin
+ */
+
+#include "servo.h"
+#include "Timer.h"
+#include "inc/tm4c123gh6pm.h"
+
+void servo_init(void) {
+    // Enable clock for GPIO Port B and wait for it to be ready
+    SYSCTL_RCGCGPIO_R |= 0x02;
+    while ((SYSCTL_PRGPIO_R & 0x02) == 0) {}
+
+    // Configure PB5 as T1CCP1 (Timer 1B PWM)
+    GPIO_PORTB_AFSEL_R |= 0x20;
+    GPIO_PORTB_PCTL_R &= ~0x00F00000;
+    GPIO_PORTB_PCTL_R |= 0x00700000;
+    GPIO_PORTB_DIR_R |= 0x20;
+    GPIO_PORTB_DEN_R |= 0x20;
+
+    // Enable clock for Timer 1 and wait for it to be ready
+    SYSCTL_RCGCTIMER_R |= 0x02;
+    while ((SYSCTL_PRTIMER_R & 0x02) == 0) {}
+
+    // Configure Timer 1B for PWM mode
+    TIMER1_CTL_R &= ~0x0100;    // Disable Timer 1B during configuration
+    TIMER1_CFG_R = 0x04;        // Set to 16-bit timer configuration
+    TIMER1_TBMR_R = 0x0A;       // Enable PWM mode and periodic mode
+
+    // Set the period for a 20 ms PWM signal (320,000 ticks)
+    TIMER1_TBILR_R = 0xE200;    // Lower 16 bits
+    TIMER1_TBPR_R = 0x04;       // Upper 8 bits for a total of 320,000 ticks
+
+    // Start with the servo at 0 degrees (1 ms pulse)
+    TIMER1_TBMATCHR_R = 0xD200; // Lower 16 bits for initial match value
+    TIMER1_TBPMR_R = 0x04;      // Upper 8 bits
+
+    TIMER1_CTL_R |= 0x0100;     // Enable Timer 1B
+}
+
+int servo_move(float degrees) {
+    // Calculate the match value based on the input degrees
+    unsigned int match_value = 320000 - ((degrees / 180.0) * 16000 + 16000);
+
+    TIMER1_TBMATCHR_R = match_value & 0xFFFF;
+    TIMER1_TBPMR_R = (match_value >> 16) & 0xFF;
+
+    timer_waitMillis(300); // Wait for the servo to move
+
+    return TIMER1_TBMATCHR_R;
+}

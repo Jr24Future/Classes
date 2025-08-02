@@ -1,0 +1,15 @@
+#ifndef PING_H
+#define PING_H
+
+#include <stdint.h>
+
+// Function to send a trigger pulse to the PING))) sensor
+void Ping_SendTrigger(void);
+
+// Function to wait for echo pulse capture and calculate width
+void Ping_CapturePulse(void);
+
+// Display function to show pulse width (to be implemented based on your setup)
+void DisplayPulseWidth(uint32_t pulseWidth);
+
+#endif
