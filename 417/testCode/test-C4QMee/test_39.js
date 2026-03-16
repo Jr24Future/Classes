@@ -1,0 +1,13 @@
+let mocha = require('mocha');
+let assert = require('assert');
+let testcode = require('..');
+
+describe('test testcode', function() {
+    describe('testcode.classifySign', function() {
+        it('should return "negative" for negative floating-point numbers', function(done) {
+            let result = testcode.classifySign(-0.1);
+            assert.strictEqual(result, 'negative');
+            done();
+        });
+    });
+});
