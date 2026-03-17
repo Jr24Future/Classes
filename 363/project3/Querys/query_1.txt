@@ -1,0 +1,2 @@
+MATCH (s:students {name: "Amy"})
+RETURN s.c_addr AS campus_address;

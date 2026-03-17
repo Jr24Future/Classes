@@ -1,0 +1,2 @@
+MATCH (s:students {name: "Gail"})-[:major]->(d:degrees)
+RETURN d.name AS major_name, d.level AS major_level;

@@ -1,0 +1,2 @@
+MATCH (l:students {name: "Lisa"})--(adj)
+RETURN adj;

@@ -1,0 +1,12 @@
+MATCH (course:courses)
+OPTIONAL MATCH (course)<-[register:register]-(student:students)
+WITH course, COALESCE(AVG(register.grade), 0) AS average_grade
+RETURN course.number AS course_number, course.name AS course_name, average_grade
+ORDER BY course_number
+
+
+
+//MATCH (course:courses)<-[register:register]-(student:students)
+//WITH course, AVG(register.grade) AS average_grade
+//RETURN course.number AS course_number, course.name AS course_name, average_grade
+//ORDER BY course_number

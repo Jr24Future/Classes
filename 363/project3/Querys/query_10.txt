@@ -1,0 +1,4 @@
+MATCH (c:courses)
+OPTIONAL MATCH (s:students)-[:register]->(c)
+RETURN c.number AS course_number, c.name AS course_name, count(s) AS number_of_students
+ORDER BY c.number;

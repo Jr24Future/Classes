@@ -1,0 +1,4 @@
+MATCH (s:students)
+WHERE toLower(s.name) CONTAINS "n"
+RETURN s.name AS student_name, s.snum AS student_number, s.ssn AS ssn
+ORDER BY s.snum;

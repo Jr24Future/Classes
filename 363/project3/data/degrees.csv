@@ -1,0 +1,46 @@
+degree_id,name,level,department_code
+1,Aerospace Engineering,MS,410
+2,Aerospace Engineering,PhD,410
+3,Agronomy,BS,411
+4,Agronomy,PhD,411
+5,Animal Science,PhD,412
+6,Anthropology,MS,413
+7,Applied Mathematics,BS,433
+8,Applied Mathematics,MS,433
+9,Applied Mathematics,PhD,433
+10,Architecture,BS,414
+11,Art and Design,MS,415
+12,Art and Design,PhD,415
+13,Biology,MS,406
+14,Business Administration,BS,416
+15,Chemical Engineering,BS,403
+16,Chemical Engineering,MS,403
+17,Chemical Engineering,PhD,403
+18,Chemistry,BS,417
+19,Chemistry,MS,417
+20,Civil Engineering,PhD,408
+21,Communication Studies,MS,418
+22,Communication Studies,PhD,418
+23,Computer Engineering,BS,419
+24,Computer Engineering,PhD,419
+25,Computer Science,BS,401
+26,Computer Science,MS,401
+27,Computer Science,PhD,401
+28,Criminal Justice,BS,420
+29,Environmental Science,BS,423
+30,Environmental Science,MS,423
+31,Geography,MS,424
+32,Journalism,MS,426
+33,Landscape Architect,BS,404
+34,Landscape Architect,MS,404
+35,Landscape Architect,PhD,404
+36,Mechanical Engineering,BS,407
+37,Mechanical Engineering,MS,407
+38,Mechanical Engineering,PhD,407
+39,Nursing,PhD,428
+40,Physics,BS,405
+41,Physics,MS,405
+42,Physics,PhD,405
+43,Software Engineering,BS,431
+44,Software Engineering,MS,431
+45,Software Engineering,PhD,431

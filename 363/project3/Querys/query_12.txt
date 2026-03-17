@@ -1,0 +1,17 @@
+MATCH (degree:degrees)
+OPTIONAL MATCH (degree)<-[:major]-(student:students)
+WITH degree, COALESCE(COUNT(student), 0) AS num_students
+WITH MIN(num_students) AS least_students
+MATCH (degree:degrees)
+OPTIONAL MATCH (degree)<-[:major]-(student:students)
+WITH degree, COALESCE(COUNT(student), 0) AS num_students, least_students
+WHERE num_students = least_students
+RETURN degree.name AS degree_name, degree.level AS degree_level, num_students
+ORDER BY degree_name
+
+
+//MATCH (degree:degrees)<-[:major]-(student:students)
+//WITH degree, COUNT(student) AS num_students
+//ORDER BY num_students ASC, degree.name ASC
+//LIMIT 1
+//RETURN degree.name AS degree_name, degree.level AS degree_level, num_students

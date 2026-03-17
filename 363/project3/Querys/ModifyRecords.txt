@@ -1,0 +1,27 @@
+MATCH (s:students {ssn: "144673371"})
+SET s.name = "Scott";
+
+MATCH (student:students {ssn: "144673371"})-[r:major]->(old_degree:degrees)
+DELETE r
+WITH student
+MATCH (new_degree:degrees {name: "Computer Science", level: "Master"})
+CREATE (student)-[:major]->(new_degree)
+RETURN student, new_degree
+
+
+MATCH (student:students)-[r:register {regtime: "Summer2024"}]->(course:courses)
+DELETE r
+
+
+MATCH (dept:departments {name: "Applied Mathematics"})
+OPTIONAL MATCH (dept)-[:administer]->(deg:degrees)
+DETACH DELETE dept, deg;
+
+MATCH (course:courses)
+WITH course.department_code AS dept_code, course.level AS level, MIN(course.number) AS min_course_number
+MATCH (course_to_keep:courses {department_code: dept_code, level: level, number: min_course_number})
+WITH COLLECT(course_to_keep) AS courses_to_keep
+MATCH (course:courses)
+WHERE NOT course IN courses_to_keep
+DETACH DELETE course
+

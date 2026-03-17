@@ -1,0 +1,3 @@
+MATCH (dept:departments)-[:administer]->(degree:degrees)<-[:major|minor]-(student:students)
+WHERE student.gender = "F" AND dept.college = "LAS"
+RETURN COUNT(DISTINCT student) AS count_female_students;
