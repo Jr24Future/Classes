@@ -1,0 +1,15 @@
+project_id  = "your-gcp-project-id"
+region      = "us-central1"
+zone        = "us-central1-a"
+name_prefix = "se4220-gallery"
+
+# The assignment requires this subnet and these machine sizes.
+subnet_cidr  = "10.0.0.0/16"
+machine_type = "e2-standard-2"
+db_tier      = "db-n1-standard-1"
+
+# Change this password before running terraform apply.
+db_password = "ChangeMe12345!"
+
+# Optional: replace with your public IP for better security.
+ssh_source_ranges = ["0.0.0.0/0"]

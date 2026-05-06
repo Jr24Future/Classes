@@ -1,0 +1,37 @@
+# Terraform local files
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+*.tfplan
+crash.log
+crash.*.log
+
+# Sensitive Terraform variables
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Generated files
+gallery-app.zip
+*.zip
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment files
+.env
+.env.*
+
+# Keep safe examples
+!.env.example
+!terraform.tfvars.example
+
+# Reports, videos, screenshots
+*.pdf
+*.mp4
+*.mov
+*.avi
+*.mkv
+docs/screenshots/

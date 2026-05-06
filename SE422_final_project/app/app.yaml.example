@@ -1,0 +1,15 @@
+# Optional Project 4 App Engine example.
+# For the final Terraform project, the app is deployed on Compute Engine instead.
+runtime: python312
+entrypoint: gunicorn -b :$PORT main:app
+
+# Replace these values before using App Engine.
+env_variables:
+  DB_NAME: gallerydb
+  DB_USER: galleryuser
+  DB_PASSWORD: CHANGE_ME
+  # For App Engine + Cloud SQL Unix socket, use this format:
+  # /cloudsql/PROJECT_ID:REGION:INSTANCE_NAME
+  DB_UNIX_SOCKET: /cloudsql/PROJECT_ID:REGION:gallery-mysql
+  SECRET_KEY: CHANGE_ME_TO_A_RANDOM_SECRET
+  UPLOAD_MAX_MB: "8"
